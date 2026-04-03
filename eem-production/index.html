@@ -825,8 +825,9 @@ function dragMove(e){
   const snapPh=DS.snap.find(s=>s.id===DS.phid);
   if(snapPh&&snapPh.assignees){snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){
       const _cd=Math.round((new Date(ph.start)-new Date(orig.start))/86400000);
-      ph.assignees[i].start=addDays(sa.start,_cd);
-      ph.assignees[i].end=addDays(sa.end,_cd);
+      const _as=addDays(sa.start,_cd);const _ae=addDays(sa.end,_cd);
+      ph.assignees[i].start=isWeekend(_as)?snapToWorkday(_as):_as;
+      ph.assignees[i].end=isWeekend(_ae)?snapToWorkdayBack(_ae):_ae;
     }});}
   cascadeLinked(proj,DS.idx,delta);
   const cy=e.touches?e.touches[0].clientY:e.clientY;
