@@ -1024,7 +1024,7 @@ function pushToFirebase(){
 }
 function initFirebase(){
   try{
-    const app=firebase.initializeApp(firebaseConfig);
+    const app=firebase.apps.length?firebase.app():firebase.initializeApp(firebaseConfig);
     _db=firebase.database();
     _ref=_db.ref('plannerData');
     _ref.on('value',snap=>{
