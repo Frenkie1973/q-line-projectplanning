@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EEM Production — Lezer</title>
 <style>
+/* VIEWER MODE - geen edit knoppen */
+#btn-save,.btn-load,
+button[onclick*="newProject"],button[onclick*="addPhase"],button[onclick*="newMilestone"],
+button[onclick*="saveToFile"],button[onclick*="export-panel"],
+button[onclick*="contacts-panel"],button[onclick*="data-panel"],
+.export-panel,.contacts-panel,.data-panel,.form-panel,
+.btn-invite,.btn-outlook,input[type="file"]{display:none!important}
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 :root {
   --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--border2:#d0cec4;
@@ -169,24 +177,10 @@ table{border-collapse:collapse;table-layout:fixed;}
 <header>
   <div class="logo">EEM <span>Production</span></div>
   <div class="header-actions">
-    <span style="background:#fef9c3;border:1px solid #ca8a04;color:#92400e;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">Lezer</span>
-    <span id="sync-dot" class="sync-dot"></span><span id="sync-label">Verbinden...</span>
-  </div><span id="sync-label">Niet opgeslagen</span></div>
-    <input type="file" id="load-file-input" accept=".json" style="display:none" onchange="loadFromFile(this)">
-    <button class="btn-data" id="btn-backup" onclick="togglePanel('data-panel')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Back-up / Herstel
-    </button>
-    <button class="btn-outlook" id="btn-export-ics" onclick="togglePanel('export-panel');renderExportList()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Exporteer ICS
-    </button>
-    <button class="btn-contacts" id="btn-contacts" onclick="togglePanel('contacts-panel')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Contacten
-    </button>
-    <button id="lang-btn" style="font-size:12px;font-weight:600;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);cursor:pointer;min-width:42px;" onclick="toggleLang()">NL</button>
-  </div>
+      <span style="background:#fef9c3;border:1px solid #ca8a04;color:#92400e;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">Lezer</span>
+      <span id="sync-dot" class="sync-dot"></span><span id="sync-label">Verbinden...</span>
+      <button onclick="toggleLang()" id="btn-lang" style="padding:4px 10px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer">EN</button>
+    </div>
 </header>
 
 <div class="main">
@@ -473,7 +467,7 @@ const PC={engineering:'#7c6ff7',buying:'#2563eb',outsourcing:'#059669',installat
 const PL={engineering:'Engineering',buying:'Inkoop',outsourcing:'Uitbesteden',installation:'Montage',transport:'Transport',production:'Productie'};
 const AV=['#7c6ff7','#2563eb','#059669','#ea580c','#d97706','#db2777','#0891b2','#9333ea'];
 const PKEY='eem-viewer-v1';
-const CKEY='eem-contacts-v1';
+const CKEY='eem-viewer-contacts-v1';
 
 let projects=[],milestones=[],nPid=1,nPhid=1,nMid=1;
 let appInitializing=true;
@@ -787,7 +781,7 @@ function render(){
 
 let DS=null;
 const TT=document.getElementById('drag-tooltip');
-function attachDrag(){document.querySelectorAll('.phase-bar[data-pid]').forEach(el=>{el.addEventListener('mousedown',dragStart);el.addEventListener('touchstart',dragStart,{passive:false});});}
+function attachDrag(){return;document.querySelectorAll('.phase-bar[data-pid]').forEach(el=>{el.addEventListener('mousedown',dragStart);el.addEventListener('touchstart',dragStart,{passive:false});});}
 function getColW(){const c=document.querySelector('td.day-col');return c?c.getBoundingClientRect().width:22;}
 function dragStart(e){
   const el=e.currentTarget,pid=parseInt(el.dataset.pid),phid=parseInt(el.dataset.phid);
@@ -867,7 +861,7 @@ function phaseEndChanged(){
   if(start&&end&&end>=start)document.getElementById('f-fdur').value=countDays(start,end,incWe);
 }
 
-function openForm_DISABLED(type,ctx){
+function openForm(type,ctx){return;
   closeAll();editCtx={type,...(ctx||{})};window.scrollTo({top:0,behavior:'smooth'});
   if(type==='proj'){
     document.getElementById('form-proj').classList.add('open');
@@ -904,7 +898,7 @@ function openForm_DISABLED(type,ctx){
   }
 }
 
-function saveProject(){
+function saveProject(){return;
   const name=document.getElementById('f-pname').value.trim();if(!name){alert(t('enterCustomer'));return;}
   const orderNr=document.getElementById('f-porder').value.trim();
   const start=document.getElementById('f-pstart').value,end=document.getElementById('f-pend').value;
@@ -915,7 +909,7 @@ function saveProject(){
   else projects.push({id:nPid++,name,orderNr,owner,start,end,cp,open:true,phases:[]});
   save();closeForm('proj');render();
 }
-function savePhase(){
+function savePhase(){return;
   const pid=parseInt(document.getElementById('f-fproject').value);if(!pid){alert(t('selectProject'));return;}
   const type=document.getElementById('f-ftype').value;
   const start=document.getElementById('f-fstart').value,end=document.getElementById('f-fend').value;
@@ -945,19 +939,19 @@ function savePhase(){
   }
   save();closeForm('phase');render();
 }
-function saveMilestone(){const name=document.getElementById('f-mname').value.trim(),pid=parseInt(document.getElementById('f-mproject').value),date=document.getElementById('f-mdate').value;if(!name||!date){alert(t('fillAllFields'));return;}const mid=editCtx.mid;if(mid){const m=milestones.find(x=>x.id===mid);if(m){m.name=name;m.projectId=pid;m.date=date;}}else milestones.push({id:nMid++,name,projectId:pid,date});save();closeForm('milestone');render();}
-function deleteProjectEdit(){
+function saveMilestone(){return;const name=document.getElementById('f-mname').value.trim(),pid=parseInt(document.getElementById('f-mproject').value),date=document.getElementById('f-mdate').value;if(!name||!date){alert(t('fillAllFields'));return;}const mid=editCtx.mid;if(mid){const m=milestones.find(x=>x.id===mid);if(m){m.name=name;m.projectId=pid;m.date=date;}}else milestones.push({id:nMid++,name,projectId:pid,date});save();closeForm('milestone');render();}
+function deleteProjectEdit(){return;
   const pid=parseInt(editCtx.pid);const p=projects.find(x=>parseInt(x.id)===pid);if(!p)return;
   const btn=document.getElementById('del-proj-btn');
   if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteProject');projects=projects.filter(x=>parseInt(x.id)!==pid);milestones=milestones.filter(x=>parseInt(x.projectId)!==pid);save();closeForm('proj');render();}
   else{btn.dataset.confirming='1';btn.textContent=t('sure');setTimeout(()=>{if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteProject');}},3000);}
 }
-function deletePhaseEdit(){
+function deletePhaseEdit(){return;
   const btn=document.getElementById('del-phase-btn');
   if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deletePhase');const pid=parseInt(editCtx.pid),phid=parseInt(editCtx.phid);const p=projects.find(x=>parseInt(x.id)===pid);if(p)p.phases=p.phases.filter(x=>parseInt(x.id)!==phid);save();closeForm('phase');render();}
   else{btn.dataset.confirming='1';btn.textContent=t('sure');setTimeout(()=>{if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deletePhase');}},3000);}
 }
-function deleteMilestoneEdit(){
+function deleteMilestoneEdit(){return;
   const btn=document.getElementById('del-ms-btn');
   if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteMilestone');const mid=parseInt(editCtx.mid);milestones=milestones.filter(x=>parseInt(x.id)!==mid);save();closeForm('milestone');render();}
   else{btn.dataset.confirming='1';btn.textContent=t('sure');setTimeout(()=>{if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteMilestone');}},3000);}
