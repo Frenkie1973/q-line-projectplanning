@@ -1038,7 +1038,7 @@ function startFbListener(){
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 try{
-  var _app=firebase.initializeApp(_fbConfig);
+  var _app=firebase.initializeApp({apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",authDomain:"q-line-planning.firebaseapp.com",databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",projectId:"q-line-planning",storageBucket:"q-line-planning.firebasestorage.app",messagingSenderId:"699669136620",appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"});
   _fbRef=firebase.database().ref('plannerData');
   startFbListener();
   console.log('Firebase OK');
