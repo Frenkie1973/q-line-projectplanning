@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projectplanner — Lezer</title>
 <style>
+/* ===== VIEWER: alleen lezen ===== */
+#btn-save, #btn-load, .btn-load,
+button[onclick*="newProject"],
+button[onclick*="addPhase"],
+button[onclick*="newMilestone"],
+button[onclick*="openContacts"],
+button[onclick*="exportICS"],
+button[onclick*="openBackup"],
+.export-panel, .contacts-panel, .backup-panel,
+input[type="file"] { display:none !important; }
+
+/* Blokkeer slepen en klikken op de gantt */
+.gantt-wrap, #g-header, #g-body, .bar, .phase-row, .bar-wrap {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: default !important;
+}
+
+/* Maar laat scrollen nog wel toe */
+.main { pointer-events: auto !important; }
+/* ================================ */
+
 /* VIEWER: verberg edit knoppen */
 #btn-save, #btn-load, .btn-load,
 button[onclick*="newProject"],
