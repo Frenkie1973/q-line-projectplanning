@@ -208,6 +208,7 @@ table{border-collapse:collapse;table-layout:fixed;}
     <input type="file" id="load-file-input" accept=".json" style="display:none" onchange="loadFromFile(this)">
     <button id="lang-btn" style="font-size:12px;font-weight:600;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);cursor:pointer;min-width:42px;" onclick="toggleLang()">NL</button>
     <span style="font-size:11px;font-weight:600;padding:4px 10px;background:#fef3c7;color:#92400e;border-radius:var(--radius);border:1px solid #fcd34d;">&#128274; <span id="viewer-badge">Lezer</span>
+    <div class="sync-status" id="sync-status" style="margin-left:8px;"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Verbinden...</span></div>
   </div>
   </div>
 </header>
@@ -1570,6 +1571,12 @@ projects.forEach(p=>{
   });
 });
 save(); appInitializing=false; render(); applyLang();
+loadFirebase().then(()=>{
+  firebase.initializeApp(firebaseConfig);
+  db=firebase.database();
+  DATA_REF=db.ref('plannerData');
+  startFirebaseSync();
+}).catch(e=>{ console.error('Firebase fout:', e); });
 
 /* ══ FIREBASE SYNC (viewer) ══ */
 function loadFirebase(){
@@ -1619,12 +1626,7 @@ function startFirebaseSync(){
   });
 }
 
-loadFirebase().then(()=>{
-  firebase.initializeApp(firebaseConfig);
-  db=firebase.database();
-  DATA_REF=db.ref('plannerData');
-  startFirebaseSync();
-}).catch(e=>{ console.warn('Firebase niet beschikbaar'); });
+
 </script>
 
 </body>
