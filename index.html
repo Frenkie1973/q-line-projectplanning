@@ -501,7 +501,11 @@ function isoWeek(d){const dt=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.ge
 /* ── persistence ── */
 var _localSaveTimer = null;
 function save(){
-  try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
+  const now = new Date().toISOString();
+  try{
+    localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));
+    localStorage.setItem(PKEY+'_meta',JSON.stringify({saved:now}));
+  }catch(e){}
   if(!appInitializing&&typeof markChanged==='function'){
     markChanged();
     if(typeof scheduleAutoSave==='function') scheduleAutoSave();
@@ -1034,12 +1038,25 @@ function initFirebase(){
 // Listen for ESM Firebase data events
 window.addEventListener('firebase-data', e=>{
   const d=e.detail;
-  if(!d||!d.projects)return;
+  if(!d||!d.projects||!d.projects.length) return; // Nooit lege Firebase data toepassen
+  // Alleen Firebase data gebruiken als die nieuwer is dan lokale data
+  const fbTime  = d.saved ? new Date(d.saved).getTime() : 0;
+  const locTime = (()=>{ try{ const l=JSON.parse(localStorage.getItem(PKEY+'_meta')||'{}'); return l.saved ? new Date(l.saved).getTime() : 0; }catch(e){return 0;} })();
+  if(fbTime < locTime){ 
+    // Lokale data is nieuwer — push lokale data naar Firebase
+    setTimeout(pushToFirebase, 500);
+    const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+    if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
+    return;
+  }
   projects=d.projects||[];milestones=d.milestones||[];
   nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
   nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
   if(d.contactBook){contactBook=d.contactBook;persistContacts();}
-  try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
+  try{
+    localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));
+    localStorage.setItem(PKEY+'_meta',JSON.stringify({saved:d.saved}));
+  }catch(e){}
   render();applyLang();
   const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
   if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
