@@ -684,7 +684,7 @@ function showICSModal(content,filename){
 }
 
 function buildDays(){
-  const dates=[...projects.flatMap(p=>[new Date(p.start),new Date(p.end)]),...projects.flatMap(p=>p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end),...(ph.assignees||[]).flatMap(a=>[new Date(a.start),new Date(a.end)])])),...milestones.map(m=>new Date(m.date))];
+  const dates=[...projects.flatMap(p=>[new Date(p.start),new Date(p.end)]),...projects.flatMap(p=>(p.phases||[]).flatMap(ph=>[new Date(ph.start),new Date(ph.end),...(ph.assignees||[]).flatMap(a=>[new Date(a.start),new Date(a.end)])])),...milestones.map(m=>new Date(m.date))].filter(d=>d instanceof Date && !isNaN(d));
   if(!dates.length){const n=new Date();dates.push(n,new Date(n.getFullYear(),n.getMonth()+2,0));}
   let mn=new Date(Math.min(...dates)),mx=new Date(Math.max(...dates));
   mn=addDays(ymd(mn),-3);mx=addDays(ymd(mx),5);
