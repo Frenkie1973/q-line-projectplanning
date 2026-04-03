@@ -1628,6 +1628,15 @@ function startFirebaseSync(){
 
 
 </script>
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+try{
+  firebase.apps.length?firebase.app():firebase.initializeApp({apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",authDomain:"q-line-planning.firebaseapp.com",databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",projectId:"q-line-planning",storageBucket:"q-line-planning.firebasestorage.app",messagingSenderId:"699669136620",appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"});
+  DATA_REF=firebase.database().ref('plannerData');
+  startFirebaseSync();
+  console.log('Firebase viewer OK');
+}catch(e){console.warn('Firebase viewer fout:',e.message);}
+</script>
 </body>
 </html>
