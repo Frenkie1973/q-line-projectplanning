@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projectplanner — Lezer</title>
 <style>
+/* VIEWER: verberg edit knoppen */
+#btn-save, #btn-load, .btn-load,
+button[onclick*="newProject"],
+button[onclick*="addPhase"],
+button[onclick*="newMilestone"],
+button[onclick*="openContacts"],
+button[onclick*="exportICS"],
+button[onclick*="openBackup"],
+.export-panel, .contacts-panel, .backup-panel,
+input[type="file"] { display:none !important; }
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 :root {
   --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:#e2e0d8;--border2:#d0cec4;
@@ -169,33 +180,11 @@ table{border-collapse:collapse;table-layout:fixed;}
 <header>
   <div class="logo">Project <span>Planner</span></div>
   <div class="header-actions">
-    <button class="btn-primary" id="btn-new-proj" onclick="openForm('proj',null)">+ Nieuw project</button>
-    <button id="btn-add-phase" onclick="openForm('phase',null)">+ Fase toevoegen</button>
-    <button id="btn-milestone" onclick="openForm('milestone',null)">+ Mijlpaal</button>
-    <button class="btn-save" id="btn-save" onclick="saveToFile()" title="Eerste keer: kies opslaglocatie. Daarna automatisch.">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Opslaan
-    </button>
-    <button class="btn-load" id="btn-load" onclick="document.getElementById('load-file-input').click()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Laden
-    </button>
-    <div class="sync-status" id="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">Niet opgeslagen</span></div>
-    <input type="file" id="load-file-input" accept=".json" style="display:none" onchange="loadFromFile(this)">
-    <button class="btn-data" id="btn-backup" onclick="togglePanel('data-panel')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Back-up / Herstel
-    </button>
-    <button class="btn-outlook" id="btn-export-ics" onclick="togglePanel('export-panel');renderExportList()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Exporteer ICS
-    </button>
-    <button class="btn-contacts" id="btn-contacts" onclick="togglePanel('contacts-panel')">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Contacten
-    </button>
-    <button id="lang-btn" style="font-size:12px;font-weight:600;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);cursor:pointer;min-width:42px;" onclick="toggleLang()">NL</button>
-  </div>
+        <span style="background:#fef9c3;border:1px solid #ca8a04;color:#92400e;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600">Lezer</span>
+        <span id="sync-dot" class="sync-dot saved"></span>
+        <span id="sync-label">Verbinden...</span>
+        <button onclick="toggleLang()" style="margin-left:8px;padding:4px 10px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:var(--surface);cursor:pointer" id="btn-lang">NL</button>
+      </div>
 </header>
 
 <div class="main">
@@ -481,7 +470,7 @@ function setHTML(id,val){const el=document.getElementById(id);if(el&&val)el.inne
 const PC={engineering:'#7c6ff7',buying:'#2563eb',outsourcing:'#059669',installation:'#ea580c',transport:'#d97706',production:'#db2777'};
 const PL={engineering:'Engineering',buying:'Inkoop',outsourcing:'Uitbesteden',installation:'Montage',transport:'Transport',production:'Productie'};
 const AV=['#7c6ff7','#2563eb','#059669','#ea580c','#d97706','#db2777','#0891b2','#9333ea'];
-const PKEY='pp-planner-v7';
+const PKEY='pp-viewer-v1';
 const CKEY='pp-contacts-v1';
 
 let projects=[],milestones=[],nPid=1,nPhid=1,nMid=1;
@@ -876,7 +865,7 @@ function phaseEndChanged(){
   if(start&&end&&end>=start)document.getElementById('f-fdur').value=countDays(start,end,incWe);
 }
 
-function openForm_DISABLED(type,ctx){
+function _openForm_disabled(type,ctx){
   closeAll();editCtx={type,...(ctx||{})};window.scrollTo({top:0,behavior:'smooth'});
   if(type==='proj'){
     document.getElementById('form-proj').classList.add('open');
