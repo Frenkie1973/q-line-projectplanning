@@ -1062,13 +1062,15 @@ window.addEventListener('firebase-data', e=>{
   if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
 });
 
-window.addEventListener('firebase-ready', ()=>{
-  initFirebase();
-});
-
-window.addEventListener('firebase-failed', ()=>{
-  showToast('Offline modus \u2014 geen real-time sync');
-});
+(function waitForFirebase(attempts){
+  if(window._fbOn && window._fbSet){
+    initFirebase();
+  } else if(attempts > 0){
+    setTimeout(()=>waitForFirebase(attempts-1), 200);
+  } else {
+    showToast('Offline modus \u2014 geen real-time sync');
+  }
+})(25);
 
 </script>
 <script type="module">
