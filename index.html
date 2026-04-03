@@ -384,6 +384,7 @@ table{border-collapse:collapse;table-layout:fixed;}
 </div>
 
 <script>
+
 /* ══ LANGUAGE ══ */
 var LANG_KEY = 'pp-lang';
 var currentLang = 'nl';
@@ -639,7 +640,16 @@ function isoWeek(d){
 }
 
 /* ── persistence ── */
-function save(){ try{ localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid})); }catch(e){} if(!appInitializing && typeof markChanged==='function'){ markChanged(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); } }
+function save(){
+  try{ localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid})); }catch(e){}
+  if(!appInitializing && typeof markChanged==='function'){
+    markChanged();
+    if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+    // Debounce Firebase push
+    clearTimeout(_localSaveTimer);
+    _localSaveTimer = setTimeout(pushToFirebase, 1000);
+  }
+}
 
 /* ══ TEAMS FILE SYNC ══ */
 let hasUnsavedChanges = false;
@@ -1631,6 +1641,74 @@ projects.forEach(p=>{
   });
 });
 save(); appInitializing=false; setSyncStatus('saved'); render(); applyLang();
+
+/* ══ FIREBASE SYNC ══ */
+// Dynamically load Firebase SDK then initialize
+function loadFirebase(){
+  return new Promise((resolve, reject)=>{
+    if(window.firebase){ resolve(); return; }
+    const s1=document.createElement('script');
+    s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+    s1.onload=()=>{
+      const s2=document.createElement('script');
+      s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+      s2.onload=resolve;
+      s2.onerror=reject;
+      document.head.appendChild(s2);
+    };
+    s1.onerror=reject;
+    document.head.appendChild(s1);
+  });
+}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",
+  authDomain: "q-line-planning.firebaseapp.com",
+  databaseURL: "https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "q-line-planning",
+  storageBucket: "q-line-planning.firebasestorage.app",
+  messagingSenderId: "699669136620",
+  appId: "1:699669136620:web:c9d5153cfb87f815bb11c9"
+};
+
+// Will be set after Firebase loads
+let db = null;
+let DATA_REF = null;
+
+function pushToFirebase(){
+  const payload={version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook};
+  DATA_REF.set(payload).catch(e=>console.warn('Firebase:',e));
+}
+
+function startFirebaseSync(){
+  DATA_REF.on('value',snapshot=>{
+    const d=snapshot.val();
+    if(!d||!d.projects) return;
+    projects=d.projects||[];
+    milestones=d.milestones||[];
+    nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
+    nPhid=d.nPhid||1;
+    nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
+    if(d.contactBook){contactBook=d.contactBook;persistContacts();}
+    try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
+    render();applyLang();
+    const dot=document.getElementById('sync-dot');
+    const lbl=document.getElementById('sync-label');
+    if(dot) dot.className='sync-dot saved';
+    if(lbl) lbl.textContent='Firebase sync actief';
+  });
+}
+
+loadFirebase().then(()=>{
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+  DATA_REF = db.ref('plannerData');
+  startFirebaseSync();
+}).catch(e=>{
+  console.warn('Firebase kon niet laden — offline modus actief');
+  showToast('Offline modus — geen real-time sync');
+});
 </script>
+
 </body>
 </html>
