@@ -1003,7 +1003,6 @@ projects.forEach(p=>{p.phases.forEach(ph=>{if(!ph.includeWeekends){if(isWeekend(
 save();appInitializing=false;setSyncStatus('saved');render();applyLang();
 
 /* ══ FIREBASE SYNC ══ */
-// Firebase scripts loaded in <head> — initialize directly
 const firebaseConfig={
   apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",
   authDomain:"q-line-planning.firebaseapp.com",
@@ -1017,41 +1016,86 @@ const firebaseConfig={
 let db=null,DATA_REF=null;
 
 function pushToFirebase(){
-  if(!DATA_REF)return;
-  const payload={version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook};
-  DATA_REF.set(payload).catch(e=>console.warn('Firebase push fout:',e));
-}
-
-function startFirebaseSync(){
-  DATA_REF.on('value',snapshot=>{
-    const d=snapshot.val();if(!d||!d.projects)return;
-    projects=d.projects||[];milestones=d.milestones||[];
-    nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
-    if(d.contactBook){contactBook=d.contactBook;persistContacts();}
-    try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
-    render();applyLang();
-    const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
-    if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
-  });
-  setTimeout(pushToFirebase,2000);
-}
-
-function initFirebase(){
-  try{
-    firebase.initializeApp(firebaseConfig);
-    db=firebase.database();
-    DATA_REF=db.ref('plannerData');
-    startFirebaseSync();
-  }catch(e){
-    console.warn('Firebase initialisatie mislukt:',e);
-    showToast('Offline modus \u2014 geen real-time sync');
+  if(window._fbSet){
+    const payload={version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook};
+    window._fbSet(payload);
   }
 }
 
+function startFirebaseSync(){
+  if(window._fbOn) window._fbOn();
+}
+
+function initFirebase(){
+  startFirebaseSync();
+  setTimeout(pushToFirebase,2000);
+}
+
+// Listen for ESM Firebase data events
+window.addEventListener('firebase-data', e=>{
+  const d=e.detail;
+  if(!d||!d.projects)return;
+  projects=d.projects||[];milestones=d.milestones||[];
+  nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
+  nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
+  if(d.contactBook){contactBook=d.contactBook;persistContacts();}
+  try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
+  render();applyLang();
+  const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+  if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
+});
+
+window.addEventListener('firebase-ready', ()=>{
+  initFirebase();
+});
+
+window.addEventListener('firebase-failed', ()=>{
+  showToast('Offline modus \u2014 geen real-time sync');
+});
+
 </script>
-<!-- Firebase SDK — must load AFTER inline script so global vars exist, BEFORE initFirebase() -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>initFirebase();</script>
+<script type="module">
+  // Firebase via ESM — most reliable method, works on GitHub Pages and locally
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+  import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js';
+
+  const firebaseConfig = {
+    apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",
+    authDomain:"q-line-planning.firebaseapp.com",
+    databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:"q-line-planning",
+    storageBucket:"q-line-planning.firebasestorage.app",
+    messagingSenderId:"699669136620",
+    appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"
+  };
+
+  try {
+    const app  = initializeApp(firebaseConfig);
+    const db   = getDatabase(app);
+    const DATA_REF = ref(db, 'plannerData');
+
+    // Override the stub functions defined in the main script
+    window._fbSet = (payload) => set(DATA_REF, payload).catch(e => console.warn('Firebase push:', e));
+    window._fbOn  = () => onValue(DATA_REF, snapshot => {
+      const d = snapshot.val();
+      if (!d || !d.projects) return;
+      window._projects   = d.projects   || [];
+      window._milestones = d.milestones || [];
+      window._nPid = d.nPid || (window._projects.length ? Math.max(...window._projects.map(p=>p.id))+1 : 1);
+      window._nPhid = d.nPhid || 1;
+      window._nMid  = d.nMid  || (window._milestones.length ? Math.max(...window._milestones.map(m=>m.id))+1 : 1);
+      if (d.contactBook) { window._contactBook = d.contactBook; }
+      // Signal the main script
+      window.dispatchEvent(new CustomEvent('firebase-data', { detail: d }));
+    });
+
+    // Signal ready
+    window.dispatchEvent(new Event('firebase-ready'));
+    console.log('Firebase ESM geladen ✓');
+  } catch(e) {
+    console.warn('Firebase kon niet laden:', e);
+    window.dispatchEvent(new Event('firebase-failed'));
+  }
+</script>
 </body>
 </html>
