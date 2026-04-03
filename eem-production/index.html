@@ -824,10 +824,10 @@ function dragMove(e){
   const realDelta=diffDays(orig.start,newStart);
   const snapPh=DS.snap.find(s=>s.id===DS.phid);
   if(snapPh&&snapPh.assignees){snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){
-      const _cd=Math.round((new Date(ph.start)-new Date(orig.start))/86400000);
-      const _as=addDays(sa.start,_cd);const _ae=addDays(sa.end,_cd);
-      ph.assignees[i].start=isWeekend(_as)?snapToWorkday(_as):_as;
-      ph.assignees[i].end=isWeekend(_ae)?snapToWorkdayBack(_ae):_ae;
+      const _aiS=days.findIndex(d=>ymd(d)===sa.start);
+      const _aiE=days.findIndex(d=>ymd(d)===sa.end);
+      if(_aiS!==-1){const _ns=days[_aiS+delta];if(_ns)ph.assignees[i].start=ymd(_ns);}
+      if(_aiE!==-1){const _ne=days[_aiE+delta];if(_ne)ph.assignees[i].end=ymd(_ne);} 
     }});}
   cascadeLinked(proj,DS.idx,delta);
   const cy=e.touches?e.touches[0].clientY:e.clientY;
