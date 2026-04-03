@@ -51,34 +51,26 @@ button:hover{background:var(--surface2);}
 .field.wide{grid-column:span 2;}
 .form-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:7px 11px;font-size:11px;color:#1e40af;margin-bottom:10px;}
-
-/* Assignee editor inside phase form */
 .assignee-section{margin-bottom:12px;}
 .assignee-section-label{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
 .assignee-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
 .assignee-edit-row{display:grid;grid-template-columns:1fr 120px 120px 28px;gap:6px;align-items:center;background:var(--surface2);border-radius:var(--radius);padding:6px 8px;}
-.assignee-edit-row input,.assignee-edit-row select{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);outline:none;width:100%;}
-.assignee-edit-row input:focus,.assignee-edit-row select:focus{border-color:var(--accent);}
+.assignee-edit-row input{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--surface);color:var(--text);outline:none;width:100%;}
+.assignee-edit-row input:focus{border-color:var(--accent);}
 .assignee-avatar-lbl{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;}
 .av-sm{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;}
 .add-assignee-row{display:flex;gap:8px;align-items:center;}
 .add-assignee-row input{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 9px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);outline:none;flex:1;}
 .add-assignee-row input:focus{border-color:var(--accent);}
-
-/* Contacten */
 .contact-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .contact-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
 .contact-name{font-size:12px;font-weight:500;min-width:80px;color:var(--text);}
 .contact-email{flex:1;font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 9px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);outline:none;}
 .contact-email:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
-
-/* Export */
 .export-list{display:flex;flex-direction:column;gap:6px;margin:12px 0;}
 .export-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);}
 .export-item-name{font-weight:500;font-size:12px;}
 .export-item-detail{font-size:11px;color:var(--text3);}
-
-/* Gantt */
 .gantt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
 .gantt-scroll{overflow-x:auto;}
 .gantt-scroll::-webkit-scrollbar{height:6px;}
@@ -162,22 +154,6 @@ table{border-collapse:collapse;table-layout:fixed;}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;}
 .sync-dot.saved{background:#059669;}
 .sync-dot.changed{background:#d97706;}
-.btn-save{background:#059669;color:#fff;border-color:#059669;display:flex;align-items:center;gap:5px;}
-.btn-save:hover{background:#047857;}
-.btn-load{background:#fff;border:1px solid #059669;color:#059669;display:flex;align-items:center;gap:5px;}
-.btn-load:hover{background:#ecfdf5;}
-.sync-status{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;padding:0 4px;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;}
-.sync-dot.saved{background:#059669;}
-.sync-dot.changed{background:#d97706;}
-.btn-save{background:#059669;color:#fff;border-color:#059669;display:flex;align-items:center;gap:5px;}
-.btn-save:hover{background:#047857;}
-.btn-load{background:#fff;border:1px solid #059669;color:#059669;display:flex;align-items:center;gap:5px;}
-.btn-load:hover{background:#ecfdf5;}
-.sync-status{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;padding:0 4px;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0;}
-.sync-dot.saved{background:#059669;}
-.sync-dot.changed{background:#d97706;}
 .btn-data{background:var(--surface);border:1px solid var(--border2);color:var(--text2);display:flex;align-items:center;gap:5px;}
 .btn-data:hover{background:var(--surface2);}
 .data-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow-md);}
@@ -186,8 +162,10 @@ table{border-collapse:collapse;table-layout:fixed;}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:#eff6ff;}
 .drop-zone p{font-size:13px;color:var(--text2);margin-bottom:6px;}
 .drop-zone span{font-size:11px;color:var(--text3);}
-
 </style>
+<!-- Firebase SDK — loaded directly to avoid CSP issues on GitHub Pages -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 <div id="drag-tooltip"></div>
@@ -225,19 +203,15 @@ table{border-collapse:collapse;table-layout:fixed;}
 
 <div class="main">
 
-<!-- Data backup / restore panel -->
 <div class="data-panel" id="data-panel">
   <div class="form-header">
     <div class="form-title" id="backup-title">Back-up &amp; Herstel</div>
     <button class="btn-ghost" onclick="togglePanel('data-panel')">&#10005;</button>
   </div>
-  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;">
-    <span id="backup-desc">Je planning wordt automatisch opgeslagen in deze browser. Gebruik <strong>Exporteren</strong> om een back-upbestand op je computer op te slaan —
-    importeer het op elk moment terug, ook na een update of op een andere computer.
-  </p>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;"><span id="backup-desc">Je planning wordt automatisch opgeslagen in deze browser. Gebruik <strong>Exporteren</strong> om een back-upbestand op je computer op te slaan &mdash; importeer het op elk moment terug.</span></p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
     <button class="btn-primary" id="btn-export-backup" onclick="exportData()">&#8681; Back-up exporteren (.json)</button>
-    <span style="font-size:12px;color:var(--text3);">of sleep een back-upbestand ergens op de pagina</span>
+    <span id="drag-or-label" style="font-size:12px;color:var(--text3);">of sleep een back-upbestand ergens op de pagina</span>
   </div>
   <div class="drop-zone" id="drop-zone" onclick="document.getElementById('import-file').click()">
     <p id="drop-zone-label">&#128194; Klik om een back-upbestand te importeren</p>
@@ -247,7 +221,6 @@ table{border-collapse:collapse;table-layout:fixed;}
   <div id="import-status" style="margin-top:10px;font-size:12px;display:none;"></div>
 </div>
 
-<!-- Contacten panel -->
 <div class="contacts-panel" id="contacts-panel">
   <div class="form-header">
     <div class="form-title" id="contacts-title">Engineer contacten</div>
@@ -256,12 +229,11 @@ table{border-collapse:collapse;table-layout:fixed;}
   <p id="contacts-desc" style="font-size:12px;color:var(--text2);margin-bottom:14px;">E-mailadressen worden gebruikt voor de &#9993; Uitnodigen knop bij elke medewerker.</p>
   <div id="contacts-list"></div>
   <div style="display:flex;gap:8px;margin-top:14px;">
-    <button class="btn-primary" onclick="saveContacten()">Contacten opslaan</button>
+    <button class="btn-primary" id="btn-save-contacts" onclick="saveContacten()">Contacten opslaan</button>
     <button onclick="togglePanel('contacts-panel')">Annuleren</button>
   </div>
 </div>
 
-<!-- Export panel -->
 <div class="export-panel" id="export-panel">
   <div class="form-header">
     <div class="form-title" id="export-title">Exporteer naar agenda (.ics)</div>
@@ -271,12 +243,8 @@ table{border-collapse:collapse;table-layout:fixed;}
   <div class="export-list" id="export-list"></div>
 </div>
 
-<!-- Project form -->
 <div class="form-panel" id="form-proj">
-  <div class="form-header">
-    <div class="form-title" id="form-proj-title">Nieuw project</div>
-    <button class="btn-ghost" onclick="closeForm('proj')">&#10005;</button>
-  </div>
+  <div class="form-header"><div class="form-title" id="form-proj-title">Nieuw project</div><button class="btn-ghost" onclick="closeForm('proj')">&#10005;</button></div>
   <div class="form-grid">
     <div class="field wide"><label id="lbl-pname">Klantnaam</label><input id="f-pname" placeholder="bijv. Vitafloor USA"></div>
     <div class="field"><label id="lbl-porder">Ordernummer</label><input id="f-porder" placeholder="bijv. PO 30260181"></div>
@@ -293,35 +261,26 @@ table{border-collapse:collapse;table-layout:fixed;}
   </div>
 </div>
 
-<!-- Phase form -->
 <div class="form-panel" id="form-phase">
-  <div class="form-header">
-    <div class="form-title" id="form-phase-title">Fase toevoegen</div>
-    <button class="btn-ghost" onclick="closeForm('phase')">&#10005;</button>
-  </div>
+  <div class="form-header"><div class="form-title" id="form-phase-title">Fase toevoegen</div><button class="btn-ghost" onclick="closeForm('phase')">&#10005;</button></div>
   <div class="form-grid">
     <div class="field"><label>Project</label><select id="f-fproject"></select></div>
     <div class="field"><label id="lbl-ftype">Fase type</label>
       <select id="f-ftype">
-        <option value="engineering">Engineering</option>
-        <option value="buying">Inkoop</option>
-        <option value="outsourcing">Uitbesteden</option>
-        <option value="installation">Montage</option>
-        <option value="transport">Transport</option>
-        <option value="production">Productie</option>
+        <option value="engineering">Engineering</option><option value="buying">Inkoop</option>
+        <option value="outsourcing">Uitbesteden</option><option value="installation">Montage</option>
+        <option value="transport">Transport</option><option value="production">Productie</option>
       </select>
     </div>
     <div class="field"><label id="lbl-fstart">Startdatum</label><input type="date" id="f-fstart" oninput="phaseStartOrDurChanged()"></div>
     <div class="field"><label id="lbl-fdur">Duur (dagen)</label><input type="number" id="f-fdur" min="1" placeholder="e.g. 5" oninput="phaseStartOrDurChanged()"></div>
     <div class="field"><label id="lbl-fend">Einddatum <span style="font-weight:400;font-size:10px;color:var(--text3)">(of vul in om duur te herberekenen)</span></label><input type="date" id="f-fend" oninput="phaseEndChanged()"></div>
     <div class="field" style="display:flex;align-items:center;gap:8px;padding-top:18px;">
-      <input type="checkbox" id="f-fweekends" style="width:15px;height:15px;cursor:pointer;accent-color:var(--accent);" >
+      <input type="checkbox" id="f-fweekends" style="width:15px;height:15px;cursor:pointer;accent-color:var(--accent);">
       <label id="lbl-fweekends-lbl" for="f-fweekends" style="font-size:12px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:0;cursor:pointer;">Weekenden inbegrepen</label>
     </div>
     <div class="field wide"><label id="lbl-fnote">Opmerking (optioneel)</label><input id="f-fnote" placeholder="bijv. galvanisatie, leverancier…"></div>
   </div>
-
-  <!-- Assignee editor -->
   <div class="assignee-section">
     <div class="assignee-section-label" id="lbl-assignees">Medewerkers &amp; hun datums binnen deze fase</div>
     <div class="assignee-rows" id="assignee-rows"></div>
@@ -330,7 +289,6 @@ table{border-collapse:collapse;table-layout:fixed;}
       <button class="btn-sm" id="btn-add-person" onclick="addAssigneeRow()">+ Persoon toevoegen</button>
     </div>
   </div>
-
   <div class="info-box" id="link-info" style="display:none"></div>
   <div class="form-actions">
     <button class="btn-primary" id="btn-save-phase" onclick="savePhase()">Fase opslaan</button>
@@ -340,12 +298,8 @@ table{border-collapse:collapse;table-layout:fixed;}
   </div>
 </div>
 
-<!-- Milestone form -->
 <div class="form-panel" id="form-milestone">
-  <div class="form-header">
-    <div class="form-title" id="form-ms-title">Mijlpaal toevoegen</div>
-    <button class="btn-ghost" onclick="closeForm('milestone')">&#10005;</button>
-  </div>
+  <div class="form-header"><div class="form-title" id="form-ms-title">Mijlpaal toevoegen</div><button class="btn-ghost" onclick="closeForm('milestone')">&#10005;</button></div>
   <div class="form-grid">
     <div class="field wide"><label>Label</label><input id="f-mname" placeholder="bijv. Oplevering, Go-live…"></div>
     <div class="field"><label>Project</label><select id="f-mproject"></select></div>
@@ -359,15 +313,7 @@ table{border-collapse:collapse;table-layout:fixed;}
   </div>
 </div>
 
-<div class="gantt-card">
-  <div class="gantt-scroll">
-    <table id="gantt-table">
-      <colgroup id="gantt-cols"></colgroup>
-      <thead id="g-head"></thead>
-      <tbody id="g-body"></tbody>
-    </table>
-  </div>
-</div>
+<div class="gantt-card"><div class="gantt-scroll"><table id="gantt-table"><colgroup id="gantt-cols"></colgroup><thead id="g-head"></thead><tbody id="g-body"></tbody></table></div></div>
 
 <div class="legend">
   <div class="leg"><div class="leg-box" style="background:var(--eng)"></div><span id="leg-engineering">Engineering</span></div>
@@ -382,7 +328,6 @@ table{border-collapse:collapse;table-layout:fixed;}
   <div class="drag-hint"><span id="leg-draghint">&#8596; Sleep balken &middot; &#9939; Fases koppelen &middot; &#9993; Uitnodigen</span></div>
 </div>
 </div>
-
 <script>
 
 /* ══ LANGUAGE ══ */
@@ -398,29 +343,25 @@ var T = {
     engineering:'Engineering', buying:'Inkoop', outsourcing:'Uitbesteden',
     installation:'Montage', transport:'Transport', production:'Productie',
     milestone_lbl:'Mijlpaal', weekend:'Weekend',
-    dragHint:'<span id="leg-draghint">&#8596; Sleep balken &middot; &#9939; Fases koppelen &middot; &#9993; Uitnodigen</span>',
+    dragHint:'&#8596; Sleep balken &middot; &#9939; Fases koppelen &middot; &#9993; Uitnodigen',
     noProjects:'Nog geen projecten &mdash; klik op <strong>+ Nieuw project</strong>.',
     noPhases:'Nog geen fases &mdash; klik + om toe te voegen',
     invite:'&#9993; Uitnodigen', setEmail:'&#9993; E-mail instellen',
     moveUp:'Omhoog', moveDown:'Omlaag',
-    // form labels
     customerName:'Klantnaam', orderNumber:'Ordernummer', owner:'Eigenaar',
     startDate:'Startdatum', endDate:'Einddatum', duration:'Duur (dagen)',
     inclWeekends:'Weekenden inbegrepen', note:'Opmerking (optioneel)',
     phaseType:'Fase type', assignees:'Medewerkers & hun datums binnen deze fase',
-    addPerson:'+ Persoon toevoegen', addPersonPh:'Persoon toevoegen\u2026',
-    // buttons
+    addPerson:'+ Persoon toevoegen', addPersonPh:'Persoon toevoegen…',
     saveProject:'Project opslaan', deleteProject:'Project verwijderen',
     savePhase:'Fase opslaan', deletePhase:'Fase verwijderen',
     saveMilestone:'Mijlpaal opslaan', deleteMilestone:'Mijlpaal verwijderen',
     saveContacts:'Contacten opslaan', cancel:'Annuleren',
-    copy:'Kopi\u00ebren', close:'Sluiten',
+    copy:'Kopiëren', close:'Sluiten',
     sure:'Zeker? Klik nogmaals om te bevestigen',
-    // dynamic titles
     editProject:'Project bewerken', newProjectTitle:'Nieuw project',
     editPhase:'Fase bewerken', addPhaseTitle:'Fase toevoegen',
     editMilestone:'Mijlpaal bewerken', addMilestoneTitle:'Mijlpaal toevoegen',
-    // alerts
     enterCustomer:'Voer een klantnaam in.',
     setDates:'Stel start- en einddatum in.',
     startBeforeEnd:'Startdatum moet voor einddatum liggen.',
@@ -428,26 +369,22 @@ var T = {
     fillAllFields:'Vul alle velden in.',
     noEmailFor:'Geen e-mail ingesteld voor ',
     openContacts:'. Open Contacten om dit toe te voegen.',
-    // recalc hint
     orFillEnd:'(of vul in om duur te herberekenen)',
-    // email
     hiPerson:'Hallo ', pleaseBlock:'Wil je de volgende werkzaamheden in je agenda blokkeren:\n\n',
     confirmReceipt:'Wil je ontvangst bevestigen en aangeven of deze datums uitkomen.\n\nMet vriendelijke groet',
-    // panels
     engineerContacts:'Engineer contacten',
     contactsDesc:'E-mailadressen worden gebruikt voor de &#9993; Uitnodigen knop bij elke medewerker.',
     exportTitle:'Exporteer naar agenda (.ics)',
     exportDesc:'Klik op een item, kopieer de tekst, plak in Kladblok, sla op als <code>.ics</code>, dubbelklik om te importeren in Outlook.',
     backupTitle:'Back-up &amp; Herstel',
-    backupDesc:'<span id="backup-desc">Je planning wordt automatisch opgeslagen in deze browser. Gebruik <strong>Exporteren</strong> om een back-upbestand op je computer op te slaan &mdash; importeer het op elk moment terug.',
+    backupDesc:'Je planning wordt automatisch opgeslagen in deze browser.',
     exportBtn:'&#8681; Back-up exporteren (.json)',
-    orDrag:'<span id="drag-or-label">of sleep een back-up bestand ergens op de pagina</span>',
+    orDrag:'of sleep een back-up bestand ergens op de pagina',
     clickImport:'&#128194; Klik om een back-upbestand te importeren',
     orDropHere:'of sleep een .json back-up hiernaartoe',
-    // toast
     savedAs:'Opgeslagen als ', downloaded:'Gedownload als ',
     putInTeams:'zet dit in je gedeelde Teams map',
-    loaded:'Geladen \u2014 ', projectsRestored:'projecten hersteld',
+    loaded:'Geladen — ', projectsRestored:'projecten hersteld',
     loadError:'Fout bij laden: ',
   },
   en: {
@@ -467,7 +404,7 @@ var T = {
     startDate:'Start date', endDate:'End date', duration:'Duration (days)',
     inclWeekends:'Include weekends', note:'Note (optional)',
     phaseType:'Phase type', assignees:'Assignees & their dates within this phase',
-    addPerson:'+ Add person', addPersonPh:'Add person\u2026',
+    addPerson:'+ Add person', addPersonPh:'Add person…',
     saveProject:'Save project', deleteProject:'Delete project',
     savePhase:'Save phase', deletePhase:'Delete phase',
     saveMilestone:'Save milestone', deleteMilestone:'Delete milestone',
@@ -492,953 +429,512 @@ var T = {
     exportTitle:'Export to calendar (.ics)',
     exportDesc:'Click an item, copy the text, paste into Notepad, save as <code>.ics</code>, double-click to import into Outlook.',
     backupTitle:'Backup &amp; Restore',
-    backupDesc:'Your planning is auto-saved in this browser. Use <strong>Export</strong> to save a backup file &mdash; import it back anytime.',
+    backupDesc:'Your planning is auto-saved in this browser.',
     exportBtn:'&#8681; Export backup (.json)',
     orDrag:'or drag a backup file anywhere on the page',
     clickImport:'&#128194; Click to import a backup file',
     orDropHere:'or drag &amp; drop a .json backup here',
     savedAs:'Saved as ', downloaded:'Downloaded as ',
     putInTeams:'put this in your shared Teams folder',
-    loaded:'Loaded \u2014 ', projectsRestored:'projects restored',
+    loaded:'Loaded — ', projectsRestored:'projects restored',
     loadError:'Error loading: ',
   }
 };
 
 function t(key){ return (T[currentLang]||T.nl)[key]||key; }
-
-function toggleLang(){
-  currentLang = currentLang==='nl'?'en':'nl';
-  try{ localStorage.setItem(LANG_KEY,currentLang); }catch(e){}
-  applyLang();
-  render();
-}
-
-function loadLang(){
-  try{ const l=localStorage.getItem(LANG_KEY); if(l) currentLang=l; }catch(e){}
-}
+function toggleLang(){ currentLang=currentLang==='nl'?'en':'nl'; try{localStorage.setItem(LANG_KEY,currentLang);}catch(e){} applyLang(); render(); }
+function loadLang(){ try{const l=localStorage.getItem(LANG_KEY);if(l)currentLang=l;}catch(e){} }
 
 function applyLang(){
-  const btn=document.getElementById('lang-btn');
-  if(btn) btn.textContent=currentLang==='nl'?'NL':'EN';
-  // Update PL map used for phase labels in bars
-  PL.engineering=t('engineering'); PL.buying=t('buying');
-  PL.outsourcing=t('outsourcing'); PL.installation=t('installation');
-  PL.transport=t('transport'); PL.production=t('production');
-  // Header buttons
-  setTxt('btn-new-proj', t('newProject'));
-  setTxt('btn-add-phase', t('addPhase'));
-  setTxt('btn-milestone', t('milestone'));
-  setTxt('btn-backup', t('backup'));
-  setTxt('btn-export-ics', t('exportIcs'));
-  setTxt('btn-contacts', t('contacts'));
-  setTxt('btn-save', t('save'));
-  setTxt('btn-load', t('load'));
-  setSyncStatus(document.getElementById('sync-dot')&&document.getElementById('sync-dot').classList.contains('saved')?'saved':
-    document.getElementById('sync-dot')&&document.getElementById('sync-dot').classList.contains('changed')?'changed':'none');
-  // Contacts panel
-  setHTML('contacts-title', t('engineerContacts'));
-  setHTML('contacts-desc', t('contactsDesc'));
-  setTxt('btn-save-contacts', t('saveContacts'));
-  // Export panel
-  setHTML('export-title', t('exportTitle'));
-  setHTML('export-desc', t('exportDesc'));
-  // Backup panel
-  setHTML('backup-title', t('backupTitle'));
-  setHTML('backup-desc', t('backupDesc'));
-  setHTML('btn-export-backup', t('exportBtn'));
-  setHTML('drag-or-label', t('orDrag'));
-  setHTML('drop-zone-label', t('clickImport'));
-  setHTML('drop-zone-sub', t('orDropHere'));
-  // Form labels - project
-  setHTML('lbl-pname', t('customerName'));
-  setHTML('lbl-porder', t('orderNumber'));
-  setHTML('lbl-powner', t('owner'));
-  setHTML('lbl-pstart', t('startDate'));
-  setHTML('lbl-pend', t('endDate'));
-  setHTML('lbl-pcp', t('criticalPath'));
-  setTxt('btn-save-proj', t('saveProject'));
-  setTxt('btn-cancel-proj', t('cancel'));
-  setTxt('del-proj-btn', t('deleteProject'));
-  // Form labels - phase
-  setHTML('lbl-ftype', t('phaseType'));
-  setHTML('lbl-fstart', t('startDate'));
-  setHTML('lbl-fdur', t('duration'));
-  setHTML('lbl-fweekends-lbl', t('inclWeekends'));
-  setHTML('lbl-fnote', t('note'));
-  setHTML('lbl-assignees', t('assignees'));
-  setTxt('btn-add-person', t('addPerson'));
+  const btn=document.getElementById('lang-btn'); if(btn) btn.textContent=currentLang==='nl'?'NL':'EN';
+  PL.engineering=t('engineering');PL.buying=t('buying');PL.outsourcing=t('outsourcing');
+  PL.installation=t('installation');PL.transport=t('transport');PL.production=t('production');
+  setTxt('btn-new-proj',t('newProject'));setTxt('btn-add-phase',t('addPhase'));setTxt('btn-milestone',t('milestone'));
+  setTxt('btn-backup',t('backup'));setTxt('btn-export-ics',t('exportIcs'));setTxt('btn-contacts',t('contacts'));
+  setTxt('btn-save',t('save'));setTxt('btn-load',t('load'));
+  setSyncStatus(document.getElementById('sync-dot')&&document.getElementById('sync-dot').classList.contains('saved')?'saved':document.getElementById('sync-dot')&&document.getElementById('sync-dot').classList.contains('changed')?'changed':'none');
+  setHTML('contacts-title',t('engineerContacts'));setHTML('contacts-desc',t('contactsDesc'));setTxt('btn-save-contacts',t('saveContacts'));
+  setHTML('export-title',t('exportTitle'));setHTML('export-desc',t('exportDesc'));
+  setHTML('backup-title',t('backupTitle'));setHTML('backup-desc',t('backupDesc'));
+  setHTML('btn-export-backup',t('exportBtn'));setHTML('drag-or-label',t('orDrag'));
+  setHTML('drop-zone-label',t('clickImport'));setHTML('drop-zone-sub',t('orDropHere'));
+  setHTML('lbl-pname',t('customerName'));setHTML('lbl-porder',t('orderNumber'));setHTML('lbl-powner',t('owner'));
+  setHTML('lbl-pstart',t('startDate'));setHTML('lbl-pend',t('endDate'));setHTML('lbl-pcp',t('criticalPath'));
+  setTxt('btn-save-proj',t('saveProject'));setTxt('btn-cancel-proj',t('cancel'));setTxt('del-proj-btn',t('deleteProject'));
+  setHTML('lbl-ftype',t('phaseType'));setHTML('lbl-fstart',t('startDate'));setHTML('lbl-fdur',t('duration'));
+  setHTML('lbl-fweekends-lbl',t('inclWeekends'));setHTML('lbl-fnote',t('note'));setHTML('lbl-assignees',t('assignees'));
+  setTxt('btn-add-person',t('addPerson'));
   document.getElementById('new-assignee-name')&&(document.getElementById('new-assignee-name').placeholder=t('addPersonPh'));
-  setTxt('btn-save-phase', t('savePhase'));
-  setTxt('btn-cancel-phase', t('cancel'));
-  setTxt('del-phase-btn', t('deletePhase'));
-  // Form labels - milestone
-  setHTML('lbl-mdate', t('startDate'));
-  setTxt('btn-save-ms', t('saveMilestone'));
-  setTxt('btn-cancel-ms', t('cancel'));
-  setTxt('del-ms-btn', t('deleteMilestone'));
-  // End date label with hint
+  setTxt('btn-save-phase',t('savePhase'));setTxt('btn-cancel-phase',t('cancel'));setTxt('del-phase-btn',t('deletePhase'));
+  setHTML('lbl-mdate',t('startDate'));setTxt('btn-save-ms',t('saveMilestone'));setTxt('btn-cancel-ms',t('cancel'));setTxt('del-ms-btn',t('deleteMilestone'));
   const elEnd=document.getElementById('lbl-fend');
-  if(elEnd) elEnd.innerHTML=t('endDate')+' <span style="font-weight:400;font-size:10px;color:var(--text3)">'+t('orFillEnd')+'</span>';
-  // Legend
-  setTxt('leg-engineering', t('engineering'));
-  setTxt('leg-buying', t('buying'));
-  setTxt('leg-outsourcing', t('outsourcing'));
-  setTxt('leg-installation', t('installation'));
-  setTxt('leg-transport', t('transport'));
-  setTxt('leg-production', t('production'));
-  setTxt('leg-milestone', t('milestone_lbl'));
-  setTxt('leg-critical', t('criticalPath'));
-  setTxt('leg-weekend', t('weekend'));
-  setHTML('leg-draghint', t('dragHint'));
-  setTxt('viewer-badge', t('viewerBadge'));
-  // option texts
+  if(elEnd)elEnd.innerHTML=t('endDate')+' <span style="font-weight:400;font-size:10px;color:var(--text3)">'+t('orFillEnd')+'</span>';
+  setTxt('leg-engineering',t('engineering'));setTxt('leg-buying',t('buying'));setTxt('leg-outsourcing',t('outsourcing'));
+  setTxt('leg-installation',t('installation'));setTxt('leg-transport',t('transport'));setTxt('leg-production',t('production'));
+  setTxt('leg-milestone',t('milestone_lbl'));setTxt('leg-critical',t('criticalPath'));setTxt('leg-weekend',t('weekend'));
+  setHTML('leg-draghint',t('dragHint'));setTxt('viewer-badge',t('viewerBadge'));
   const sel=document.getElementById('f-fcp');
   if(sel){sel.options[0].text=currentLang==='nl'?'Nee':'No';sel.options[1].text=currentLang==='nl'?'Ja':'Yes';}
-  // Phase type options
   const ftype=document.getElementById('f-ftype');
   if(ftype){['engineering','buying','outsourcing','installation','transport','production'].forEach((v,i)=>{if(ftype.options[i])ftype.options[i].text=t(v);});}
 }
+function setTxt(id,val){const el=document.getElementById(id);if(el&&val)el.textContent=val;}
+function setHTML(id,val){const el=document.getElementById(id);if(el&&val)el.innerHTML=val;}
 
-function setTxt(id,val){ const el=document.getElementById(id); if(el&&val) el.textContent=val; }
-function setHTML(id,val){ const el=document.getElementById(id); if(el&&val) el.innerHTML=val; }
+const PC={engineering:'#7c6ff7',buying:'#2563eb',outsourcing:'#059669',installation:'#ea580c',transport:'#d97706',production:'#db2777'};
+const PL={engineering:'Engineering',buying:'Inkoop',outsourcing:'Uitbesteden',installation:'Montage',transport:'Transport',production:'Productie'};
+const AV=['#7c6ff7','#2563eb','#059669','#ea580c','#d97706','#db2777','#0891b2','#9333ea'];
+const PKEY='pp-planner-v7';
+const CKEY='pp-contacts-v1';
 
+let projects=[],milestones=[],nPid=1,nPhid=1,nMid=1;
+let appInitializing=true;
+let contactBook={};
+let editCtx={};
 
-
-const PC = {engineering:'#7c6ff7',buying:'#2563eb',outsourcing:'#059669',installation:'#ea580c',transport:'#d97706',production:'#db2777'};
-const PL = {engineering:'Engineering',buying:'Inkoop',outsourcing:'Uitbesteden',installation:'Montage',transport:'Transport',production:'Productie'};
-const AV = ['#7c6ff7','#2563eb','#059669','#ea580c','#d97706','#db2777','#0891b2','#9333ea'];
-
-const PKEY = 'pp-planner-v7';
-const CKEY = 'pp-contacts-v1';
-
-let projects = [], milestones = [], nPid = 1, nPhid = 1, nMid = 1;
-let appInitializing = true;
-let contactBook = {};
-let editCtx = {};
-
-/* ── assignee model: [{name, start, end}] ── */
-
-function avatarColor(n){ let h=0; for(let i=0;i<n.length;i++) h=(h*31+n.charCodeAt(i))%AV.length; return AV[h]; }
-function initials(n){ return n.trim().split(/\s+/).map(w=>w[0].toUpperCase()).slice(0,2).join(''); }
-function ymd(d){
-  if(!(d instanceof Date)) return d;
-  // Use local date parts to avoid UTC timezone shift
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const dd = String(d.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+dd;
-}
-function addDays(s,n){ const d=new Date(s); d.setDate(d.getDate()+n); return ymd(d); }
-function diffDays(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
-function fmtLong(s){ return new Date(s).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
-function fmtShort(s){ return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); }
-function isoWeek(d){
-  const dt=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
-  const day=dt.getUTCDay()||7; dt.setUTCDate(dt.getUTCDate()+4-day);
-  const ys=new Date(Date.UTC(dt.getUTCFullYear(),0,1));
-  return Math.ceil((((dt-ys)/86400000)+1)/7);
-}
+function avatarColor(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%AV.length;return AV[h];}
+function initials(n){return n.trim().split(/\s+/).map(w=>w[0].toUpperCase()).slice(0,2).join('');}
+function ymd(d){if(!(d instanceof Date))return d;const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dd;}
+function addDays(s,n){const d=new Date(s);d.setDate(d.getDate()+n);return ymd(d);}
+function diffDays(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
+function fmtLong(s){return new Date(s).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+function fmtShort(s){return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+function isoWeek(d){const dt=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=dt.getUTCDay()||7;dt.setUTCDate(dt.getUTCDate()+4-day);const ys=new Date(Date.UTC(dt.getUTCFullYear(),0,1));return Math.ceil((((dt-ys)/86400000)+1)/7);}
 
 /* ── persistence ── */
+var _localSaveTimer = null;
 function save(){
-  try{ localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid})); }catch(e){}
-  if(!appInitializing && typeof markChanged==='function'){
+  try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
+  if(!appInitializing&&typeof markChanged==='function'){
     markChanged();
     if(typeof scheduleAutoSave==='function') scheduleAutoSave();
-    // Debounce Firebase push
     clearTimeout(_localSaveTimer);
-    _localSaveTimer = setTimeout(pushToFirebase, 1000);
+    _localSaveTimer=setTimeout(function(){if(typeof pushToFirebase==='function')pushToFirebase();},1000);
   }
 }
 
 /* ══ TEAMS FILE SYNC ══ */
-let hasUnsavedChanges = false;
-
+let hasUnsavedChanges=false;
 function setSyncStatus(state){
-  const dot=document.getElementById('sync-dot');
-  const label=document.getElementById('sync-label');
-  if(!dot||!label) return;
-  if(state==='saved'){ dot.className='sync-dot saved'; label.textContent=t('saved'); }
-  else if(state==='changed'){ dot.className='sync-dot changed'; label.textContent=t('unsaved'); }
-  else { dot.className='sync-dot'; label.textContent=t('notSaved'); }
+  const dot=document.getElementById('sync-dot'),label=document.getElementById('sync-label');
+  if(!dot||!label)return;
+  if(state==='saved'){dot.className='sync-dot saved';label.textContent=t('saved');}
+  else if(state==='changed'){dot.className='sync-dot changed';label.textContent=t('unsaved');}
+  else{dot.className='sync-dot';label.textContent=t('notSaved');}
 }
+function markChanged(){hasUnsavedChanges=true;setSyncStatus('changed');}
+function buildPayload(){return JSON.stringify({version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook},null,2);}
 
-function markChanged(){
-  hasUnsavedChanges=true;
-  setSyncStatus('changed');
-}
-
-function buildPayload(){
-  return JSON.stringify({version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook},null,2);
-}
-
-let _fileHandle = null;
-let _autoSaveTimer = null;
-
+let _fileHandle=null, _autoSaveTimer=null;
 async function saveToFile(){
-  const json = buildPayload();
-  const filename = 'projectplanner-data.json';
-  if(!window.showSaveFilePicker){ fallbackDownload(json,filename); return; }
-  try {
+  const json=buildPayload(),filename='projectplanner-data.json';
+  if(!window.showSaveFilePicker){fallbackDownload(json,filename);return;}
+  try{
     if(_fileHandle){
-      try {
-        const w = await _fileHandle.createWritable();
-        await w.write(json); await w.close();
-        hasUnsavedChanges=false; setSyncStatus('saved');
-        showToast('💾 Opgeslagen');
-        return;
-      } catch(e){ _fileHandle=null; }
+      try{const w=await _fileHandle.createWritable();await w.write(json);await w.close();hasUnsavedChanges=false;setSyncStatus('saved');showToast('\uD83D\uDCBE Opgeslagen');return;}
+      catch(e){_fileHandle=null;}
     }
-    _fileHandle = await window.showSaveFilePicker({
-      suggestedName:filename,
-      types:[{description:'JSON',accept:{'application/json':['.json']}}]
-    });
-    const w = await _fileHandle.createWritable();
-    await w.write(json); await w.close();
-    hasUnsavedChanges=false; setSyncStatus('saved');
-    showToast('💾 Opslaglocatie ingesteld — volgende keer automatisch');
-  } catch(e){ if(e.name!=='AbortError') fallbackDownload(json,filename); }
+    _fileHandle=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'JSON',accept:{'application/json':['.json']}}]});
+    const w=await _fileHandle.createWritable();await w.write(json);await w.close();
+    hasUnsavedChanges=false;setSyncStatus('saved');showToast('\uD83D\uDCBE Opslaglocatie ingesteld \u2014 volgende keer automatisch');
+  }catch(e){if(e.name!=='AbortError')fallbackDownload(json,filename);}
 }
-
-function scheduleAutoSave(){
-  if(!_fileHandle) return;
-  clearTimeout(_autoSaveTimer);
-  _autoSaveTimer = setTimeout(()=>saveToFile(), 1500);
-}
-
+function scheduleAutoSave(){if(!_fileHandle)return;clearTimeout(_autoSaveTimer);_autoSaveTimer=setTimeout(()=>saveToFile(),1500);}
 function fallbackDownload(json,filename){
-  const a=document.createElement('a');
-  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(json);
-  a.download=filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  hasUnsavedChanges=false;
-  setSyncStatus('saved');
-  showToast(t('downloaded')+filename+' — zet dit in je gedeelde Teams map');
+  const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(json);a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  hasUnsavedChanges=false;setSyncStatus('saved');showToast(t('downloaded')+filename);
 }
-
 function loadFromFile(input){
-  const file=input.files[0]; if(!file) return;
+  const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
     try{
       const d=JSON.parse(e.target.result);
-      if(!d.projects||!Array.isArray(d.projects)) throw new Error('Ongeldig bestand');
-      projects=d.projects||[];
-      milestones=d.milestones||[];
+      if(!d.projects||!Array.isArray(d.projects))throw new Error('Ongeldig bestand');
+      projects=d.projects||[];milestones=d.milestones||[];
       nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
-      nPhid=d.nPhid||1;
-      nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
+      nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
       if(d.contactBook){contactBook=d.contactBook;persistContacts();}
-      save();
-      hasUnsavedChanges=false;
-      setSyncStatus('saved');
-      render();
-      showToast('Geladen — '+projects.length+' project'+(projects.length!==1?'en':'')+' hersteld');
-    }catch(err){
-      showToast(t('loadError')+err.message,true);
-    }
+      save();hasUnsavedChanges=false;setSyncStatus('saved');render();applyLang();
+      showToast(t('loaded')+projects.length+' project'+(projects.length!==1?'en':'')+' '+t('projectsRestored'));
+    }catch(err){showToast(t('loadError')+err.message,true);}
   };
-  reader.readAsText(file);
-  input.value='';
+  reader.readAsText(file);input.value='';
 }
-
 function showToast(msg,isError){
   document.getElementById('pp-toast')&&document.getElementById('pp-toast').remove();
-  const t=document.createElement('div');
-  t.id='pp-toast';
-  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:'+(isError?'#dc2626':'#1a1a18')+';color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.2);pointer-events:none;';
-  t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),3500);
+  const el=document.createElement('div');el.id='pp-toast';
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:'+(isError?'#dc2626':'#1a1a18')+';color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.2);pointer-events:none;';
+  el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
 }
 
 function load(){
   try{
     const d=JSON.parse(localStorage.getItem(PKEY)||'null');
-    if(d){ projects=d.projects||[]; milestones=d.milestones||[]; nPid=d.nPid||1; nPhid=d.nPhid||1; nMid=d.nMid||1; return; }
+    if(d){projects=d.projects||[];milestones=d.milestones||[];nPid=d.nPid||1;nPhid=d.nPhid||1;nMid=d.nMid||1;return;}
   }catch(e){}
   projects=[{id:1,name:'Vitafloor USA',orderNr:'PO 30260181',owner:'',start:'2026-03-25',end:'2026-04-29',cp:false,open:true,phases:[
-    {id:1,type:'engineering',start:'2026-03-25',end:'2026-03-25',note:'',includeWeekends:false,linked:true,
-     assignees:[{name:'Frank',start:'2026-03-25',end:'2026-03-25'},{name:'Douwe',start:'2026-03-25',end:'2026-03-25'}],assigneesOpen:true},
-    {id:2,type:'buying',    start:'2026-03-26',end:'2026-04-15',note:'',includeWeekends:false,linked:true, assignees:[],assigneesOpen:false},
-    {id:3,type:'production',start:'2026-04-16',end:'2026-04-22',note:'',includeWeekends:false,linked:true, assignees:[],assigneesOpen:false},
+    {id:1,type:'engineering',start:'2026-03-25',end:'2026-03-25',note:'',includeWeekends:false,linked:true,assignees:[{name:'Frank',start:'2026-03-25',end:'2026-03-25'},{name:'Douwe',start:'2026-03-25',end:'2026-03-25'}],assigneesOpen:true},
+    {id:2,type:'buying',start:'2026-03-26',end:'2026-04-15',note:'',includeWeekends:false,linked:true,assignees:[],assigneesOpen:false},
+    {id:3,type:'production',start:'2026-04-16',end:'2026-04-22',note:'',includeWeekends:false,linked:true,assignees:[],assigneesOpen:false},
     {id:4,type:'outsourcing',start:'2026-04-23',end:'2026-04-29',note:'galvanisation',includeWeekends:false,linked:false,assignees:[],assigneesOpen:false},
   ]}];
-  milestones=[]; nPid=2; nPhid=5; nMid=1;
+  milestones=[];nPid=2;nPhid=5;nMid=1;
 }
-function loadContacten(){ try{ contactBook=JSON.parse(localStorage.getItem(CKEY)||'{}'); }catch(e){ contactBook={}; } }
-function persistContacten(){ try{ localStorage.setItem(CKEY,JSON.stringify(contactBook)); }catch(e){} }
-function persistContacts(){ persistContacten(); }
-function loadContacts(){ loadContacten(); }
-function saveContacts(){
-  document.querySelectorAll('#contacts-list .contact-row').forEach(row=>{
-    const name=row.dataset.person, email=row.querySelector('.contact-email').value.trim();
-    if(name) contactBook[name]=email;
-  });
-  persistContacts(); togglePanel('contacts-panel'); render();
-}
+function loadContacten(){try{contactBook=JSON.parse(localStorage.getItem(CKEY)||'{}');}catch(e){contactBook={};}}
+function persistContacten(){try{localStorage.setItem(CKEY,JSON.stringify(contactBook));}catch(e){}}
+function persistContacts(){persistContacten();}
+function loadContacts(){loadContacten();}
+function saveContacts(){document.querySelectorAll('#contacts-list .contact-row').forEach(row=>{const name=row.dataset.person,email=row.querySelector('.contact-email').value.trim();if(name)contactBook[name]=email;});persistContacts();togglePanel('contacts-panel');render();}
 
-/* ── panels ── */
 function togglePanel(id){
-  const el=document.getElementById(id);
+  const el=document.getElementById(id);if(!el)return;
   const wasOpen=el.classList.contains('open');
   document.querySelectorAll('.contacts-panel,.export-panel,.data-panel').forEach(p=>p.classList.remove('open'));
-  if(!wasOpen){ el.classList.add('open'); if(id==='contacts-panel') renderContactenList(); }
+  if(!wasOpen){el.classList.add('open');if(id==='contacts-panel')renderContactenList();}
 }
-
 function renderContactenList(){
   const names=[...new Set(projects.flatMap(p=>p.phases.flatMap(ph=>(ph.assignees||[]).map(a=>a.name))))];
   const el=document.getElementById('contacts-list');
-  if(!names.length){ el.innerHTML='<p style="font-size:12px;color:var(--text3);">Nog geen medewerkers.</p>'; return; }
-  el.innerHTML=names.map(name=>`
-    <div class="contact-row" data-person="${name}">
-      <div class="contact-avatar" style="background:${avatarColor(name)}">${initials(name)}</div>
-      <span class="contact-name">${name}</span>
-      <input class="contact-email" type="email" placeholder="${name.toLowerCase()}@yourcompany.com" value="${contactBook[name]||''}">
-    </div>`).join('');
+  if(!names.length){el.innerHTML='<p style="font-size:12px;color:var(--text3);">Nog geen medewerkers.</p>';return;}
+  el.innerHTML=names.map(name=>`<div class="contact-row" data-person="${name}"><div class="contact-avatar" style="background:${avatarColor(name)}">${initials(name)}</div><span class="contact-name">${name}</span><input class="contact-email" type="email" placeholder="${name.toLowerCase()}@yourcompany.com" value="${contactBook[name]||''}"></div>`).join('');
 }
-function saveContacten(){
-  document.querySelectorAll('#contacts-list .contact-row').forEach(row=>{
-    const name=row.dataset.person, email=row.querySelector('.contact-email').value.trim();
-    if(name) contactBook[name]=email;
-  });
-  persistContacten(); togglePanel('contacts-panel'); render();
-}
+function saveContacten(){document.querySelectorAll('#contacts-list .contact-row').forEach(row=>{const name=row.dataset.person,email=row.querySelector('.contact-email').value.trim();if(name)contactBook[name]=email;});persistContacten();togglePanel('contacts-panel');render();}
 
-/* ── assignee editor in phase form ── */
-function renderAssigneeRows(phStart, phEnd){
+function renderAssigneeRows(phStart,phEnd){
   const rows=document.getElementById('assignee-rows');
   const items=JSON.parse(rows.dataset.assignees||'[]');
-  rows.innerHTML=items.map((a,i)=>{
-    const color=avatarColor(a.name);
-    return `<div class="assignee-edit-row" data-idx="${i}">
-      <div class="assignee-avatar-lbl">
-        <div class="av-sm" style="background:${color}">${initials(a.name)}</div>
-        <span>${a.name}</span>
-      </div>
-      <input type="date" value="${a.start}" min="${phStart}" max="${phEnd}" onchange="updateAssigneeDate(${i},'start',this.value)" title="Start">
-      <input type="date" value="${a.end}"   min="${phStart}" max="${phEnd}" onchange="updateAssigneeDate(${i},'end',this.value)"   title="End">
-      <button style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0;" onclick="removeAssigneeRow(${i})" title="Remove">&#10005;</button>
-    </div>`;
-  }).join('');
+  rows.innerHTML=items.map((a,i)=>`<div class="assignee-edit-row" data-idx="${i}"><div class="assignee-avatar-lbl"><div class="av-sm" style="background:${avatarColor(a.name)}">${initials(a.name)}</div><span>${a.name}</span></div><input type="date" value="${a.start}" min="${phStart}" max="${phEnd}" onchange="updateAssigneeDate(${i},'start',this.value)"><input type="date" value="${a.end}" min="${phStart}" max="${phEnd}" onchange="updateAssigneeDate(${i},'end',this.value)"><button style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0;" onclick="removeAssigneeRow(${i})">&#10005;</button></div>`).join('');
 }
-function updateAssigneeDate(idx, field, val){
-  const rows=document.getElementById('assignee-rows');
-  const items=JSON.parse(rows.dataset.assignees||'[]');
-  if(items[idx]) items[idx][field]=val;
-  rows.dataset.assignees=JSON.stringify(items);
-  // re-render to keep in sync
-  const phStart=document.getElementById('f-fstart').value;
-  const phEnd  =document.getElementById('f-fend').value;
-  renderAssigneeRows(phStart, phEnd);
+function updateAssigneeDate(idx,field,val){
+  const rows=document.getElementById('assignee-rows');const items=JSON.parse(rows.dataset.assignees||'[]');
+  if(items[idx])items[idx][field]=val;rows.dataset.assignees=JSON.stringify(items);
+  renderAssigneeRows(document.getElementById('f-fstart').value,document.getElementById('f-fend').value);
 }
 function removeAssigneeRow(idx){
-  const rows=document.getElementById('assignee-rows');
-  const items=JSON.parse(rows.dataset.assignees||'[]');
-  items.splice(idx,1);
-  rows.dataset.assignees=JSON.stringify(items);
-  const phStart=document.getElementById('f-fstart').value;
-  const phEnd  =document.getElementById('f-fend').value;
-  renderAssigneeRows(phStart, phEnd);
+  const rows=document.getElementById('assignee-rows');const items=JSON.parse(rows.dataset.assignees||'[]');
+  items.splice(idx,1);rows.dataset.assignees=JSON.stringify(items);
+  renderAssigneeRows(document.getElementById('f-fstart').value,document.getElementById('f-fend').value);
 }
 function addAssigneeRow(){
-  const nameInp=document.getElementById('new-assignee-name');
-  const name=nameInp.value.trim();
-  if(!name){ nameInp.focus(); return; }
+  const nameInp=document.getElementById('new-assignee-name');const name=nameInp.value.trim();if(!name){nameInp.focus();return;}
   const phStart=document.getElementById('f-fstart').value||ymd(new Date());
-  const phEnd  =document.getElementById('f-fend').value  ||ymd(new Date());
-  const rows=document.getElementById('assignee-rows');
-  const items=JSON.parse(rows.dataset.assignees||'[]');
-  if(items.find(a=>a.name===name)){ nameInp.value=''; return; }
-  items.push({name, start:phStart, end:phEnd});
-  rows.dataset.assignees=JSON.stringify(items);
-  nameInp.value='';
-  renderAssigneeRows(phStart, phEnd);
+  const phEnd=document.getElementById('f-fend').value||ymd(new Date());
+  const rows=document.getElementById('assignee-rows');const items=JSON.parse(rows.dataset.assignees||'[]');
+  if(items.find(a=>a.name===name)){nameInp.value='';return;}
+  items.push({name,start:phStart,end:phEnd});rows.dataset.assignees=JSON.stringify(items);nameInp.value='';
+  renderAssigneeRows(phStart,phEnd);
 }
 
-/* ── invite ── */
-function sendInvite(pid, phid, personName){
-  const p=projects.find(x=>x.id===pid), ph=p&&p.phases.find(x=>x.id===phid);
-  if(!p||!ph) return;
-  const assignee=ph.assignees.find(a=>a.name===personName);
-  if(!assignee) return;
+function sendInvite(pid,phid,personName){
+  const p=projects.find(x=>x.id===pid),ph=p&&p.phases.find(x=>x.id===phid);if(!p||!ph)return;
+  const assignee=ph.assignees.find(a=>a.name===personName);if(!assignee)return;
   const email=contactBook[personName];
-  if(!email){ alert(t('noEmailFor')+personName+'. Open Contacten to add it.'); togglePanel('contacts-panel'); return; }
-  const lbl    = PL[ph.type]+(ph.note?' \u2013 '+ph.note:'');
-  const project= p.name+(p.orderNr?' ('+p.orderNr+')':'');
-  const dur    = diffDays(assignee.start, assignee.end)+1;
-  const subject= '['+( p.orderNr||p.name)+'] '+lbl+' \u2013 '+personName;
-  const body   =
-    t('hiPerson')+personName+',\n\n'+
-    t('pleaseBlock')+
-    'Project:   '+project+'\n'+
-    'Phase:     '+lbl+'\n'+
-    'Your start: '+fmtLong(assignee.start)+'\n'+
-    'Your end:   '+fmtLong(assignee.end)+'\n'+
-    'Duration:  '+dur+' day'+(dur>1?'s':'')+'\n\n'+
-    t('confirmReceipt');
+  if(!email){alert(t('noEmailFor')+personName+t('openContacts'));togglePanel('contacts-panel');return;}
+  const lbl=PL[ph.type]+(ph.note?' \u2013 '+ph.note:'');
+  const project=p.name+(p.orderNr?' ('+p.orderNr+')':'');
+  const dur=diffDays(assignee.start,assignee.end)+1;
+  const subject='['+(p.orderNr||p.name)+'] '+lbl+' \u2013 '+personName;
+  const body=t('hiPerson')+personName+',\n\n'+t('pleaseBlock')+'Project:   '+project+'\nPhase:     '+lbl+'\nStart: '+fmtLong(assignee.start)+'\nEnd:   '+fmtLong(assignee.end)+'\nDuration:  '+dur+' day'+(dur>1?'s':'')+'\n\n'+t('confirmReceipt');
   window.location.href='mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
 }
 
-/* ── ICS export ── */
 function renderExportList(){
-  const el=document.getElementById('export-list'); let html='';
+  const el=document.getElementById('export-list');let html='';
   projects.forEach(p=>{
     p.phases.forEach(ph=>{
       const lbl=PL[ph.type]+(ph.note?' \u2013 '+ph.note:'');
-      (ph.assignees||[]).forEach((a,ai)=>{
-        html+=`<div class="export-item">
-          <div><div class="export-item-name">${a.name} \u2013 ${lbl}</div>
-          <div class="export-item-detail">${p.orderNr||p.name} \u00b7 ${fmtShort(a.start)} \u2192 ${fmtShort(a.end)}</div></div>
-          <button class="btn-outlook" style="font-size:11px;padding:4px 10px;" onclick="showICS(${p.id},${ph.id},${ai})">Get .ics</button>
-        </div>`;
-      });
-      html+=`<div class="export-item">
-        <div><div class="export-item-name">${lbl} (whole phase)</div>
-        <div class="export-item-detail">${p.orderNr||p.name} \u00b7 ${fmtShort(ph.start)} \u2192 ${fmtShort(ph.end)}</div></div>
-        <button class="btn-outlook" style="font-size:11px;padding:4px 10px;" onclick="showICS(${p.id},${ph.id},null)">Get .ics</button>
-      </div>`;
+      (ph.assignees||[]).forEach((a,ai)=>{html+=`<div class="export-item"><div><div class="export-item-name">${a.name} \u2013 ${lbl}</div><div class="export-item-detail">${p.orderNr||p.name} \u00b7 ${fmtShort(a.start)} \u2192 ${fmtShort(a.end)}</div></div><button class="btn-outlook" style="font-size:11px;padding:4px 10px;" onclick="showICS(${p.id},${ph.id},${ai})">Get .ics</button></div>`;});
+      html+=`<div class="export-item"><div><div class="export-item-name">${lbl} (whole phase)</div><div class="export-item-detail">${p.orderNr||p.name} \u00b7 ${fmtShort(ph.start)} \u2192 ${fmtShort(ph.end)}</div></div><button class="btn-outlook" style="font-size:11px;padding:4px 10px;" onclick="showICS(${p.id},${ph.id},null)">Get .ics</button></div>`;
     });
   });
-  if(!html) html='<p style="font-size:12px;color:var(--text3);">Nog geen medewerkers.</p>';
+  if(!html)html='<p style="font-size:12px;color:var(--text3);">Nog geen medewerkers.</p>';
   el.innerHTML=html;
 }
-function buildICS(vevents){ return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ProjectPlanner//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH',...vevents,'END:VCALENDAR'].join('\r\n'); }
+function buildICS(vevents){return['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ProjectPlanner//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH',...vevents,'END:VCALENDAR'].join('\r\n');}
 function buildVEVENT(title,desc,start,end){
-  function esc(s){ return s.replace(/[,;\\]/g,'\\$&').replace(/\n/g,'\\n'); }
+  function esc(s){return s.replace(/[,;\\]/g,'\\$&').replace(/\n/g,'\\n');}
   const now=new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)+'Z';
-  return ['BEGIN:VEVENT','UID:pp-'+Date.now()+'-'+Math.random().toString(36).slice(2)+'@planner',
-    'DTSTAMP:'+now,'DTSTART;VALUE=DATE:'+start.replace(/-/g,''),'DTEND;VALUE=DATE:'+addDays(end,1).replace(/-/g,''),
-    'SUMMARY:'+esc(title),'DESCRIPTION:'+esc(desc),'TRANSP:TRANSPARENT','END:VEVENT'].join('\r\n');
+  return['BEGIN:VEVENT','UID:pp-'+Date.now()+'-'+Math.random().toString(36).slice(2)+'@planner','DTSTAMP:'+now,'DTSTART;VALUE=DATE:'+start.replace(/-/g,''),'DTEND;VALUE=DATE:'+addDays(end,1).replace(/-/g,''),'SUMMARY:'+esc(title),'DESCRIPTION:'+esc(desc),'TRANSP:TRANSPARENT','END:VEVENT'].join('\r\n');
 }
-function showICS(pid, phid, assigneeIdx){
-  const p=projects.find(x=>x.id===pid), ph=p&&p.phases.find(x=>x.id===phid); if(!p||!ph) return;
+function showICS(pid,phid,assigneeIdx){
+  const p=projects.find(x=>x.id===pid),ph=p&&p.phases.find(x=>x.id===phid);if(!p||!ph)return;
   const lbl=PL[ph.type]+(ph.note?' \u2013 '+ph.note:'');
-  let title, desc, start, end;
-  if(assigneeIdx!==null){
-    const a=ph.assignees[assigneeIdx];
-    title=a.name+' \u2013 '+lbl+' ['+(p.orderNr||p.name)+']';
-    desc='Project: '+p.name+(p.orderNr?' ('+p.orderNr+')':'')+'\nPhase: '+lbl+'\nAssignee: '+a.name+'\nFrom: '+fmtShort(a.start)+' to '+fmtShort(a.end);
-    start=a.start; end=a.end;
-  } else {
-    title=lbl+' ['+(p.orderNr||p.name)+']';
-    desc='Project: '+p.name+(p.orderNr?' ('+p.orderNr+')':'')+'\nPhase: '+lbl+'\nFrom: '+fmtShort(ph.start)+' to '+fmtShort(ph.end);
-    start=ph.start; end=ph.end;
-  }
+  let title,desc,start,end;
+  if(assigneeIdx!==null){const a=ph.assignees[assigneeIdx];title=a.name+' \u2013 '+lbl+' ['+(p.orderNr||p.name)+']';desc='Project: '+p.name+'\nPhase: '+lbl+'\nAssignee: '+a.name;start=a.start;end=a.end;}
+  else{title=lbl+' ['+(p.orderNr||p.name)+']';desc='Project: '+p.name+'\nPhase: '+lbl;start=ph.start;end=ph.end;}
   const fname=(assigneeIdx!==null?ph.assignees[assigneeIdx].name+'-':'')+lbl.replace(/[^a-z0-9]/gi,'-').toLowerCase()+'.ics';
-  showICSModal(buildICS([buildVEVENT(title,desc,start,end)]), fname);
+  showICSModal(buildICS([buildVEVENT(title,desc,start,end)]),fname);
 }
-function showICSModal(content, filename){
+function showICSModal(content,filename){
   document.getElementById('ics-modal')&&document.getElementById('ics-modal').remove();
-  const m=document.createElement('div');
-  m.id='ics-modal';
+  const m=document.createElement('div');m.id='ics-modal';
   m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
   const safe=content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  m.innerHTML='<div style="background:#fff;border-radius:12px;padding:24px;max-width:580px;width:100%;font-family:\'DM Sans\',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,.2);">'+
-    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">'+
-      '<div style="font-weight:600;font-size:14px;">'+filename+'</div>'+
-      '<button onclick="document.getElementById(\'ics-modal\').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:0;">&#10005;</button>'+
-    '</div>'+
-    '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 13px;font-size:12px;color:#1e40af;margin-bottom:12px;line-height:1.7;">'+
-      '<strong>Importeren in Outlook:</strong> 1. Klik op <strong>Kopiëren</strong> &nbsp;2. Open Kladblok &nbsp;3. Plak &amp; sla op als <strong>'+filename+'</strong> (bestandstype: Alle bestanden) &nbsp;4. Dubbelklik om te importeren'+
-    '</div>'+
-    '<textarea id="ics-ta" readonly style="width:100%;height:140px;font-family:monospace;font-size:10px;border:1px solid #e2e0d8;border-radius:8px;padding:8px;resize:none;background:#f5f4f0;">'+safe+'</textarea>'+
-    '<div style="display:flex;gap:8px;margin-top:12px;align-items:center;">'+
-      '<button id="ics-copy" style="background:#0078d4;color:#fff;border:none;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;">Kopiëren</button>'+
-      '<span id="ics-ok" style="font-size:12px;color:#059669;display:none;font-weight:500;">&#10003; Copied!</span>'+
-      '<div style="flex:1"></div>'+
-      '<button onclick="document.getElementById(\'ics-modal\').remove()" style="background:#f0efe9;border:1px solid #d0cec4;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;">Sluiten</button>'+
-    '</div></div>';
+  m.innerHTML='<div style="background:#fff;border-radius:12px;padding:24px;max-width:580px;width:100%;font-family:sans-serif;box-shadow:0 8px 32px rgba(0,0,0,.2);"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div style="font-weight:600;font-size:14px;">'+filename+'</div><button onclick="document.getElementById(\'ics-modal\').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;">&#10005;</button></div><textarea id="ics-ta" readonly style="width:100%;height:140px;font-family:monospace;font-size:10px;border:1px solid #e2e0d8;border-radius:8px;padding:8px;resize:none;background:#f5f4f0;">'+safe+'</textarea><div style="display:flex;gap:8px;margin-top:12px;"><button id="ics-copy" style="background:#0078d4;color:#fff;border:none;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:13px;">Kopi\u00ebren</button><span id="ics-ok" style="font-size:12px;color:#059669;display:none;">&#10003; Copied!</span><div style="flex:1"></div><button onclick="document.getElementById(\'ics-modal\').remove()" style="background:#f0efe9;border:1px solid #d0cec4;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;">Sluiten</button></div></div>';
   document.body.appendChild(m);
-  m.addEventListener('click',e=>{ if(e.target===m) m.remove(); });
+  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
   document.getElementById('ics-copy').onclick=function(){
-    function ok(){ const el=document.getElementById('ics-ok'); if(el){el.style.display='inline';setTimeout(()=>{if(el)el.style.display='none';},2500);} }
-    if(navigator.clipboard){ navigator.clipboard.writeText(content).then(ok).catch(()=>fb()); } else fb();
-    function fb(){ const t=document.createElement('textarea');t.value=content;t.style.cssText='position:fixed;top:-999px;';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(t); }
+    function ok(){const el=document.getElementById('ics-ok');if(el){el.style.display='inline';setTimeout(()=>{if(el)el.style.display='none';},2500);}}
+    if(navigator.clipboard){navigator.clipboard.writeText(content).then(ok).catch(()=>fb());}else fb();
+    function fb(){const t=document.createElement('textarea');t.value=content;t.style.cssText='position:fixed;top:-999px;';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(t);}
   };
 }
 
-/* ── day grid ── */
 function buildDays(){
-  const dates=[
-    ...projects.flatMap(p=>[new Date(p.start),new Date(p.end)]),
-    ...projects.flatMap(p=>p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end),
-      ...(ph.assignees||[]).flatMap(a=>[new Date(a.start),new Date(a.end)])])),
-    ...milestones.map(m=>new Date(m.date))
-  ];
-  if(!dates.length){ const n=new Date(); dates.push(n,new Date(n.getFullYear(),n.getMonth()+2,0)); }
-  let mn=new Date(Math.min(...dates)), mx=new Date(Math.max(...dates));
-  mn=addDays(ymd(mn),-3); mx=addDays(ymd(mx),5);
-  const mnD=new Date(mn); const dow=mnD.getDay()||7; if(dow>1) mnD.setDate(mnD.getDate()-(dow-1));
-  const days=[]; let c=new Date(mnD);
-  while(c<=new Date(mx)){ days.push(new Date(c)); c.setDate(c.getDate()+1); }
+  const dates=[...projects.flatMap(p=>[new Date(p.start),new Date(p.end)]),...projects.flatMap(p=>p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end),...(ph.assignees||[]).flatMap(a=>[new Date(a.start),new Date(a.end)])])),...milestones.map(m=>new Date(m.date))];
+  if(!dates.length){const n=new Date();dates.push(n,new Date(n.getFullYear(),n.getMonth()+2,0));}
+  let mn=new Date(Math.min(...dates)),mx=new Date(Math.max(...dates));
+  mn=addDays(ymd(mn),-3);mx=addDays(ymd(mx),5);
+  const mnD=new Date(mn);const dow=mnD.getDay()||7;if(dow>1)mnD.setDate(mnD.getDate()-(dow-1));
+  const days=[];let c=new Date(mnD);
+  while(c<=new Date(mx)){days.push(new Date(c));c.setDate(c.getDate()+1);}
   return days;
 }
-function dCls(d){ const dow=d.getDay(),we=dow===0||dow===6,mon=dow===1,tod=ymd(d)===ymd(new Date()); return ['td','day-col',we?'weekend':'',mon?'mon':'',tod?'today-col':''].filter(Boolean).join(' '); }
-function thCls(d){ const dow=d.getDay(),we=dow===0||dow===6,mon=dow===1,tod=ymd(d)===ymd(new Date()); return ['th','day-cell',we?'weekend':'',mon?'mon':'',tod?'today-col':''].filter(Boolean).join(' '); }
+function dCls(d){const dow=d.getDay(),we=dow===0||dow===6,mon=dow===1,tod=ymd(d)===ymd(new Date());return['td','day-col',we?'weekend':'',mon?'mon':'',tod?'today-col':''].filter(Boolean).join(' ');}
+function thCls(d){const dow=d.getDay(),we=dow===0||dow===6,mon=dow===1,tod=ymd(d)===ymd(new Date());return['th','day-cell',we?'weekend':'',mon?'mon':'',tod?'today-col':''].filter(Boolean).join(' ');}
 
 function cascadeLinked(p,si,delta){
   for(let i=si+1;i<p.phases.length;i++){
-    if(!p.phases[i-1].linked) break;
+    if(!p.phases[i-1].linked)break;
     const incWe=!!(p.phases[i].includeWeekends);
-    const rs=addDays(p.phases[i].start,delta), re=addDays(p.phases[i].end,delta);
-    p.phases[i].start = incWe ? rs : (delta>=0 ? snapToWorkday(rs)     : snapToWorkdayBack(rs));
-    p.phases[i].end   = incWe ? re : (delta>=0 ? snapToWorkday(re)     : snapToWorkdayBack(re));
+    const rs=addDays(p.phases[i].start,delta),re=addDays(p.phases[i].end,delta);
+    p.phases[i].start=incWe?rs:(delta>=0?snapToWorkday(rs):snapToWorkdayBack(rs));
+    p.phases[i].end=incWe?re:(delta>=0?snapToWorkday(re):snapToWorkdayBack(re));
     (p.phases[i].assignees||[]).forEach(a=>{
-      const as=addDays(a.start,delta), ae=addDays(a.end,delta);
-      a.start = incWe ? as : (delta>=0 ? snapToWorkday(as) : snapToWorkdayBack(as));
-      a.end   = incWe ? ae : (delta>=0 ? snapToWorkday(ae) : snapToWorkdayBack(ae));
+      const as=addDays(a.start,delta),ae=addDays(a.end,delta);
+      a.start=incWe?as:(delta>=0?snapToWorkday(as):snapToWorkdayBack(as));
+      a.end=incWe?ae:(delta>=0?snapToWorkday(ae):snapToWorkdayBack(ae));
     });
   }
   const all=p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end)]);
-  p.start=ymd(new Date(Math.min(...all))); p.end=ymd(new Date(Math.max(...all)));
+  p.start=ymd(new Date(Math.min(...all)));p.end=ymd(new Date(Math.max(...all)));
 }
 
-/* ── render ── */
 function render(){
-  const days=buildDays(), today=ymd(new Date());
-  ['f-fproject','f-mproject'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=projects.map(p=>`<option value="${p.id}">${p.orderNr?p.orderNr+' \u2013 ':''} ${p.name}</option>`).join(''); });
-  document.getElementById('gantt-cols').innerHTML=`<col class="col-label"><col class="col-actions">${days.map(()=>'<col class="col-day">').join('')}`; 
-
-  // header
+  const days=buildDays(),today=ymd(new Date());
+  ['f-fproject','f-mproject'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=projects.map(p=>`<option value="${p.id}">${p.orderNr?p.orderNr+' \u2013 ':''}${p.name}</option>`).join('');});
+  document.getElementById('gantt-cols').innerHTML=`<col class="col-label"><col class="col-actions">${days.map(()=>'<col class="col-day">').join('')}`;
   let r1=`<tr><th class="th sticky" rowspan="3" style="min-width:250px;text-align:left;vertical-align:middle;padding:6px 10px;">${t('customerPhase')}</th><th class="th sticky2" rowspan="3" style="min-width:80px;position:sticky;left:250px;z-index:5;background:var(--surface2);border-right:2px solid var(--border2);"></th>`;
   const mgs=[];let pm=-1,ms=0,msp=0;
-  days.forEach((d,i)=>{ if(d.getMonth()!==pm){if(pm!==-1)mgs.push({l:new Date(days[ms]).toLocaleString(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}),s:msp});pm=d.getMonth();ms=i;msp=1;}else msp++;if(i===days.length-1)mgs.push({l:new Date(days[ms]).toLocaleString(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}),s:msp}); });
-  mgs.forEach(g=>{ r1+=`<th class="th month-cell" colspan="${g.s}">${g.l}</th>`; });
-  r1+=`</tr>`;
-  let r2=`<tr>`;let pw=-1,ws=0,wf=true;
-  days.forEach((d,i)=>{ const w=isoWeek(d);if(w!==pw){if(pw!==-1){r2+=`<th class="th week-cell${wf?'':' mon'}" colspan="${ws}">W${pw}</th>`;wf=false;}pw=w;ws=1;}else ws++;if(i===days.length-1)r2+=`<th class="th week-cell${wf?'':' mon'}" colspan="${ws}">W${w}</th>`; });
-  r2+=`</tr>`;
-  let r3=`<tr>`; days.forEach(d=>{ r3+=`<th class="${thCls(d)}" title="${d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}">${d.getDate()}</th>`; }); r3+=`</tr>`;
+  days.forEach((d,i)=>{if(d.getMonth()!==pm){if(pm!==-1)mgs.push({l:new Date(days[ms]).toLocaleString(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}),s:msp});pm=d.getMonth();ms=i;msp=1;}else msp++;if(i===days.length-1)mgs.push({l:new Date(days[ms]).toLocaleString(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}),s:msp});});
+  mgs.forEach(g=>{r1+=`<th class="th month-cell" colspan="${g.s}">${g.l}</th>`;});r1+='</tr>';
+  let r2='<tr>';let pw=-1,ws=0,wf=true;
+  days.forEach((d,i)=>{const w=isoWeek(d);if(w!==pw){if(pw!==-1){r2+=`<th class="th week-cell${wf?'':' mon'}" colspan="${ws}">W${pw}</th>`;wf=false;}pw=w;ws=1;}else ws++;if(i===days.length-1)r2+=`<th class="th week-cell${wf?'':' mon'}" colspan="${ws}">W${w}</th>`;});
+  r2+='</tr>';
+  let r3='<tr>';days.forEach(d=>{r3+=`<th class="${thCls(d)}" title="${d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}">${d.getDate()}</th>`;});r3+='</tr>';
   document.getElementById('g-head').innerHTML=r1+r2+r3;
-
   let bh='';
-  if(!projects.length){ bh=`<tr><td colspan="${days.length+2}"><div class="empty-state"><p>Nog geen projecten &mdash; klik op <strong>+ Nieuw project</strong>.</p></div></td></tr>`; }
-
+  if(!projects.length){bh=`<tr><td colspan="${days.length+2}"><div class="empty-state"><p>${t('noProjects')}</p></div></td></tr>`;}
   projects.forEach(p=>{
-    const pMs=milestones.filter(m=>m.projectId===p.id), projColor=p.cp?'#dc2626':'#6b7280';
-    bh+=`<tr class="proj-row"><td class="td sticky"><div class="proj-name-cell">
-      <button class="toggle-btn" onclick="toggleP(${p.id})">${p.open?'&#9662;':'&#9656;'}</button>
-      <span class="proj-name">${p.name}</span>
-      ${p.orderNr?`<span class="proj-ordernr">${p.orderNr}</span>`:''}
-      ${p.cp?'<span class="cp-tag">critical</span>':''}
-    </div></td>`;
-    bh+=`<td class="td actions-col"><button class="edit-btn" title="Move up" onclick="moveProject(${p.id},-1)">&#9650;</button><button class="edit-btn" title="Move down" onclick="moveProject(${p.id},1)">&#9660;</button><button class="edit-btn" onclick="openForm('proj',{pid:${p.id}})">&#9998;</button><button class="edit-btn" onclick="openFormPhaseFor(${p.id})">+</button></td>`;
+    const pMs=milestones.filter(m=>m.projectId===p.id),projColor=p.cp?'#dc2626':'#6b7280';
+    bh+=`<tr class="proj-row"><td class="td sticky"><div class="proj-name-cell"><button class="toggle-btn" onclick="toggleP(${p.id})">${p.open?'&#9662;':'&#9656;'}</button><span class="proj-name">${p.name}</span>${p.orderNr?`<span class="proj-ordernr">${p.orderNr}</span>`:''}${p.cp?'<span class="cp-tag">critical</span>':''}</div></td>`;
+    bh+=`<td class="td actions-col"><button class="edit-btn" title="${t('moveUp')}" onclick="moveProject(${p.id},-1)">&#9650;</button><button class="edit-btn" title="${t('moveDown')}" onclick="moveProject(${p.id},1)">&#9660;</button><button class="edit-btn" onclick="openForm('proj',{pid:${p.id}})">&#9998;</button><button class="edit-btn" onclick="openFormPhaseFor(${p.id})">+</button></td>`;
     days.forEach(d=>{
       const ds=ymd(d),inR=ds>=p.start&&ds<=p.end,isF=ds===p.start,isL=ds===p.end,isTod=ds===today;
       const mss=pMs.filter(m=>m.date===ds);
       bh+=`<td class="${dCls(d)}"><div class="bar-row">`;
-      if(isTod) bh+=`<div class="today-line"></div>`;
-      if(inR){ const rad=`border-radius:${isF?'2px':'0'} ${isL?'2px':'0'} ${isL?'2px':'0'} ${isF?'2px':'0'}`; bh+=`<div class="proj-bar" style="left:0;right:0;background:${projColor};${rad};opacity:.3;"></div>`; }
-      mss.forEach(ms=>{ bh+=`<div class="ms-diamond" onclick="openForm('milestone',{mid:${ms.id}})" title="${ms.name}"></div><div class="ms-lbl">${ms.name}</div>`; });
-      bh+=`</div></td>`;
+      if(isTod)bh+='<div class="today-line"></div>';
+      if(inR){const rad=`border-radius:${isF?'2px':'0'} ${isL?'2px':'0'} ${isL?'2px':'0'} ${isF?'2px':'0'}`;bh+=`<div class="proj-bar" style="left:0;right:0;background:${projColor};${rad};opacity:.3;"></div>`;}
+      mss.forEach(ms=>{bh+=`<div class="ms-diamond" onclick="openForm('milestone',{mid:${ms.id}})" title="${ms.name}"></div><div class="ms-lbl">${ms.name}</div>`;});
+      bh+='</div></td>';
     });
-    bh+=`</tr>`;
-
+    bh+='</tr>';
     if(p.open){
       if(!p.phases.length){
-        bh+=`<tr><td class="td sticky"><span class="no-phases">Nog geen fases &mdash; klik + om toe te voegen</span></td><td class="td actions-col"></td>`;
-        days.forEach(d=>{ bh+=`<td class="${dCls(d)}"><div class="bar-row">${ymd(d)===today?'<div class="today-line"></div>':''}</div></td>`; });
-        bh+=`</tr>`;
+        bh+=`<tr><td class="td sticky"><span class="no-phases">${t('noPhases')}</span></td><td class="td actions-col"></td>`;
+        days.forEach(d=>{bh+=`<td class="${dCls(d)}"><div class="bar-row">${ymd(d)===today?'<div class="today-line"></div>':''}</div></td>`;});
+        bh+='</tr>';
       } else {
         p.phases.forEach((ph,idx)=>{
           const lbl=PL[ph.type]+(ph.note?' \u2013 '+ph.note:'');
           const showChain=ph.linked&&idx<p.phases.length-1;
-          const assignees=ph.assignees||[];
-          const hasA=assignees.length>0;
-          const aOpen=!!ph.assigneesOpen;
-
-          bh+=`<tr><td class="td sticky"><div class="phase-cell">
-            ${hasA?`<button class="toggle-btn" onclick="toggleAssign(${p.id},${ph.id})">${aOpen?'&#9662;':'&#9656;'}</button>`:`<span style="display:inline-block;width:18px;"></span>`}
-            <div class="phase-dot" style="background:${PC[ph.type]}"></div>
-            <span class="phase-name">${lbl}</span>
-            ${showChain?'<span class="chain-line"></span>':''}
-            ${assignees.map(a=>`<div class="avatar" style="background:${avatarColor(a.name)}" title="${a.name}">${initials(a.name)}</div>`).join('')}
-          </div></td>`;
-          bh+=`<td class="td actions-col" style="display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:3px 5px;">
-            <button class="edit-btn" title="${t('moveUp')}" onclick="movePhase(${p.id},${ph.id},-1)">&#9650;</button>
-            <button class="edit-btn" title="${t('moveDown')}" onclick="movePhase(${p.id},${ph.id},1)">&#9660;</button>
-            <button class="chain-btn ${ph.linked?'linked':''}" onclick="toggleLink(${p.id},${ph.id})">&#9939;</button>
-            <button class="edit-btn" style="opacity:1" onclick="openForm('phase',{pid:${p.id},phid:${ph.id}})">&#9998;</button>
-          </td>`;
+          const assignees=ph.assignees||[];const hasA=assignees.length>0;const aOpen=!!ph.assigneesOpen;
+          bh+=`<tr><td class="td sticky"><div class="phase-cell">${hasA?`<button class="toggle-btn" onclick="toggleAssign(${p.id},${ph.id})">${aOpen?'&#9662;':'&#9656;'}</button>`:`<span style="display:inline-block;width:18px;"></span>`}<div class="phase-dot" style="background:${PC[ph.type]}"></div><span class="phase-name">${lbl}</span>${showChain?'<span class="chain-line"></span>':''  }${assignees.map(a=>`<div class="avatar" style="background:${avatarColor(a.name)}" title="${a.name}">${initials(a.name)}</div>`).join('')}</div></td>`;
+          bh+=`<td class="td actions-col" style="display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:3px 5px;"><button class="edit-btn" title="${t('moveUp')}" onclick="movePhase(${p.id},${ph.id},-1)">&#9650;</button><button class="edit-btn" title="${t('moveDown')}" onclick="movePhase(${p.id},${ph.id},1)">&#9660;</button><button class="chain-btn ${ph.linked?'linked':''}" onclick="toggleLink(${p.id},${ph.id})">&#9939;</button><button class="edit-btn" style="opacity:1" onclick="openForm('phase',{pid:${p.id},phid:${ph.id}})">&#9998;</button></td>`;
           days.forEach(d=>{
             const ds=ymd(d),inR=ds>=ph.start&&ds<=ph.end,isF=ds===ph.start,isL=ds===ph.end,isTod=ds===today;
             bh+=`<td class="${dCls(d)}"><div class="bar-row">`;
-            if(isTod) bh+=`<div class="today-line"></div>`;
-            if(inR){
-              const rad=`border-radius:${isF?'3px':'0'} ${isL?'3px':'0'} ${isL?'3px':'0'} ${isF?'3px':'0'}`;
-              bh+=`<div class="phase-bar" data-pid="${p.id}" data-phid="${ph.id}" style="left:0;right:${isL?'0':'-1px'};${rad};background:${PC[ph.type]};">`;
-              if(isF) bh+=`<span>${lbl.substring(0,14)}</span>`;
-              bh+=`</div>`;
-            }
-            bh+=`</div></td>`;
+            if(isTod)bh+='<div class="today-line"></div>';
+            if(inR){const rad=`border-radius:${isF?'3px':'0'} ${isL?'3px':'0'} ${isL?'3px':'0'} ${isF?'3px':'0'}`;bh+=`<div class="phase-bar" data-pid="${p.id}" data-phid="${ph.id}" style="left:0;right:${isL?'0':'-1px'};${rad};background:${PC[ph.type]};">${isF?`<span>${lbl.substring(0,14)}</span>`:''}</div>`;}
+            bh+='</div></td>';
           });
-          bh+=`</tr>`;
-
-          // assignee sub-rows
+          bh+='</tr>';
           if(aOpen){
             assignees.forEach((a,ai)=>{
               const email=contactBook[a.name]||'';
-              bh+=`<tr class="assign-row"><td class="td sticky"><div class="assign-cell">
-                <div class="assign-dot" style="background:${avatarColor(a.name)}"></div>
-                <span class="assign-name">${a.name}</span>
-                <span class="assign-dates">${fmtShort(a.start)} &rarr; ${fmtShort(a.end)}</span>
-                ${email
-                  ? `<button class="btn-invite" onclick="sendInvite(${p.id},${ph.id},'${a.name.replace(/'/g,"\\'")}')">&#9993; Uitnodigen</button>`
-                  : `<button class="btn-invite no-email" onclick="togglePanel('contacts-panel')">&#9993; E-mail instellen</button>`}
-              </div></td><td class="td actions-col"></td>`;
+              bh+=`<tr class="assign-row"><td class="td sticky"><div class="assign-cell"><div class="assign-dot" style="background:${avatarColor(a.name)}"></div><span class="assign-name">${a.name}</span><span class="assign-dates">${fmtShort(a.start)} &rarr; ${fmtShort(a.end)}</span>${email?`<button class="btn-invite" onclick="sendInvite(${p.id},${ph.id},'${a.name.replace(/'/g,"\\'")}')">&#9993; ${t('invite')}</button>`:`<button class="btn-invite no-email" onclick="togglePanel('contacts-panel')">&#9993; ${t('setEmail')}</button>`}</div></td><td class="td actions-col"></td>`;
               days.forEach(d=>{
                 const ds=ymd(d),inR=ds>=a.start&&ds<=a.end,isF=ds===a.start,isL=ds===a.end,isTod=ds===today;
                 bh+=`<td class="${dCls(d)}"><div class="bar-row">`;
-                if(isTod) bh+=`<div class="today-line"></div>`;
-                if(inR){
-                  const rad=`border-radius:${isF?'2px':'0'} ${isL?'2px':'0'} ${isL?'2px':'0'} ${isF?'2px':'0'}`;
-                  bh+=`<div class="assign-bar" style="left:0;right:${isL?'0':'-1px'};${rad};background:${avatarColor(a.name)};"></div>`;
-                }
-                bh+=`</div></td>`;
+                if(isTod)bh+='<div class="today-line"></div>';
+                if(inR){const rad=`border-radius:${isF?'2px':'0'} ${isL?'2px':'0'} ${isL?'2px':'0'} ${isF?'2px':'0'}`;bh+=`<div class="assign-bar" style="left:0;right:${isL?'0':'-1px'};${rad};background:${avatarColor(a.name)};"></div>`;}
+                bh+='</div></td>';
               });
-              bh+=`</tr>`;
+              bh+='</tr>';
             });
           }
         });
       }
     }
   });
-
   document.getElementById('g-body').innerHTML=bh;
   attachDrag();
 }
 
-/* ── drag ── */
 let DS=null;
 const TT=document.getElementById('drag-tooltip');
-function attachDrag(){
-  document.querySelectorAll('.phase-bar[data-pid]').forEach(el=>{
-    el.addEventListener('mousedown',dragStart);
-    el.addEventListener('touchstart',dragStart,{passive:false});
-  });
-}
-function getColW(){ const c=document.querySelector('td.day-col'); return c?c.getBoundingClientRect().width:22; }
+function attachDrag(){document.querySelectorAll('.phase-bar[data-pid]').forEach(el=>{el.addEventListener('mousedown',dragStart);el.addEventListener('touchstart',dragStart,{passive:false});});}
+function getColW(){const c=document.querySelector('td.day-col');return c?c.getBoundingClientRect().width:22;}
 function dragStart(e){
   const el=e.currentTarget,pid=parseInt(el.dataset.pid),phid=parseInt(el.dataset.phid);
-  const proj=projects.find(x=>x.id===pid),ph=proj&&proj.phases.find(x=>x.id===phid);
-  if(!ph) return;
+  const proj=projects.find(x=>x.id===pid),ph=proj&&proj.phases.find(x=>x.id===phid);if(!ph)return;
   const cx=e.touches?e.touches[0].clientX:e.clientX;
-  DS={pid,phid,idx:proj.phases.indexOf(ph),cx,
-    snap:proj.phases.map(x=>({id:x.id,start:x.start,end:x.end,includeWeekends:!!(x.includeWeekends),assignees:(x.assignees||[]).map(a=>({...a}))})),
-    moved:0,colW:getColW()};
-  document.body.style.userSelect='none'; document.body.style.cursor='grabbing';
-  document.addEventListener('mousemove',dragMove); document.addEventListener('mouseup',dragEnd);
-  document.addEventListener('touchmove',dragMove,{passive:false}); document.addEventListener('touchend',dragEnd);
-  e.preventDefault(); e.stopPropagation();
+  DS={pid,phid,idx:proj.phases.indexOf(ph),cx,snap:proj.phases.map(x=>({id:x.id,start:x.start,end:x.end,includeWeekends:!!(x.includeWeekends),assignees:(x.assignees||[]).map(a=>({...a}))})),moved:0,colW:getColW()};
+  document.body.style.userSelect='none';document.body.style.cursor='grabbing';
+  document.addEventListener('mousemove',dragMove);document.addEventListener('mouseup',dragEnd);
+  document.addEventListener('touchmove',dragMove,{passive:false});document.addEventListener('touchend',dragEnd);
+  e.preventDefault();e.stopPropagation();
 }
 function dragMove(e){
-  if(!DS) return;
+  if(!DS)return;
   const cx=e.touches?e.touches[0].clientX:e.clientX;
-  const delta=Math.round((cx-DS.cx)/DS.colW);
-  if(delta===DS.moved) return; DS.moved=delta;
-  const proj=projects.find(x=>x.id===DS.pid); if(!proj) return;
-  // restore snapshot
-  DS.snap.forEach(s=>{
-    const ph=proj.phases.find(x=>x.id===s.id);
-    if(ph){ ph.start=s.start; ph.end=s.end; ph.includeWeekends=s.includeWeekends; ph.assignees=(s.assignees||[]).map(a=>({...a})); }
-  });
+  const delta=Math.round((cx-DS.cx)/DS.colW);if(delta===DS.moved)return;DS.moved=delta;
+  const proj=projects.find(x=>x.id===DS.pid);if(!proj)return;
+  DS.snap.forEach(s=>{const ph=proj.phases.find(x=>x.id===s.id);if(ph){ph.start=s.start;ph.end=s.end;ph.includeWeekends=s.includeWeekends;ph.assignees=(s.assignees||[]).map(a=>({...a}));}});
   const ph=proj.phases.find(x=>x.id===DS.phid),orig=DS.snap.find(s=>s.id===DS.phid);
   const incWe=!!(ph.includeWeekends);
   const rawStart=addDays(orig.start,delta);
-  // Snap start to workday, then recalculate end preserving exact duration
-  // Snap start to workday, then add original working-day duration to get end
-  const newStart   = incWe ? rawStart : (delta>=0 ? snapToWorkday(rawStart) : snapToWorkdayBack(rawStart));
-  const origWdDur  = countDays(orig.start, orig.end, incWe); // working days in original phase
-  const newEnd     = addWorkingDays(newStart, origWdDur, incWe);
-  ph.start = newStart;
-  ph.end   = newEnd;
-  // Shift assignees by same calendar delta as the snapped start
-  const realDelta = diffDays(orig.start, newStart);
-  const snapPh = DS.snap.find(s=>s.id===DS.phid);
-  if(snapPh && snapPh.assignees){
-    snapPh.assignees.forEach((sa,i)=>{
-      if(ph.assignees[i]){
-        ph.assignees[i].start = addDays(sa.start, realDelta);
-        ph.assignees[i].end   = addDays(sa.end,   realDelta);
-      }
-    });
-  }
+  const newStart=incWe?rawStart:(delta>=0?snapToWorkday(rawStart):snapToWorkdayBack(rawStart));
+  const origWdDur=countDays(orig.start,orig.end,incWe);
+  const newEnd=addWorkingDays(newStart,origWdDur,incWe);
+  ph.start=newStart;ph.end=newEnd;
+  const realDelta=diffDays(orig.start,newStart);
+  const snapPh=DS.snap.find(s=>s.id===DS.phid);
+  if(snapPh&&snapPh.assignees){snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){ph.assignees[i].start=addDays(sa.start,realDelta);ph.assignees[i].end=addDays(sa.end,realDelta);}});}
   cascadeLinked(proj,DS.idx,delta);
   const cy=e.touches?e.touches[0].clientY:e.clientY;
   const linked=proj.phases.filter((_,i)=>i>DS.idx&&proj.phases[i-1].linked).length;
   TT.textContent=`${fmtShort(ph.start)} \u2192 ${fmtShort(ph.end)}${delta?` (${delta>0?'+':''}${delta}d)`:''} ${linked?`\u00b7 +${linked} linked`:''}`;
-  TT.style.display='block'; TT.style.left=(cx+14)+'px'; TT.style.top=(cy-36)+'px';
+  TT.style.display='block';TT.style.left=(cx+14)+'px';TT.style.top=(cy-36)+'px';
   render();
 }
 function dragEnd(){
-  if(!DS) return; save(); DS=null;
-  document.body.style.userSelect=''; document.body.style.cursor=''; TT.style.display='none';
-  document.removeEventListener('mousemove',dragMove); document.removeEventListener('mouseup',dragEnd);
-  document.removeEventListener('touchmove',dragMove); document.removeEventListener('touchend',dragEnd);
+  if(!DS)return;save();DS=null;
+  document.body.style.userSelect='';document.body.style.cursor='';TT.style.display='none';
+  document.removeEventListener('mousemove',dragMove);document.removeEventListener('mouseup',dragEnd);
+  document.removeEventListener('touchmove',dragMove);document.removeEventListener('touchend',dragEnd);
   render();
 }
 
-/* ── toggles ── */
-function movePhase(pid, phid, dir){
-  const p=projects.find(x=>parseInt(x.id)===parseInt(pid));
-  if(!p) return;
-  const idx=p.phases.findIndex(x=>parseInt(x.id)===parseInt(phid));
-  if(idx===-1) return;
-  const swap=idx+dir;
-  if(swap<0||swap>=p.phases.length) return;
-  const tmp=p.phases[idx];
-  p.phases[idx]=p.phases[swap];
-  p.phases[swap]=tmp;
-  save(); render();
-}
+function movePhase(pid,phid,dir){const p=projects.find(x=>parseInt(x.id)===parseInt(pid));if(!p)return;const idx=p.phases.findIndex(x=>parseInt(x.id)===parseInt(phid));if(idx===-1)return;const swap=idx+dir;if(swap<0||swap>=p.phases.length)return;const tmp=p.phases[idx];p.phases[idx]=p.phases[swap];p.phases[swap]=tmp;save();render();}
+function moveProject(id,dir){const idx=projects.findIndex(x=>x.id===id);if(idx===-1)return;const swap=idx+dir;if(swap<0||swap>=projects.length)return;const tmp=projects[idx];projects[idx]=projects[swap];projects[swap]=tmp;save();render();applyLang();}
+function toggleP(id){const p=projects.find(x=>x.id===id);if(p){p.open=!p.open;save();render();}}
+function toggleLink(pid,phid){const p=projects.find(x=>x.id===pid),ph=p&&p.phases.find(x=>x.id===phid);if(ph){ph.linked=!ph.linked;save();render();}}
+function toggleAssign(pid,phid){const p=projects.find(x=>x.id===pid),ph=p&&p.phases.find(x=>x.id===phid);if(ph){ph.assigneesOpen=!ph.assigneesOpen;save();render();}}
+function openFormPhaseFor(pid){openForm('phase',{pid});}
+function closeAll(){['proj','phase','milestone'].forEach(closeForm);}
+function closeForm(t){const el=document.getElementById('form-'+t);if(el)el.classList.remove('open');}
 
-function moveProject(id, dir){
-  const idx = projects.findIndex(x=>x.id===id);
-  if(idx===-1) return;
-  const swap = idx + dir;
-  if(swap < 0 || swap >= projects.length) return;
-  const tmp = projects[idx];
-  projects[idx] = projects[swap];
-  projects[swap] = tmp;
-  save(); render(); applyLang();
-}
-
-function toggleP(id){ const p=projects.find(x=>x.id===id); if(p){p.open=!p.open;save();render();} }
-function toggleLink(pid,phid){ const p=projects.find(x=>x.id===pid),ph=p&&p.phases.find(x=>x.id===phid); if(ph){ph.linked=!ph.linked;save();render();} }
-function toggleAssign(pid,phid){ const p=projects.find(x=>x.id===pid),ph=p&&p.phases.find(x=>x.id===phid); if(ph){ph.assigneesOpen=!ph.assigneesOpen;save();render();} }
-function openFormPhaseFor(pid){ openForm('phase',{pid}); }
-function closeAll(){ ['proj','phase','milestone'].forEach(closeForm); }
-function closeForm(t){ document.getElementById('form-'+t).classList.remove('open'); }
-
-/* ── working days helpers ── */
-/* Parse YYYY-MM-DD as LOCAL time to avoid UTC timezone shift */
-function localDate(str){
-  const [y,m,d] = str.split('-').map(Number);
-  return new Date(y, m-1, d);
-}
-
-function isWeekend(str){
-  const dow = localDate(str).getDay();
-  return dow === 0 || dow === 6;
-}
-
-/* Snap a date forward to the next working day if it falls on a weekend */
-function snapToWorkday(str){
-  let d = localDate(str);
-  while(isWeekend(ymd(d))){ d.setDate(d.getDate()+1); }
+function localDate(str){const[y,m,d]=str.split('-').map(Number);return new Date(y,m-1,d);}
+function isWeekend(str){const dow=localDate(str).getDay();return dow===0||dow===6;}
+function snapToWorkday(str){let d=localDate(str);while(isWeekend(ymd(d)))d.setDate(d.getDate()+1);return ymd(d);}
+function snapToWorkdayBack(str){let d=localDate(str);while(isWeekend(ymd(d)))d.setDate(d.getDate()-1);return ymd(d);}
+function addWorkingDays(startStr,n,includeWeekends){
+  let d=localDate(includeWeekends?startStr:snapToWorkday(startStr));let remaining=n-1;
+  while(remaining>0){d.setDate(d.getDate()+1);if(includeWeekends||!isWeekend(ymd(d)))remaining--;}
+  if(!includeWeekends&&isWeekend(ymd(d)))d=localDate(snapToWorkdayBack(ymd(d)));
   return ymd(d);
 }
-
-/* Snap a date BACKWARD to the previous Friday if it falls on a weekend */
-function snapToWorkdayBack(str){
-  let d = localDate(str);
-  while(isWeekend(ymd(d))){ d.setDate(d.getDate()-1); }
-  return ymd(d);
-}
-
-function addWorkingDays(startStr, n, includeWeekends){
-  // n=1 means just the start day itself
-  // if not includeWeekends, start snaps forward to a workday first
-  let d = localDate(includeWeekends ? startStr : snapToWorkday(startStr));
-  let remaining = n - 1;
-  while(remaining > 0){
-    d.setDate(d.getDate()+1);
-    if(includeWeekends || !isWeekend(ymd(d))) remaining--;
-  }
-  // end must not land on weekend when weekends excluded
-  if(!includeWeekends && isWeekend(ymd(d))) d = localDate(snapToWorkdayBack(ymd(d)));
-  return ymd(d);
-}
-
-function countDays(startStr, endStr, includeWeekends){
-  let count = 0;
-  let d = localDate(startStr);
-  const end = localDate(endStr);
-  while(d <= end){
-    if(includeWeekends || !isWeekend(ymd(d))) count++;
-    d.setDate(d.getDate()+1);
-  }
+function countDays(startStr,endStr,includeWeekends){
+  let count=0,d=localDate(startStr);const end=localDate(endStr);
+  while(d<=end){if(includeWeekends||!isWeekend(ymd(d)))count++;d.setDate(d.getDate()+1);}
   return count;
 }
-
-/* Shift a date string by delta calendar days, then snap end to workday if needed */
-function shiftDate(str, delta, includeWeekends){
-  const shifted = addDays(str, delta);
-  if(!includeWeekends && isWeekend(shifted)){
-    // snap in the direction of drag
-    return delta >= 0 ? snapToWorkday(shifted) : snapToWorkdayBack(shifted);
-  }
-  return shifted;
-}
-
+function shiftDate(str,delta,includeWeekends){const shifted=addDays(str,delta);if(!includeWeekends&&isWeekend(shifted))return delta>=0?snapToWorkday(shifted):snapToWorkdayBack(shifted);return shifted;}
 function phaseStartOrDurChanged(){
-  const start = document.getElementById('f-fstart').value;
-  const dur   = parseInt(document.getElementById('f-fdur').value);
-  const incWe = document.getElementById('f-fweekends').checked;
-  if(!start) return;
-  // snap start to workday if weekends excluded
-  const snapStart = incWe ? start : snapToWorkday(start);
-  if(snapStart !== start) document.getElementById('f-fstart').value = snapStart;
-  if(dur >= 1){
-    // recalculate end from start + duration
-    const end = addWorkingDays(snapStart, dur, incWe);
-    document.getElementById('f-fend').value = end;
-  } else {
-    // no duration yet — recalculate duration from existing end if available
-    const end = document.getElementById('f-fend').value;
-    if(end && end >= snapStart){
-      const d = countDays(snapStart, end, incWe);
-      document.getElementById('f-fdur').value = d;
-    }
-  }
+  const start=document.getElementById('f-fstart').value;const dur=parseInt(document.getElementById('f-fdur').value);const incWe=document.getElementById('f-fweekends').checked;
+  if(!start)return;const snapStart=incWe?start:snapToWorkday(start);if(snapStart!==start)document.getElementById('f-fstart').value=snapStart;
+  if(dur>=1){document.getElementById('f-fend').value=addWorkingDays(snapStart,dur,incWe);}
+  else{const end=document.getElementById('f-fend').value;if(end&&end>=snapStart)document.getElementById('f-fdur').value=countDays(snapStart,end,incWe);}
 }
-
 function phaseEndChanged(){
-  const start = document.getElementById('f-fstart').value;
-  let   end   = document.getElementById('f-fend').value;
-  const incWe = document.getElementById('f-fweekends').checked;
-  if(!incWe && isWeekend(end)){
-    end = snapToWorkdayBack(end);
-    document.getElementById('f-fend').value = end;
-  }
-  if(start && end && end >= start){
-    const dur = countDays(start, end, incWe);
-    document.getElementById('f-fdur').value = dur;
-  }
+  const start=document.getElementById('f-fstart').value;let end=document.getElementById('f-fend').value;const incWe=document.getElementById('f-fweekends').checked;
+  if(!incWe&&isWeekend(end)){end=snapToWorkdayBack(end);document.getElementById('f-fend').value=end;}
+  if(start&&end&&end>=start)document.getElementById('f-fdur').value=countDays(start,end,incWe);
 }
 
-/* ── open forms ── */
 function openForm(type,ctx){
-  closeAll(); editCtx={type,...(ctx||{})};
-  window.scrollTo({top:0,behavior:'smooth'});
+  closeAll();editCtx={type,...(ctx||{})};window.scrollTo({top:0,behavior:'smooth'});
   if(type==='proj'){
     document.getElementById('form-proj').classList.add('open');
-    const _pid = ctx&&ctx.pid ? parseInt(ctx.pid) : null;
-    const p = _pid ? projects.find(x=>parseInt(x.id)===_pid) : null;
+    const _pid=ctx&&ctx.pid?parseInt(ctx.pid):null;const p=_pid?projects.find(x=>parseInt(x.id)===_pid):null;
     document.getElementById('form-proj-title').textContent=p?t('editProject'):t('newProjectTitle');
-    document.getElementById('f-pname').value=p?p.name:'';
-    document.getElementById('f-porder').value=p?p.orderNr||'':'';
-    document.getElementById('f-powner').value=p?p.owner:'';
-    document.getElementById('f-pstart').value=p?p.start:'';
-    document.getElementById('f-pend').value=p?p.end:'';
-    document.getElementById('f-pcp').value=p&&p.cp?'1':'0';
-    const delbtn=document.getElementById('del-proj-btn');
-    delbtn.style.display=p?'inline-block':'none';
+    document.getElementById('f-pname').value=p?p.name:'';document.getElementById('f-porder').value=p?p.orderNr||'':'';
+    document.getElementById('f-powner').value=p?p.owner:'';document.getElementById('f-pstart').value=p?p.start:'';
+    document.getElementById('f-pend').value=p?p.end:'';document.getElementById('f-pcp').value=p&&p.cp?'1':'0';
+    document.getElementById('del-proj-btn').style.display=p?'inline-block':'none';
     setTimeout(()=>document.getElementById('f-pname').focus(),50);
   } else if(type==='phase'){
     document.getElementById('form-phase').classList.add('open');
-    let ph=null, pid=ctx&&ctx.pid||null;
-    if(ctx&&ctx.phid&&pid){ const pr=projects.find(x=>x.id===pid); ph=pr?pr.phases.find(x=>x.id===ctx.phid):null; }
+    let ph=null,pid=ctx&&ctx.pid||null;
+    if(ctx&&ctx.phid&&pid){const pr=projects.find(x=>x.id===pid);ph=pr?pr.phases.find(x=>x.id===ctx.phid):null;}
     document.getElementById('form-phase-title').textContent=ph?t('editPhase'):t('addPhaseTitle');
-    if(pid) document.getElementById('f-fproject').value=pid;
+    if(pid)document.getElementById('f-fproject').value=pid;
     document.getElementById('f-ftype').value=ph?ph.type:'engineering';
-    document.getElementById('f-fstart').value=ph?ph.start:'';
-    document.getElementById('f-fend').value=ph?ph.end:'';
+    document.getElementById('f-fstart').value=ph?ph.start:'';document.getElementById('f-fend').value=ph?ph.end:'';
     document.getElementById('f-fweekends').checked=ph?!!(ph.includeWeekends):false;
-    if(ph && ph.start && ph.end){
-      document.getElementById('f-fdur').value=countDays(ph.start,ph.end,!!(ph.includeWeekends));
-    } else {
-      document.getElementById('f-fdur').value='';
-    }
+    document.getElementById('f-fdur').value=ph&&ph.start&&ph.end?countDays(ph.start,ph.end,!!(ph.includeWeekends)):'';
     document.getElementById('f-fnote').value=ph?ph.note:'';
     document.getElementById('del-phase-btn').style.display=ph?'inline-block':'none';
-    // load assignees into editor
-    const rows=document.getElementById('assignee-rows');
-    rows.dataset.assignees=JSON.stringify(ph?(ph.assignees||[]):[]);
-    renderAssigneeRows(ph?ph.start:'', ph?ph.end:'');
-    if(ph){
-      const pr=projects.find(x=>x.id===pid),i=pr.phases.indexOf(ph);
-      const lc=pr.phases.filter((_,j)=>j>i&&pr.phases[j-1].linked).length;
-      const ib=document.getElementById('link-info');
-      if(ph.linked&&lc>0){ib.textContent=`Linked \u2014 einddatum wijzigen verschuift ${lc} phase${lc>1?'s':''}.`;ib.style.display='block';}
-      else ib.style.display='none';
-    } else document.getElementById('link-info').style.display='none';
+    const rows=document.getElementById('assignee-rows');rows.dataset.assignees=JSON.stringify(ph?(ph.assignees||[]):[]);
+    renderAssigneeRows(ph?ph.start:'',ph?ph.end:'');
+    if(ph){const pr=projects.find(x=>x.id===pid),i=pr.phases.indexOf(ph);const lc=pr.phases.filter((_,j)=>j>i&&pr.phases[j-1].linked).length;const ib=document.getElementById('link-info');if(ph.linked&&lc>0){ib.textContent=`Linked \u2014 einddatum wijzigen verschuift ${lc} phase${lc>1?'s':''}.`;ib.style.display='block';}else ib.style.display='none';}
+    else document.getElementById('link-info').style.display='none';
   } else if(type==='milestone'){
     document.getElementById('form-milestone').classList.add('open');
     const ms=ctx&&ctx.mid?milestones.find(x=>x.id===ctx.mid):null;
     document.getElementById('form-ms-title').textContent=ms?t('editMilestone'):t('addMilestoneTitle');
-    document.getElementById('f-mname').value=ms?ms.name:'';
-    if(ms) document.getElementById('f-mproject').value=ms.projectId;
-    document.getElementById('f-mdate').value=ms?ms.date:'';
-    document.getElementById('del-ms-btn').style.display=ms?'inline-block':'none';
+    document.getElementById('f-mname').value=ms?ms.name:'';if(ms)document.getElementById('f-mproject').value=ms.projectId;
+    document.getElementById('f-mdate').value=ms?ms.date:'';document.getElementById('del-ms-btn').style.display=ms?'inline-block':'none';
     setTimeout(()=>document.getElementById('f-mname').focus(),50);
   }
 }
 
-/* ── save forms ── */
 function saveProject(){
-  const name=document.getElementById('f-pname').value.trim();
-  if(!name){alert(t('enterCustomer'));return;}
+  const name=document.getElementById('f-pname').value.trim();if(!name){alert(t('enterCustomer'));return;}
   const orderNr=document.getElementById('f-porder').value.trim();
   const start=document.getElementById('f-pstart').value,end=document.getElementById('f-pend').value;
-  if(!start||!end){alert(t('setDates'));return;}
-  if(new Date(start)>new Date(end)){alert(t('startBeforeEnd'));return;}
+  if(!start||!end){alert(t('setDates'));return;}if(new Date(start)>new Date(end)){alert(t('startBeforeEnd'));return;}
   const owner=document.getElementById('f-powner').value.trim(),cp=document.getElementById('f-pcp').value==='1';
   const pid=parseInt(editCtx.pid);
   if(pid){const p=projects.find(x=>parseInt(x.id)===pid);if(p){p.name=name;p.orderNr=orderNr;p.owner=owner;p.start=start;p.end=end;p.cp=cp;}}
   else projects.push({id:nPid++,name,orderNr,owner,start,end,cp,open:true,phases:[]});
   save();closeForm('proj');render();
 }
-
 function savePhase(){
-  const pid=parseInt(document.getElementById('f-fproject').value);
-  if(!pid){alert(t('selectProject'));return;}
+  const pid=parseInt(document.getElementById('f-fproject').value);if(!pid){alert(t('selectProject'));return;}
   const type=document.getElementById('f-ftype').value;
   const start=document.getElementById('f-fstart').value,end=document.getElementById('f-fend').value;
-  const note=document.getElementById('f-fnote').value.trim();
-  const includeWeekends=document.getElementById('f-fweekends').checked;
+  const note=document.getElementById('f-fnote').value.trim();const includeWeekends=document.getElementById('f-fweekends').checked;
   if(!start||!end){alert(t('setDates'));return;}
-  // safety snap: if weekends excluded, make sure start/end don't land on weekend
-  const snapStart = includeWeekends ? start : snapToWorkday(start);
-  const snapEnd   = includeWeekends ? end   : snapToWorkdayBack(end);
-  if(snapStart !== start){ document.getElementById('f-fstart').value=snapStart; }
-  if(snapEnd   !== end  ){ document.getElementById('f-fend').value=snapEnd; }
-  const finalStart = snapStart, finalEnd = snapEnd;
-  if(new Date(finalStart)>new Date(finalEnd)){alert(t('startBeforeEnd'));return;}
-  // flush any pending new-assignee name
+  const snapStart=includeWeekends?start:snapToWorkday(start);const snapEnd=includeWeekends?end:snapToWorkdayBack(end);
+  if(snapStart!==start)document.getElementById('f-fstart').value=snapStart;if(snapEnd!==end)document.getElementById('f-fend').value=snapEnd;
+  const finalStart=snapStart,finalEnd=snapEnd;if(new Date(finalStart)>new Date(finalEnd)){alert(t('startBeforeEnd'));return;}
   const newName=document.getElementById('new-assignee-name').value.trim();
-  if(newName){
-    const rows=document.getElementById('assignee-rows');
-    const items=JSON.parse(rows.dataset.assignees||'[]');
-    if(!items.find(a=>a.name===newName)){ items.push({name:newName,start,end}); rows.dataset.assignees=JSON.stringify(items); }
-    document.getElementById('new-assignee-name').value='';
-  }
+  if(newName){const rows=document.getElementById('assignee-rows');const items=JSON.parse(rows.dataset.assignees||'[]');if(!items.find(a=>a.name===newName)){items.push({name:newName,start,end});rows.dataset.assignees=JSON.stringify(items);}document.getElementById('new-assignee-name').value='';}
   const assignees=JSON.parse(document.getElementById('assignee-rows').dataset.assignees||'[]');
-  // Clamp assignee dates to phase bounds instead of blocking
-  assignees.forEach(a=>{
-    if(a.start<finalStart) a.start=finalStart;
-    if(a.end>finalEnd)     a.end=finalEnd;
-    if(a.start>a.end)      a.end=a.start;
-  });
-  const p=projects.find(x=>x.id===pid);if(!p)return;
-  const phid=editCtx.phid;
+  assignees.forEach(a=>{if(a.start<finalStart)a.start=finalStart;if(a.end>finalEnd)a.end=finalEnd;if(a.start>a.end)a.end=a.start;});
+  const p=projects.find(x=>x.id===pid);if(!p)return;const phid=editCtx.phid;
   if(phid){
     const ph=p.phases.find(x=>x.id===phid);
     if(ph){
-      const oldStart=ph.start, oldEnd=ph.end;
-      const startDelta=diffDays(oldStart,finalStart);
+      const oldStart=ph.start,oldEnd=ph.end,startDelta=diffDays(oldStart,finalStart);
       ph.type=type;ph.start=finalStart;ph.end=finalEnd;ph.note=note;ph.includeWeekends=includeWeekends;
-      // If start changed, shift all assignee dates by same delta (unless user explicitly edited them)
-      if(startDelta!==0){
-        assignees.forEach(a=>{
-          // only shift if assignee dates weren't manually changed in this edit session
-          // (we detect this by checking if they match the old phase dates pattern)
-          const wasAtPhaseStart = a.start===oldStart;
-          const wasAtPhaseEnd   = a.end===oldEnd;
-          if(wasAtPhaseStart) a.start=finalStart;
-          else a.start=addDays(a.start,startDelta);
-          if(wasAtPhaseEnd) a.end=finalEnd;
-          else a.end=addDays(a.end,startDelta);
-          // clamp to new phase bounds
-          if(a.start<finalStart) a.start=finalStart;
-          if(a.end>finalEnd)     a.end=finalEnd;
-          if(a.start>a.end)      a.end=a.start;
-        });
-      }
-      ph.assignees=assignees;
-      const d=diffDays(oldEnd,finalEnd);
-      if(d!==0&&ph.linked) cascadeLinked(p,p.phases.indexOf(ph),d);
+      if(startDelta!==0){assignees.forEach(a=>{const wasAtPhaseStart=a.start===oldStart,wasAtPhaseEnd=a.end===oldEnd;if(wasAtPhaseStart)a.start=finalStart;else a.start=addDays(a.start,startDelta);if(wasAtPhaseEnd)a.end=finalEnd;else a.end=addDays(a.end,startDelta);if(a.start<finalStart)a.start=finalStart;if(a.end>finalEnd)a.end=finalEnd;if(a.start>a.end)a.end=a.start;});}
+      ph.assignees=assignees;const d=diffDays(oldEnd,finalEnd);
+      if(d!==0&&ph.linked)cascadeLinked(p,p.phases.indexOf(ph),d);
       else{const all2=p.phases.flatMap(x=>[new Date(x.start),new Date(x.end)]);p.start=ymd(new Date(Math.min(...all2)));p.end=ymd(new Date(Math.max(...all2)));}
     }
   } else {
@@ -1447,268 +943,112 @@ function savePhase(){
   }
   save();closeForm('phase');render();
 }
-
-function saveMilestone(){
-  const name=document.getElementById('f-mname').value.trim(),pid=parseInt(document.getElementById('f-mproject').value),date=document.getElementById('f-mdate').value;
-  if(!name||!date){alert(t('fillAllFields'));return;}
-  const mid=editCtx.mid;
-  if(mid){const m=milestones.find(x=>x.id===mid);if(m){m.name=name;m.projectId=pid;m.date=date;}}
-  else milestones.push({id:nMid++,name,projectId:pid,date});
-  save();closeForm('milestone');render();
-}
-
+function saveMilestone(){const name=document.getElementById('f-mname').value.trim(),pid=parseInt(document.getElementById('f-mproject').value),date=document.getElementById('f-mdate').value;if(!name||!date){alert(t('fillAllFields'));return;}const mid=editCtx.mid;if(mid){const m=milestones.find(x=>x.id===mid);if(m){m.name=name;m.projectId=pid;m.date=date;}}else milestones.push({id:nMid++,name,projectId:pid,date});save();closeForm('milestone');render();}
 function deleteProjectEdit(){
-  const pid=parseInt(editCtx.pid);
-  const p=projects.find(x=>parseInt(x.id)===pid);
-  if(!p) return;
-  // Show inline confirm inside the form instead of browser confirm()
+  const pid=parseInt(editCtx.pid);const p=projects.find(x=>parseInt(x.id)===pid);if(!p)return;
   const btn=document.getElementById('del-proj-btn');
-  if(btn.dataset.confirming==='1'){
-    // Second click - actually delete
-    btn.dataset.confirming='0';
-    btn.textContent='Project verwijderen';
-    projects=projects.filter(x=>parseInt(x.id)!==pid);
-    milestones=milestones.filter(x=>parseInt(x.projectId)!==pid);
-    save();closeForm('proj');render();
-  } else {
-    // First click - ask for confirmation inline
-    btn.dataset.confirming='1';
-    btn.textContent='Zeker? Klik nogmaals om te bevestigen';
-    setTimeout(()=>{
-      if(btn.dataset.confirming==='1'){
-        btn.dataset.confirming='0';
-        btn.textContent='Project verwijderen';
-      }
-    }, 3000);
-  }
+  if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteProject');projects=projects.filter(x=>parseInt(x.id)!==pid);milestones=milestones.filter(x=>parseInt(x.projectId)!==pid);save();closeForm('proj');render();}
+  else{btn.dataset.confirming='1';btn.textContent=t('sure');setTimeout(()=>{if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteProject');}},3000);}
 }
 function deletePhaseEdit(){
   const btn=document.getElementById('del-phase-btn');
-  if(btn.dataset.confirming==='1'){
-    btn.dataset.confirming='0';
-    btn.textContent='Fase verwijderen';
-    const pid=parseInt(editCtx.pid), phid=parseInt(editCtx.phid);
-    const p=projects.find(x=>parseInt(x.id)===pid);
-    if(p)p.phases=p.phases.filter(x=>parseInt(x.id)!==phid);
-    save();closeForm('phase');render();
-  } else {
-    btn.dataset.confirming='1';
-    btn.textContent='Zeker? Klik nogmaals om te bevestigen';
-    setTimeout(()=>{ if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent='Fase verwijderen';} },3000);
-  }
+  if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deletePhase');const pid=parseInt(editCtx.pid),phid=parseInt(editCtx.phid);const p=projects.find(x=>parseInt(x.id)===pid);if(p)p.phases=p.phases.filter(x=>parseInt(x.id)!==phid);save();closeForm('phase');render();}
+  else{btn.dataset.confirming='1';btn.textContent=t('sure');setTimeout(()=>{if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deletePhase');}},3000);}
 }
 function deleteMilestoneEdit(){
   const btn=document.getElementById('del-ms-btn');
-  if(btn.dataset.confirming==='1'){
-    btn.dataset.confirming='0';
-    btn.textContent='Mijlpaal verwijderen';
-    const mid=parseInt(editCtx.mid);
-    milestones=milestones.filter(x=>parseInt(x.id)!==mid);
-    save();closeForm('milestone');render();
-  } else {
-    btn.dataset.confirming='1';
-    btn.textContent='Zeker? Klik nogmaals om te bevestigen';
-    setTimeout(()=>{ if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent='Mijlpaal verwijderen';} },3000);
-  }
+  if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteMilestone');const mid=parseInt(editCtx.mid);milestones=milestones.filter(x=>parseInt(x.id)!==mid);save();closeForm('milestone');render();}
+  else{btn.dataset.confirming='1';btn.textContent=t('sure');setTimeout(()=>{if(btn.dataset.confirming==='1'){btn.dataset.confirming='0';btn.textContent=t('deleteMilestone');}},3000);}
 }
 
-// Update assignee date bounds when phase dates change
 document.addEventListener('change',e=>{
-  if(e.target.id==='f-fstart'||e.target.id==='f-fdur'||e.target.id==='f-fweekends'){
-    phaseStartOrDurChanged();
-  } else if(e.target.id==='f-fend'){
-    phaseEndChanged();
-  }
-  const s=document.getElementById('f-fstart').value;
-  const en=document.getElementById('f-fend').value;
-  if(s&&en) renderAssigneeRows(s,en);
+  if(e.target.id==='f-fstart'||e.target.id==='f-fdur'||e.target.id==='f-fweekends')phaseStartOrDurChanged();
+  else if(e.target.id==='f-fend')phaseEndChanged();
+  const s=document.getElementById('f-fstart').value,en=document.getElementById('f-fend').value;
+  if(s&&en)renderAssigneeRows(s,en);
 });
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAll();document.querySelectorAll('.contacts-panel,.export-panel,.data-panel').forEach(p=>p.classList.remove('open'));document.getElementById('ics-modal')&&document.getElementById('ics-modal').remove();}});
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){
-    closeAll();
-    document.querySelectorAll('.contacts-panel,.export-panel,.data-panel').forEach(p=>p.classList.remove('open'));
-    document.getElementById('ics-modal')&&document.getElementById('ics-modal').remove();
-  }
-});
-
-/* ══ BACKUP / RESTORE ══ */
 function exportData(){
-  const payload = {
-    version: 1,
-    exported: new Date().toISOString(),
-    projects, milestones, nPid, nPhid, nMid, contactBook
-  };
-  const json = JSON.stringify(payload, null, 2);
-  const date = new Date().toISOString().slice(0,10);
-  const filename = 'project-planner-backup-'+date+'.json';
-  // Show copy modal with the JSON (same reliable approach as ICS)
-  showDataModal(json, filename);
+  const payload={version:1,exported:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook};
+  const json=JSON.stringify(payload,null,2);const date=new Date().toISOString().slice(0,10);const filename='project-planner-backup-'+date+'.json';
+  showDataModal(json,filename);
 }
-
-function showDataModal(json, filename){
-  document.getElementById('data-modal') && document.getElementById('data-modal').remove();
-  const m = document.createElement('div');
-  m.id = 'data-modal';
-  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
-  const safe = json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  m.innerHTML =
-    '<div style="background:#fff;border-radius:12px;padding:24px;max-width:580px;width:100%;font-family:sans-serif;box-shadow:0 8px 32px rgba(0,0,0,.2);">'+
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">'+
-        '<div style="font-weight:600;font-size:14px;">'+filename+'</div>'+
-        '<button onclick="document.getElementById(\x27data-modal\x27).remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:0;">&#10005;</button>'+
-      '</div>'+
-      '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:9px 13px;font-size:12px;color:#1e40af;margin-bottom:12px;line-height:1.7;">'+
-        '<strong>Back-up opslaan:</strong> Klik op <strong>Kopiëren</strong>, open Kladblok, plak, sla op als <strong>'+filename+'</strong> (bestandstype: Alle bestanden). Bewaar dit bestand goed &mdash; use <strong>Back-up / Herstel</strong> to load it back anytime.'+
-      '</div>'+
-      '<textarea readonly style="width:100%;height:160px;font-family:monospace;font-size:10px;border:1px solid #e2e0d8;border-radius:8px;padding:8px;resize:none;background:#f5f4f0;" id="data-ta">'+safe+'</textarea>'+
-      '<div style="display:flex;gap:8px;margin-top:12px;align-items:center;">'+
-        '<button id="data-copy" style="background:#2563eb;color:#fff;border:none;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;">Kopiëren</button>'+
-        '<span id="data-ok" style="font-size:12px;color:#059669;display:none;font-weight:500;">&#10003; Copied!</span>'+
-        '<div style="flex:1"></div>'+
-        '<button onclick="document.getElementById(\x27data-modal\x27).remove()" style="background:#f0efe9;border:1px solid #d0cec4;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;">Sluiten</button>'+
-      '</div>'+
-    '</div>';
-  document.body.appendChild(m);
-  m.addEventListener('click', e=>{ if(e.target===m) m.remove(); });
-  document.getElementById('data-copy').onclick = function(){
-    function ok(){ const el=document.getElementById('data-ok'); if(el){el.style.display='inline';setTimeout(()=>{if(el)el.style.display='none';},2500);} }
-    if(navigator.clipboard){ navigator.clipboard.writeText(json).then(ok).catch(()=>fb()); } else fb();
-    function fb(){ const t=document.createElement('textarea');t.value=json;t.style.cssText='position:fixed;top:-999px;';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(t); }
-  };
+function showDataModal(json,filename){
+  document.getElementById('data-modal')&&document.getElementById('data-modal').remove();
+  const m=document.createElement('div');m.id='data-modal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  const safe=json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  m.innerHTML='<div style="background:#fff;border-radius:12px;padding:24px;max-width:580px;width:100%;font-family:sans-serif;"><div style="font-weight:600;font-size:14px;margin-bottom:12px;">'+filename+'</div><textarea readonly style="width:100%;height:160px;font-family:monospace;font-size:10px;border:1px solid #e2e0d8;border-radius:8px;padding:8px;resize:none;background:#f5f4f0;">'+safe+'</textarea><div style="display:flex;gap:8px;margin-top:12px;"><button id="data-copy" style="background:#2563eb;color:#fff;border:none;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:13px;">Kopi\u00ebren</button><span id="data-ok" style="font-size:12px;color:#059669;display:none;">&#10003; Copied!</span><div style="flex:1"></div><button onclick="document.getElementById(\'data-modal\').remove()" style="background:#f0efe9;border:1px solid #d0cec4;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;">Sluiten</button></div></div>';
+  document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.remove();});
+  document.getElementById('data-copy').onclick=function(){function ok(){const el=document.getElementById('data-ok');if(el){el.style.display='inline';setTimeout(()=>{if(el)el.style.display='none';},2500);}}if(navigator.clipboard){navigator.clipboard.writeText(json).then(ok).catch(()=>fb());}else fb();function fb(){const t=document.createElement('textarea');t.value=json;t.style.cssText='position:fixed;top:-999px;';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(t);}};
 }
-
-function importDataFromInput(input){
-  const file = input.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => importJSON(e.target.result);
-  reader.readAsText(file);
-  input.value = '';
-}
-
+function importDataFromInput(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>importJSON(e.target.result);reader.readAsText(file);input.value='';}
 function importJSON(text){
-  const statusEl = document.getElementById('import-status');
-  try {
-    const d = JSON.parse(text);
-    if(!d.projects || !Array.isArray(d.projects)) throw new Error('Invalid backup file.');
-    if(!confirm('This will replace ALL current planning data with the backup. Continue?')) return;
-    projects   = d.projects   || [];
-    milestones = d.milestones || [];
-    nPid       = d.nPid       || (projects.length ? Math.max(...projects.map(p=>p.id))+1 : 1);
-    nPhid      = d.nPhid      || 1;
-    nMid       = d.nMid       || (milestones.length ? Math.max(...milestones.map(m=>m.id))+1 : 1);
-    if(d.contactBook) { contactBook = d.contactBook; persistContacten(); }
-    save();
-    if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#059669'; statusEl.textContent='\u2713 Imported successfully — '+projects.length+' project'+(projects.length!==1?'s':'')+' loaded.'; }
-    togglePanel('data-panel');
-    render();
-  } catch(err) {
-    if(statusEl){ statusEl.style.display='block'; statusEl.style.color='#dc2626'; statusEl.textContent='\u2717 Bestand kon niet worden gelezen: '+err.message; }
-  }
+  const statusEl=document.getElementById('import-status');
+  try{
+    const d=JSON.parse(text);if(!d.projects||!Array.isArray(d.projects))throw new Error('Invalid backup file.');
+    if(!confirm('This will replace ALL current planning data. Continue?'))return;
+    projects=d.projects||[];milestones=d.milestones||[];
+    nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
+    if(d.contactBook){contactBook=d.contactBook;persistContacten();}
+    save();if(statusEl){statusEl.style.display='block';statusEl.style.color='#059669';statusEl.textContent='\u2713 Geimporteerd \u2014 '+projects.length+' project'+(projects.length!==1?'en':'')+' geladen.';}
+    togglePanel('data-panel');render();applyLang();
+  }catch(err){if(statusEl){statusEl.style.display='block';statusEl.style.color='#dc2626';statusEl.textContent='\u2717 Fout: '+err.message;}}
 }
 
-// Global drag-and-drop onto the page for backup files
-document.addEventListener('dragover', e=>{
-  if([...e.dataTransfer.items].some(i=>i.kind==='file')){
-    e.preventDefault();
-    document.getElementById('drop-zone').classList.add('dragover');
-  }
-});
-document.addEventListener('dragleave', e=>{ if(!e.relatedTarget) document.getElementById('drop-zone').classList.remove('dragover'); });
-document.addEventListener('drop', e=>{
-  document.getElementById('drop-zone').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if(file && file.name.endsWith('.json')){
-    e.preventDefault();
-    const reader = new FileReader();
-    reader.onload = ev => importJSON(ev.target.result);
-    reader.readAsText(file);
-  }
-});
+document.addEventListener('dragover',e=>{if([...e.dataTransfer.items].some(i=>i.kind==='file')){e.preventDefault();const dz=document.getElementById('drop-zone');if(dz)dz.classList.add('dragover');}});
+document.addEventListener('dragleave',e=>{if(!e.relatedTarget){const dz=document.getElementById('drop-zone');if(dz)dz.classList.remove('dragover');}});
+document.addEventListener('drop',e=>{const dz=document.getElementById('drop-zone');if(dz)dz.classList.remove('dragover');const file=e.dataTransfer.files[0];if(file&&file.name.endsWith('.json')){e.preventDefault();const reader=new FileReader();reader.onload=ev=>importJSON(ev.target.result);reader.readAsText(file);}});
 
-loadLang(); loadContacten(); load();
-// One-time fix: snap any existing phase end dates that land on weekends
-projects.forEach(p=>{
-  p.phases.forEach(ph=>{
-    if(!ph.includeWeekends){
-      if(isWeekend(ph.start)) ph.start=snapToWorkday(ph.start);
-      if(isWeekend(ph.end))   ph.end  =snapToWorkdayBack(ph.end);
-      (ph.assignees||[]).forEach(a=>{
-        if(isWeekend(a.start)) a.start=snapToWorkday(a.start);
-        if(isWeekend(a.end))   a.end  =snapToWorkdayBack(a.end);
-      });
-    }
-  });
-});
-save(); appInitializing=false; setSyncStatus('saved'); render(); applyLang();
+loadLang();loadContacten();load();
+projects.forEach(p=>{p.phases.forEach(ph=>{if(!ph.includeWeekends){if(isWeekend(ph.start))ph.start=snapToWorkday(ph.start);if(isWeekend(ph.end))ph.end=snapToWorkdayBack(ph.end);(ph.assignees||[]).forEach(a=>{if(isWeekend(a.start))a.start=snapToWorkday(a.start);if(isWeekend(a.end))a.end=snapToWorkdayBack(a.end);});}});});
+save();appInitializing=false;setSyncStatus('saved');render();applyLang();
 
 /* ══ FIREBASE SYNC ══ */
-// Dynamically load Firebase SDK then initialize
-function loadFirebase(){
-  return new Promise((resolve, reject)=>{
-    if(window.firebase){ resolve(); return; }
-    const s1=document.createElement('script');
-    s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-    s1.onload=()=>{
-      const s2=document.createElement('script');
-      s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-      s2.onload=resolve;
-      s2.onerror=reject;
-      document.head.appendChild(s2);
-    };
-    s1.onerror=reject;
-    document.head.appendChild(s1);
-  });
-}
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",
-  authDomain: "q-line-planning.firebaseapp.com",
-  databaseURL: "https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "q-line-planning",
-  storageBucket: "q-line-planning.firebasestorage.app",
-  messagingSenderId: "699669136620",
-  appId: "1:699669136620:web:c9d5153cfb87f815bb11c9"
+// Firebase scripts loaded in <head> — initialize directly
+const firebaseConfig={
+  apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",
+  authDomain:"q-line-planning.firebaseapp.com",
+  databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"q-line-planning",
+  storageBucket:"q-line-planning.firebasestorage.app",
+  messagingSenderId:"699669136620",
+  appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"
 };
 
-// Will be set after Firebase loads
-let db = null;
-let DATA_REF = null;
+let db=null,DATA_REF=null;
 
 function pushToFirebase(){
+  if(!DATA_REF)return;
   const payload={version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook};
-  DATA_REF.set(payload).catch(e=>console.warn('Firebase:',e));
+  DATA_REF.set(payload).catch(e=>console.warn('Firebase push fout:',e));
 }
 
 function startFirebaseSync(){
   DATA_REF.on('value',snapshot=>{
-    const d=snapshot.val();
-    if(!d||!d.projects) return;
-    projects=d.projects||[];
-    milestones=d.milestones||[];
-    nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
-    nPhid=d.nPhid||1;
-    nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
+    const d=snapshot.val();if(!d||!d.projects)return;
+    projects=d.projects||[];milestones=d.milestones||[];
+    nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
     if(d.contactBook){contactBook=d.contactBook;persistContacts();}
     try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
     render();applyLang();
-    const dot=document.getElementById('sync-dot');
-    const lbl=document.getElementById('sync-label');
-    if(dot) dot.className='sync-dot saved';
-    if(lbl) lbl.textContent='Firebase sync actief';
+    const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+    if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
   });
+  setTimeout(pushToFirebase,2000);
 }
 
-loadFirebase().then(()=>{
+try{
   firebase.initializeApp(firebaseConfig);
-  db = firebase.database();
-  DATA_REF = db.ref('plannerData');
+  db=firebase.database();
+  DATA_REF=db.ref('plannerData');
   startFirebaseSync();
-}).catch(e=>{
-  console.warn('Firebase kon niet laden — offline modus actief');
-  showToast('Offline modus — geen real-time sync');
-});
-</script>
+}catch(e){
+  console.warn('Firebase initialisatie mislukt:',e);
+  showToast('Offline modus \u2014 geen real-time sync');
+}
 
+</script>
 </body>
 </html>
