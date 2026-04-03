@@ -916,13 +916,17 @@ function showICSModal(content, filename){
 }
 
 /* ── day grid ── */
+function sanitizeData(){
+  (projects||[]).forEach(p=>{if(!p.phases)p.phases=[];p.phases.forEach(ph=>{if(!ph.assignees)ph.assignees=[];});});
+  milestones=milestones||[];
+}
 function buildDays(){
   const dates=[
     ...projects.flatMap(p=>[new Date(p.start),new Date(p.end)]),
-    ...projects.flatMap(p=>p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end),
+    ...projects.flatMap(p=>(p.phases||[]).flatMap(ph=>[new Date(ph.start),new Date(ph.end),
       ...(ph.assignees||[]).flatMap(a=>[new Date(a.start),new Date(a.end)])])),
     ...milestones.map(m=>new Date(m.date))
-  ];
+  ].filter(d=>!isNaN(d));
   if(!dates.length){ const n=new Date(); dates.push(n,new Date(n.getFullYear(),n.getMonth()+2,0)); }
   let mn=new Date(Math.min(...dates)), mx=new Date(Math.max(...dates));
   mn=addDays(ymd(mn),-3); mx=addDays(ymd(mx),5);
@@ -1567,7 +1571,7 @@ projects.forEach(p=>{
 });
 save(); appInitializing=false; render(); applyLang();
 loadFirebase().then(()=>{
-  firebase.initializeApp(firebaseConfig);
+  firebase.apps.length?firebase.app():firebase.initializeApp({apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",authDomain:"q-line-planning.firebaseapp.com",databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",projectId:"q-line-planning",storageBucket:"q-line-planning.firebasestorage.app",messagingSenderId:"699669136620",appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"});
   db=firebase.database();
   DATA_REF=db.ref('plannerData');
   startFirebaseSync();
@@ -1612,6 +1616,7 @@ function startFirebaseSync(){
     nPhid=d.nPhid||1;
     nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
     if(d.contactBook){contactBook=d.contactBook;persistContacts();}
+    sanitizeData();
     try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));}catch(e){}
     render();applyLang();
     const dot=document.getElementById('sync-dot');
