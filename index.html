@@ -1007,55 +1007,45 @@ projects.forEach(p=>{p.phases.forEach(ph=>{if(!ph.includeWeekends){if(isWeekend(
 save();appInitializing=false;setSyncStatus('saved');render();applyLang();
 
 /* ══ FIREBASE SYNC ══ */
-const firebaseConfig = {
-  apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",
-  authDomain:"q-line-planning.firebaseapp.com",
-  databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:"q-line-planning",
-  storageBucket:"q-line-planning.firebasestorage.app",
-  messagingSenderId:"699669136620",
-  appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"
-};
-let _db=null,_ref=null;
+var _fbConfig={apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",authDomain:"q-line-planning.firebaseapp.com",databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",projectId:"q-line-planning",storageBucket:"q-line-planning.firebasestorage.app",messagingSenderId:"699669136620",appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"};
+var _fbRef=null;
 function pushToFirebase(){
-  if(!_ref)return;
-  _ref.set({version:1,saved:new Date().toISOString(),projects,milestones,nPid,nPhid,nMid,contactBook})
-    .catch(e=>console.warn('Firebase push:',e));
+  if(!_fbRef)return;
+  _fbRef.set({version:1,saved:new Date().toISOString(),projects:projects,milestones:milestones,nPid:nPid,nPhid:nPhid,nMid:nMid,contactBook:contactBook}).catch(function(e){console.warn('push:',e);});
 }
-function initFirebase(){
-  try{
-    const app=firebase.apps.length?firebase.app():firebase.initializeApp(firebaseConfig);
-    _db=firebase.database();
-    _ref=_db.ref('plannerData');
-    _ref.on('value',snap=>{
-      const d=snap.val();
-      if(!d||!d.projects||!d.projects.length)return;
-      const fbT=d.saved?new Date(d.saved).getTime():0;
-      const lcT=(()=>{try{const m=JSON.parse(localStorage.getItem(PKEY+'_meta')||'{}');return m.saved?new Date(m.saved).getTime():0;}catch(e){return 0;}})();
-      if(fbT<lcT){setTimeout(pushToFirebase,500);}
-      else{
-        projects=d.projects||[];milestones=d.milestones||[];
-        nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
-        nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
-        if(d.contactBook){contactBook=d.contactBook;persistContacts();}
-        try{localStorage.setItem(PKEY,JSON.stringify({projects,milestones,nPid,nPhid,nMid}));
-            localStorage.setItem(PKEY+'_meta',JSON.stringify({saved:d.saved}));}catch(e){}
-        render();applyLang();
-      }
-      const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
-      if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
-    });
-    setTimeout(pushToFirebase,2000);
-    console.log('Firebase OK ✓');
-  }catch(e){
-    console.warn('Firebase fout:',e);
-    showToast('Offline modus — geen real-time sync');
-  }
+function startFbListener(){
+  _fbRef.on('value',function(snap){
+    var d=snap.val();
+    if(!d||!d.projects||!d.projects.length){setTimeout(pushToFirebase,1000);return;}
+    var fbT=d.saved?new Date(d.saved).getTime():0;
+    var lcT=0;try{var m=JSON.parse(localStorage.getItem(PKEY+'_meta')||'{}');lcT=m.saved?new Date(m.saved).getTime():0;}catch(e){}
+    if(fbT<lcT){setTimeout(pushToFirebase,500);}
+    else{
+      projects=d.projects||[];milestones=d.milestones||[];
+      nPid=d.nPid||(projects.length?Math.max.apply(null,projects.map(function(p){return p.id;}))+1:1);
+      nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max.apply(null,milestones.map(function(m){return m.id;}))+1:1);
+      if(d.contactBook){contactBook=d.contactBook;persistContacts();}
+      try{localStorage.setItem(PKEY,JSON.stringify({projects:projects,milestones:milestones,nPid:nPid,nPhid:nPhid,nMid:nMid}));localStorage.setItem(PKEY+'_meta',JSON.stringify({saved:d.saved}));}catch(e){}
+      render();applyLang();
+    }
+    var dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
+    if(dot)dot.className='sync-dot saved';if(lbl)lbl.textContent='Firebase sync actief';
+  });
+  setTimeout(pushToFirebase,2000);
 }
-
 </script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>initFirebase();</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"><\/script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"><\/script>
+<script>
+try{
+  var _app=firebase.initializeApp(_fbConfig);
+  _fbRef=firebase.database().ref('plannerData');
+  startFbListener();
+  console.log('Firebase OK');
+}catch(e){
+  console.warn('Firebase fout:',e.message);
+  showToast('Offline modus');
+}
+</script>
 </body>
 </html>
