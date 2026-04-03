@@ -163,9 +163,6 @@ table{border-collapse:collapse;table-layout:fixed;}
 .drop-zone p{font-size:13px;color:var(--text2);margin-bottom:6px;}
 .drop-zone span{font-size:11px;color:var(--text3);}
 </style>
-<!-- Firebase SDK — loaded directly to avoid CSP issues on GitHub Pages -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 <div id="drag-tooltip"></div>
@@ -1039,16 +1036,22 @@ function startFirebaseSync(){
   setTimeout(pushToFirebase,2000);
 }
 
-try{
-  firebase.initializeApp(firebaseConfig);
-  db=firebase.database();
-  DATA_REF=db.ref('plannerData');
-  startFirebaseSync();
-}catch(e){
-  console.warn('Firebase initialisatie mislukt:',e);
-  showToast('Offline modus \u2014 geen real-time sync');
+function initFirebase(){
+  try{
+    firebase.initializeApp(firebaseConfig);
+    db=firebase.database();
+    DATA_REF=db.ref('plannerData');
+    startFirebaseSync();
+  }catch(e){
+    console.warn('Firebase initialisatie mislukt:',e);
+    showToast('Offline modus \u2014 geen real-time sync');
+  }
 }
 
 </script>
+<!-- Firebase SDK — must load AFTER inline script so global vars exist, BEFORE initFirebase() -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>initFirebase();</script>
 </body>
 </html>
