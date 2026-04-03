@@ -570,10 +570,20 @@ function showToast(msg,isError){
   el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
 }
 
+function sanitizeData(){
+  // Ensure all phases have assignees array — fixes crash on old data
+  (projects||[]).forEach(p=>{
+    if(!p.phases) p.phases=[];
+    p.phases.forEach(ph=>{
+      if(!ph.assignees) ph.assignees=[];
+    });
+  });
+  milestones = milestones||[];
+}
 function load(){
   try{
     const d=JSON.parse(localStorage.getItem(PKEY)||'null');
-    if(d){projects=d.projects||[];milestones=d.milestones||[];nPid=d.nPid||1;nPhid=d.nPhid||1;nMid=d.nMid||1;return;}
+    if(d){projects=d.projects||[];milestones=d.milestones||[];nPid=d.nPid||1;nPhid=d.nPhid||1;nMid=d.nMid||1;sanitizeData();return;}
   }catch(e){}
   projects=[{id:1,name:'Vitafloor USA',orderNr:'PO 30260181',owner:'',start:'2026-03-25',end:'2026-04-29',cp:false,open:true,phases:[
     {id:1,type:'engineering',start:'2026-03-25',end:'2026-03-25',note:'',includeWeekends:false,linked:true,assignees:[{name:'Frank',start:'2026-03-25',end:'2026-03-25'},{name:'Douwe',start:'2026-03-25',end:'2026-03-25'}],assigneesOpen:true},
@@ -1026,6 +1036,7 @@ function startFbListener(){
       nPid=d.nPid||(projects.length?Math.max.apply(null,projects.map(function(p){return p.id;}))+1:1);
       nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max.apply(null,milestones.map(function(m){return m.id;}))+1:1);
       if(d.contactBook){contactBook=d.contactBook;persistContacts();}
+      sanitizeData();
       try{localStorage.setItem(PKEY,JSON.stringify({projects:projects,milestones:milestones,nPid:nPid,nPhid:nPhid,nMid:nMid}));localStorage.setItem(PKEY+'_meta',JSON.stringify({saved:d.saved}));}catch(e){}
       render();applyLang();
     }
