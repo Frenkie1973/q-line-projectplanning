@@ -714,9 +714,11 @@ function cascadeLinked(p,si,delta){
     p.phases[i].start=incWe?rs:(delta>=0?snapToWorkday(rs):snapToWorkdayBack(rs));
     p.phases[i].end=incWe?re:(delta>=0?snapToWorkday(re):snapToWorkdayBack(re));
     (p.phases[i].assignees||[]).forEach(a=>{
-      const as=addDays(a.start,delta),ae=addDays(a.end,delta);
-      a.start=incWe?as:(delta>=0?snapToWorkday(as):snapToWorkdayBack(as));
-      a.end=incWe?ae:(delta>=0?snapToWorkday(ae):snapToWorkdayBack(ae));
+      const rawAS=addDays(a.start,delta);
+      const newAS=incWe?rawAS:(delta>=0?snapToWorkday(rawAS):snapToWorkdayBack(rawAS));
+      const aDur=countDays(a.start,a.end,incWe);
+      a.start=newAS;
+      a.end=addWorkingDays(newAS,aDur,incWe);
     });
   }
   const all=p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end)]);
