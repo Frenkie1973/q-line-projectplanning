@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Q-Line Planning</title>
+<link rel="manifest" href="manifest-viewer.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Q-Line">
+<meta name="theme-color" content="#0f1117">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#23273a;--border:#2e3347;--text:#f0f2ff;--text2:#8b91b0;--accent:#4f7cff;--green:#2dd4a0;--orange:#ff8c42;--red:#ff4f6e;--yellow:#ffd166;--pink:#ff6bb5}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Syne',sans-serif;color:var(--text)}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.screen.hidden{transform:translateX(100%)}
+#home{background:var(--bg)}
+.home-header{padding:56px 24px 16px}
+.home-header h1{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.home-header h1 span{color:var(--accent)}
+.home-subtitle{font-size:12px;color:var(--text2);margin-top:4px;font-family:'DM Mono',monospace}
+.sync-bar{margin:8px 24px 16px;background:var(--surface);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border)}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
+.sync-dot.offline{background:var(--red);box-shadow:0 0 6px var(--red)}
+.sync-text{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;flex:1}
+.sync-btn{font-size:11px;color:var(--accent);font-weight:600;background:none;border:none;cursor:pointer;font-family:'Syne',sans-serif}
+.project-list{flex:1;overflow-y:auto;padding:0 16px 80px;-webkit-overflow-scrolling:touch}
+.project-list::-webkit-scrollbar{display:none}
+.section-label{font-size:10px;color:var(--text2);font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:12px 8px 6px;font-family:'DM Mono',monospace}
+.project-card{background:var(--surface);border-radius:16px;margin-bottom:10px;padding:16px;cursor:pointer;border:1px solid var(--border);transition:transform .1s;position:relative;overflow:hidden}
+.project-card:active{transform:scale(.98);background:var(--surface2)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.card-name{font-size:16px;font-weight:700;line-height:1.2;flex:1;padding-right:8px}
+.card-owner{background:var(--surface2);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;border:1px solid var(--border);white-space:nowrap}
+.phase-bar{display:flex;height:5px;border-radius:5px;overflow:hidden;gap:2px;margin-bottom:10px}
+.phase-seg{height:100%;border-radius:5px;min-width:3px}
+.card-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-meta span{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
+.card-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.card-status.active{background:rgba(45,212,160,.15);color:var(--green)}
+.card-status.done{background:rgba(139,145,176,.1);color:var(--text2)}
+.card-status.upcoming{background:rgba(79,124,255,.15);color:var(--accent)}
+.chevron{color:var(--border);position:absolute;right:14px;top:50%;transform:translateY(-50%)}
+#detail{background:var(--bg)}
+.detail-header{padding:52px 20px 12px}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;margin-bottom:12px}
+.detail-title{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.detail-sub{font-size:11px;color:var(--text2);margin-top:3px;font-family:'DM Mono',monospace}
+.legend{display:flex;flex-wrap:wrap;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2);font-family:'DM Mono',monospace}
+.legend-dot{width:7px;height:7px;border-radius:2px}
+.gantt-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+.gantt-wrap::-webkit-scrollbar{display:none}
+.g-head{display:flex;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
+.g-lh{width:120px;flex-shrink:0;padding:8px 12px;font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;background:var(--bg);border-right:1px solid var(--border)}
+.g-weeks{display:flex}
+.g-wk{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.g-wl{font-size:9px;color:var(--accent);font-family:'DM Mono',monospace;padding:3px 6px;border-bottom:1px solid var(--border);background:var(--bg)}
+.g-days{display:flex}
+.g-day{font-size:8px;color:var(--text2);font-family:'DM Mono',monospace;width:26px;text-align:center;padding:2px 0;background:var(--bg)}
+.g-day.we{color:var(--border)}
+.g-day.td{color:var(--accent);font-weight:700}
+.g-row{display:flex;align-items:center;border-bottom:1px solid var(--border);min-height:44px}
+.g-label{width:120px;flex-shrink:0;padding:6px 10px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10}
+.g-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-family:'DM Mono',monospace}
+.g-note{font-size:10px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:105px}
+.g-cells{display:flex;position:relative;height:44px}
+.g-cell{width:26px;height:44px;flex-shrink:0}
+.g-cell.we{background:rgba(255,255,255,.015)}
+.g-cell.td{background:rgba(79,124,255,.07)}
+.g-bar{position:absolute;top:50%;transform:translateY(-50%);height:22px;border-radius:7px;z-index:5;display:flex;align-items:center;padding:0 7px;font-size:9px;font-weight:600;white-space:nowrap;overflow:hidden;min-width:6px}
+.g-arow{display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.025);min-height:32px}
+.g-alabel{width:120px;flex-shrink:0;padding:3px 10px 3px 18px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10}
+.g-aname{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:98px}
+.g-acells{display:flex;position:relative;height:32px}
+.g-bar.a{height:14px;border-radius:4px;opacity:.65}
+.today-ln{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);z-index:15;opacity:.5;pointer-events:none}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;padding:40px}
+.empty-icon{font-size:44px}.empty-title{font-size:15px;font-weight:600;color:var(--text2);text-align:center}
+.empty-sub{font-size:11px;color:var(--text2);opacity:.6;text-align:center;font-family:'DM Mono',monospace}
+</style>
+</head>
+<body>
+<div class="screen" id="home">
+  <div class="home-header">
+    <h1>Q-Line <span>Planning</span></h1>
+    <div class="home-subtitle" id="sync-sub">Laden...</div>
+  </div>
+  <div class="sync-bar">
+    <div class="sync-dot" id="sync-dot"></div>
+    <div class="sync-text" id="sync-text">Verbinden...</div>
+    <button class="sync-btn" onclick="loadData()">↻</button>
+  </div>
+  <div class="project-list" id="project-list">
+    <div class="loading"><div class="spinner"></div></div>
+  </div>
+</div>
+<div class="screen hidden" id="detail">
+  <div class="detail-header">
+    <button class="back-btn" onclick="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Projecten
+    </button>
+    <div class="detail-title" id="d-title"></div>
+    <div class="detail-sub" id="d-sub"></div>
+  </div>
+  <div class="legend" id="d-legend"></div>
+  <div class="gantt-wrap" id="gantt"></div>
+</div>
+<script>
+const SK='pp-planner-v7';
+const FB='https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app/plannerData.json';
+const TC={outsourcing:'#ff8c42',installation:'#4f7cff',production:'#2dd4a0',transport:'#ffd166',engineering:'#c97cff',buying:'#ff6bb5'};
+const TN={outsourcing:'Uitbesteding',installation:'Installatie',production:'Productie',transport:'Transport',engineering:'Engineering',buying:'Inkoop'};
+const DW=26;
+let projects=[],curProj=null,gDays=[];
+async function loadData(){
+  setStat('load');
+  try{
+    const r=await fetch(FB+'?t='+Date.now());
+    const d=await r.json();
+    if(d&&d.projects){projects=d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));localStorage.setItem(SK,JSON.stringify(d));setStat('on');renderList();return;}
+  }catch(e){}
+  const l=localStorage.getItem(SK);
+  if(l){const d=JSON.parse(l);projects=(d.projects||[]).sort((a,b)=>new Date(a.start)-new Date(b.start));setStat('off');renderList();}
+  else{setStat('off');renderEmpty();}
+}
+function setStat(s){
+  const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text'),sub=document.getElementById('sync-sub');
+  const now=new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  if(s==='on'){dot.className='sync-dot';txt.textContent='Live data';sub.textContent='Bijgewerkt '+now;}
+  else if(s==='off'){dot.className='sync-dot offline';txt.textContent='Cached';sub.textContent='Offline';}
+  else{dot.className='sync-dot offline';txt.textContent='Laden...';sub.textContent='';}
+}
+function ymd(d){return new Date(d instanceof Date?d:d+'T00:00:00').toISOString().slice(0,10);}
+function pd(s){return new Date(s+'T00:00:00');}
+function ad(s,n){const d=pd(s);d.setDate(d.getDate()+n);return ymd(d);}
+function isWE(s){const w=pd(s).getDay();return w===0||w===6;}
+function isToday(s){return ymd(new Date())===s;}
+function fmt(s){return pd(s).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});}
+function diff(a,b){return Math.round((pd(b)-pd(a))/86400000);}
+function buildDays(s,e){const r=[];let c=s;while(c<=e){r.push(c);c=ad(c,1);}return r;}
+function renderList(){
+  const el=document.getElementById('project-list');
+  if(!projects.length){renderEmpty();return;}
+  const today=ymd(new Date());
+  const active=projects.filter(p=>p.start<=today&&p.end>=today);
+  const upcoming=projects.filter(p=>p.start>today);
+  const done=projects.filter(p=>p.end<today);
+  let h='';
+  if(active.length){h+='<div class="section-label">Actief</div>'+active.map(p=>card(p,today,'active')).join('');}
+  if(upcoming.length){h+='<div class="section-label">Aankomend</div>'+upcoming.map(p=>card(p,today,'upcoming')).join('');}
+  if(done.length){h+='<div class="section-label">Afgerond</div>'+done.map(p=>card(p,today,'done')).join('');}
+  el.innerHTML=h;
+}
+function card(p,today,status){
+  const ph=p.phases||[];
+  const total=Math.max(1,diff(p.start,p.end));
+  const bar=ph.map(ph=>{const l=Math.max(1,diff(ph.start,ph.end));return '<div class="phase-seg" style="background:'+(TC[ph.type]||'#4f7cff')+';flex:'+l+'"></div>';}).join('');
+  const pct=status==='active'?Math.round(Math.max(0,Math.min(diff(p.start,today),total))/total*100):null;
+  const statusLabels={active:'actief',done:'klaar',upcoming:'aankomend'};
+  return '<div class="project-card" onclick="openProject(''+p.id+'')">'
+    +'<div class="card-top"><div class="card-name">'+p.name+'</div>'+(p.owner?'<div class="card-owner">'+p.owner+'</div>':'')+'</div>'
+    +'<div class="phase-bar">'+bar+'</div>'
+    +'<div class="card-meta">'
+    +'<span>'+fmt(p.start)+' → '+fmt(p.end)+'</span>'
+    +'<span>'+ph.length+' fases</span>'
+    +(pct!==null?'<span style="color:var(--green)">'+pct+'%</span>':'')
+    +'<span class="card-status '+status+'">'+statusLabels[status]+'</span>'
+    +'</div>'
+    +'<svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>'
+    +'</div>';
+}
+function renderEmpty(){document.getElementById('project-list').innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Geen projecten</div><div class="empty-sub">Open de Q-Line planner op desktop om data te synchroniseren.</div></div>';}
+function openProject(id){
+  curProj=projects.find(p=>String(p.id)===String(id));
+  if(!curProj)return;
+  document.getElementById('d-title').textContent=curProj.name;
+  const ph=curProj.phases||[];
+  document.getElementById('d-sub').textContent=fmt(curProj.start)+' → '+fmt(curProj.end)+(curProj.owner?' · '+curProj.owner:'')+' · '+ph.length+' fases';
+  renderGantt(curProj);
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('detail').classList.remove('hidden');
+  document.getElementById('gantt').scrollLeft=0;
+  document.getElementById('gantt').scrollTop=0;
+}
+function goBack(){document.getElementById('detail').classList.add('hidden');document.getElementById('home').classList.remove('hidden');}
+function renderGantt(proj){
+  const ph=proj.phases||[];
+  if(!ph.length)return;
+  const today=ymd(new Date());
+  gDays=buildDays(proj.start,proj.end);
+  const usedTypes=[...new Set(ph.map(p=>p.type))];
+  document.getElementById('d-legend').innerHTML=usedTypes.map(t=>'<div class="legend-item"><div class="legend-dot" style="background:'+(TC[t]||'#4f7cff')+'"></div>'+(TN[t]||t)+'</div>').join('');
+  // Build weeks
+  const weeks=[];let i=0;
+  while(i<gDays.length){
+    const wd=[];let j=i;
+    while(j<gDays.length){wd.push(gDays[j]);j++;if(j<gDays.length&&pd(gDays[j]).getDay()===1)break;}
+    const dt=pd(gDays[i]);const jan1=new Date(dt.getFullYear(),0,1);
+    const wn=Math.ceil(((dt-jan1)/86400000+jan1.getDay()+1)/7);
+    weeks.push({wn,days:wd});i=j;
+  }
+  let head='<div class="g-head"><div class="g-lh">Fase</div><div class="g-weeks">';
+  weeks.forEach(w=>{
+    head+='<div class="g-wk"><div class="g-wl" style="min-width:'+(w.days.length*DW)+'px">W'+w.wn+'</div><div class="g-days">';
+    w.days.forEach(d=>{const dt=pd(d);const dn=['Z','M','D','W','D','V','Z'];const cls=isWE(d)?'we':'';const tc=isToday(d)?'td':'';head+='<div class="g-day '+cls+' '+tc+'">'+dn[dt.getDay()]+'</div>';});
+    head+='</div></div>';
+  });
+  head+='</div></div>';
+  let rows='';
+  const todayIdx=gDays.indexOf(today);
+  const tln=todayIdx>=0?'<div class="today-ln" style="left:'+(todayIdx*DW+DW/2)+'px"></div>':'';
+  ph.forEach(phase=>{
+    const col=TC[phase.type]||'#4f7cff';
+    const si=gDays.indexOf(phase.start),ei=gDays.indexOf(phase.end);
+    const bl=Math.max(0,si)*DW,bw=Math.max(DW,(Math.max(0,ei)-Math.max(0,si)+1)*DW);
+    rows+='<div class="g-row">'
+      +'<div class="g-label"><div class="g-type" style="color:'+col+'">'+(TN[phase.type]||phase.type)+'</div>'+(phase.note?'<div class="g-note">'+phase.note+'</div>':'')+'</div>'
+      +'<div class="g-cells" style="width:'+(gDays.length*DW)+'px">'
+      +tln
+      +gDays.map(d=>'<div class="g-cell'+(isWE(d)?' we':'')+(isToday(d)?' td':'')+'"></div>').join('')
+      +'<div class="g-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+(col==='#ffd166'?'#1a1d27':'#fff')+';box-shadow:0 2px 8px '+col+'33">'+(phase.note||'')+'</div>'
+      +'</div></div>';
+    (phase.assignees||[]).forEach(a=>{
+      const asi=gDays.indexOf(a.start),aei=gDays.indexOf(a.end);
+      const al=Math.max(0,asi)*DW,aw=Math.max(DW/2,(Math.max(0,aei)-Math.max(0,asi)+1)*DW);
+      rows+='<div class="g-arow"><div class="g-alabel"><div class="g-aname">↳ '+(a.name||'?')+'</div></div>'
+        +'<div class="g-acells" style="width:'+(gDays.length*DW)+'px">'
+        +'<div class="g-bar a" style="left:'+al+'px;width:'+aw+'px;background:'+col+'"></div>'
+        +'</div></div>';
+    });
+  });
+  document.getElementById('gantt').innerHTML=head+rows;
+  setTimeout(()=>{const w=document.getElementById('gantt');w.scrollLeft=Math.max(0,(todayIdx>=0?todayIdx-2:0)*DW);},50);
+}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw-viewer.js').catch(()=>{});
+loadData();
+</script>
+</body>
+</html>
