@@ -823,7 +823,7 @@ function dragMove(e){
   ph.start=newStart;ph.end=newEnd;
   const realDelta=diffDays(orig.start,newStart);
   const snapPh=DS.snap.find(s=>s.id===DS.phid);
-  if(snapPh&&snapPh.assignees){
+  if(snapPh&&snapPh.assignees){/* v2 */
     const _days=buildDays();
     const _phOrigIdx=_days.findIndex(d=>ymd(d)===orig.start);
     const _phNewIdx=_days.findIndex(d=>ymd(d)===ph.start);
