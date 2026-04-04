@@ -122,15 +122,18 @@ const TN={outsourcing:'Uitbesteding',installation:'Installatie',production:'Prod
 const DW=26;
 let projects=[],curProj=null,gDays=[];
 async function loadData(){
-  setStat('load');
-  try{
-    const r=await fetch(FB+'?t='+Date.now());
-    const d=await r.json();
-    if(d&&d.projects){projects=d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));localStorage.setItem(SK,JSON.stringify(d));setStat('on');renderList();return;}
-  }catch(e){}
   const l=localStorage.getItem(SK);
-  if(l){const d=JSON.parse(l);projects=(d.projects||[]).sort((a,b)=>new Date(a.start)-new Date(b.start));setStat('off');renderList();}
-  else{setStat('off');renderEmpty();}
+  if(l){try{const d=JSON.parse(l);if(d&&d.projects&&d.projects.length){projects=d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));setStat('off');renderList();}}catch(e){}}
+  try{
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),8000);
+    const r=await fetch(FB+'?t='+Date.now(),{signal:ctrl.signal});
+    clearTimeout(timer);
+    const d=await r.json();
+    if(d&&d.projects&&d.projects.length){projects=d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));localStorage.setItem(SK,JSON.stringify(d));setStat('on');renderList();}
+  }catch(e){
+    if(!projects.length){setStat('off');renderEmpty();}
+  }
 }
 function setStat(s){
   const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text'),sub=document.getElementById('sync-sub');
