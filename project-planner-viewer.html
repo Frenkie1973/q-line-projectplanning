@@ -167,6 +167,13 @@ table{border-collapse:collapse;table-layout:fixed;}
 .drop-zone p{font-size:13px;color:var(--text2);margin-bottom:6px;}
 .drop-zone span{font-size:11px;color:var(--text3);}
 </style>
+  <link rel="manifest" href="manifest-viewer.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Q-Line Viewer">
+  <meta name="theme-color" content="#1a1a2e">
+  <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 <div id="drag-tooltip"></div>
@@ -1038,6 +1045,12 @@ try{
 }catch(e){
   console.warn('Firebase fout:',e.message);
   showToast('Offline modus');
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw-viewer.js').catch(()=>{});
 }
 </script>
 </body>
