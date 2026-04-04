@@ -710,21 +710,20 @@ function cascadeLinked(p,si,delta){
   for(let i=si+1;i<p.phases.length;i++){
     if(!p.phases[i-1].linked)break;
     const incWe=!!(p.phases[i].includeWeekends);
-    const rs=addDays(p.phases[i].start,delta),re=addDays(p.phases[i].end,delta);
-    p.phases[i].start=incWe?rs:(delta>=0?snapToWorkday(rs):snapToWorkdayBack(rs));
-    p.phases[i].end=incWe?re:(delta>=0?snapToWorkday(re):snapToWorkdayBack(re));
+    const phDur=countDays(p.phases[i].start,p.phases[i].end,incWe);
+    const rawS=addDays(p.phases[i].start,delta);
+    const newS=incWe?rawS:(delta>=0?snapToWorkday(rawS):snapToWorkdayBack(rawS));
+    p.phases[i].start=newS;
+    p.phases[i].end=addWorkingDays(newS,phDur,incWe);
     (p.phases[i].assignees||[]).forEach(a=>{
-      const rawAS=addDays(a.start,delta);
-      const newAS=incWe?rawAS:(delta>=0?snapToWorkday(rawAS):snapToWorkdayBack(rawAS));
       const aDur=countDays(a.start,a.end,incWe);
-      a.start=newAS;
-      a.end=addWorkingDays(newAS,aDur,incWe);
+      const rawA=addDays(a.start,delta);
+      const newA=incWe?rawA:(delta>=0?snapToWorkday(rawA):snapToWorkdayBack(rawA));
+      a.start=newA;
+      a.end=addWorkingDays(newA,aDur,incWe);
     });
   }
-  const all=p.phases.flatMap(ph=>[new Date(ph.start),new Date(ph.end)]);
-  p.start=ymd(new Date(Math.min(...all)));p.end=ymd(new Date(Math.max(...all)));
 }
-
 function render(){
   const days=buildDays(),today=ymd(new Date());
   ['f-fproject','f-mproject'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=projects.map(p=>`<option value="${p.id}">${p.orderNr?p.orderNr+' \u2013 ':''}${p.name}</option>`).join('');});
