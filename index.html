@@ -829,8 +829,10 @@ function dragMove(e){
     const _phNewIdx=_days.findIndex(d=>ymd(d)===ph.start);
     const _realDelta=(_phOrigIdx!==-1&&_phNewIdx!==-1)?_phNewIdx-_phOrigIdx:0;
     snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){
-      const _si=_days.findIndex(d=>ymd(d)===sa.start);
-      const _ei=_days.findIndex(d=>ymd(d)===sa.end);
+      let _si=_days.findIndex(d=>ymd(d)===sa.start);
+      if(_si===-1)_si=_days.findIndex(d=>ymd(d)>=sa.start);
+      let _ei=_days.findIndex(d=>ymd(d)===sa.end);
+      if(_ei===-1)_ei=_days.findIndex(d=>ymd(d)>=sa.end);
       if(_si!==-1&&_days[_si+_realDelta])ph.assignees[i].start=ymd(_days[_si+_realDelta]);
       if(_ei!==-1&&_days[_ei+_realDelta])ph.assignees[i].end=ymd(_days[_ei+_realDelta]);
     }});}
