@@ -823,11 +823,16 @@ function dragMove(e){
   ph.start=newStart;ph.end=newEnd;
   const realDelta=diffDays(orig.start,newStart);
   const snapPh=DS.snap.find(s=>s.id===DS.phid);
-  if(snapPh&&snapPh.assignees){const _days=buildDays();snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){
+  if(snapPh&&snapPh.assignees){
+    const _days=buildDays();
+    const _phOrigIdx=_days.findIndex(d=>ymd(d)===orig.start);
+    const _phNewIdx=_days.findIndex(d=>ymd(d)===ph.start);
+    const _realDelta=(_phOrigIdx!==-1&&_phNewIdx!==-1)?_phNewIdx-_phOrigIdx:0;
+    snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){
       const _si=_days.findIndex(d=>ymd(d)===sa.start);
       const _ei=_days.findIndex(d=>ymd(d)===sa.end);
-      if(_si!==-1&&_days[_si+delta])ph.assignees[i].start=ymd(_days[_si+delta]);
-      if(_ei!==-1&&_days[_ei+delta])ph.assignees[i].end=ymd(_days[_ei+delta]);
+      if(_si!==-1&&_days[_si+_realDelta])ph.assignees[i].start=ymd(_days[_si+_realDelta]);
+      if(_ei!==-1&&_days[_ei+_realDelta])ph.assignees[i].end=ymd(_days[_ei+_realDelta]);
     }});}
   cascadeLinked(proj,DS.idx,delta);
   const cy=e.touches?e.touches[0].clientY:e.clientY;
