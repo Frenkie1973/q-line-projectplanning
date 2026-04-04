@@ -823,18 +823,19 @@ function dragMove(e){
   ph.start=newStart;ph.end=newEnd;
   const realDelta=diffDays(orig.start,newStart);
   const snapPh=DS.snap.find(s=>s.id===DS.phid);
-  if(snapPh&&snapPh.assignees){/* v2 */
+  if(snapPh&&snapPh.assignees){
     const _days=buildDays();
-    const _phOrigIdx=_days.findIndex(d=>ymd(d)===orig.start);
-    const _phNewIdx=_days.findIndex(d=>ymd(d)===ph.start);
-    const _realDelta=(_phOrigIdx!==-1&&_phNewIdx!==-1)?_phNewIdx-_phOrigIdx:0;
+    const _opi=_days.findIndex(d=>ymd(d)===orig.start);
+    const _npi=_days.findIndex(d=>ymd(d)===ph.start);
+    const _rd=(_opi!==-1&&_npi!==-1)?_npi-_opi:0;
+    const _incWe=!!(ph.includeWeekends);
     snapPh.assignees.forEach((sa,i)=>{if(ph.assignees[i]){
       let _si=_days.findIndex(d=>ymd(d)===sa.start);
-      if(_si===-1)_si=_days.findIndex(d=>ymd(d)>=sa.start);
+      if(_si===-1)_si=_days.findIndex(d=>ymd(d)>sa.start)-1;
       let _ei=_days.findIndex(d=>ymd(d)===sa.end);
-      if(_ei===-1)_ei=_days.findIndex(d=>ymd(d)>=sa.end);
-      if(_si!==-1&&_days[_si+_realDelta])ph.assignees[i].start=ymd(_days[_si+_realDelta]);
-      if(_ei!==-1&&_days[_ei+_realDelta])ph.assignees[i].end=ymd(_days[_ei+_realDelta]);
+      if(_ei===-1)_ei=_days.findIndex(d=>ymd(d)>sa.end)-1;
+      if(_si>=0&&_days[_si+_rd]){const v=ymd(_days[_si+_rd]);ph.assignees[i].start=(!_incWe&&isWeekend(v))?snapToWorkday(v):v;}
+      if(_ei>=0&&_days[_ei+_rd]){const v=ymd(_days[_ei+_rd]);ph.assignees[i].end=(!_incWe&&isWeekend(v))?snapToWorkdayBack(v):v;}
     }});}
   cascadeLinked(proj,DS.idx,delta);
   const cy=e.touches?e.touches[0].clientY:e.clientY;
