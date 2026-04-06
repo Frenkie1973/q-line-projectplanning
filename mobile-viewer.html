@@ -296,7 +296,7 @@ function diff(a,b){return Math.round((pd(b)-pd(a))/86400000)}
 function isWE(s){const w=pd(s).getDay();return w===0||w===6}
 function isToday(s){return ymd(new Date())===s}
 function fmt(s){return pd(s).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}
-function buildDays(s,e){const r=[];let c=s;while(c<=e){r.push(c);c=ad(c,1)}return r}
+function buildDays(s,e){const r=[];let c=s;let g=0;while(c<=e&&g++<400){r.push(c);c=ad(c,1)}return r}
 
 async function loadData(){
   const local = localStorage.getItem(SK);
@@ -535,7 +535,7 @@ function buildGantt(proj){
 
     rows+='<div class="gantt-phase-row'+(hasAssignees?' has-assignees':'')+'"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div>';
     rows+='<div class="gantt-cells" style="width:'+(gDays.length*DW)+'px">'+todayLine;
-    rows+=gDays.map(d=>'<div class="gantt-cell'+(isWE(d)?' we':'')+(isToday(d)?' td':'')+'"></div>').join('');
+    rows+=gDays.slice(0,400).map(d=>'<div class="gantt-cell'+(isWE(d)?' we':'')+(isToday(d)?' td':'')+'"></div>').join('');
     rows+='<div class="gantt-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+colText+';box-shadow:0 0 0 1px '+col+'80">'+(phase.note||label)+'</div></div></div>';
 
     if(hasAssignees){
