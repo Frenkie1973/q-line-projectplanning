@@ -9,252 +9,552 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Q-Line">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#23273a;--border:#2e3347;--text:#f0f2ff;--text2:#8b91b0;--accent:#4f7cff;--green:#2dd4a0;--orange:#ff8c42;--red:#ff4f6e;--yellow:#ffd166;--pink:#ff6bb5}
-html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Syne',sans-serif;color:var(--text)}
-.screen{position:fixed;inset:0;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.4,0,.2,1)}
-.screen.hidden{transform:translateX(100%)}
-#home{background:var(--bg)}
-.home-header{padding:56px 24px 16px}
-.home-header h1{font-size:30px;font-weight:800;letter-spacing:-.5px}
-.home-header h1 span{color:var(--accent)}
-.home-subtitle{font-size:12px;color:var(--text2);margin-top:4px;font-family:'DM Mono',monospace}
-.sync-bar{margin:8px 24px 16px;background:var(--surface);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border)}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0}
-.sync-dot.offline{background:var(--red);box-shadow:0 0 6px var(--red)}
-.sync-text{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;flex:1}
-.sync-btn{font-size:11px;color:var(--accent);font-weight:600;background:none;border:none;cursor:pointer;font-family:'Syne',sans-serif}
-.project-list{flex:1;overflow-y:auto;padding:0 16px 80px;-webkit-overflow-scrolling:touch}
+:root{
+  --bg:#0a0a0a;
+  --surface:#111111;
+  --surface2:#1a1a1a;
+  --border:#222222;
+  --border2:#2a2a2a;
+  --text:#f0f0f0;
+  --text2:#888;
+  --text3:#555;
+  --red:#8B0000;
+  --red-bright:#c0392b;
+  --red-light:#1a0000;
+  --gold:#c9a84c;
+  --gold-dark:#8a6f2e;
+  --gold-light:#1a1400;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',sans-serif;color:var(--text)}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;will-change:transform;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.screen.slide-out{transform:translateX(-30%)}
+.screen.slide-in{transform:translateX(100%)}
+.screen.hidden{transform:translateX(100%);pointer-events:none}
+
+/* ─── HEADER ─── */
+.header{
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  padding:0 16px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-shrink:0;
+  position:relative;
+}
+.header-logo{
+  width:32px;height:32px;
+  background:var(--red);
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.header-logo svg{width:20px;height:20px}
+.header-titles{flex:1}
+.header-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px;color:var(--text)}
+.header-name span{color:var(--gold)}
+.header-sub{font-size:11px;color:var(--text3);margin-top:-1px}
+.header-sync{display:flex;align-items:center;gap:5px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;flex-shrink:0}
+.sync-dot.off{background:var(--text3)}
+.sync-label{font-size:10px;color:var(--text3)}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;padding:0;flex-shrink:0}
+.back-arrow{width:16px;height:16px;fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ─── HOME SCREEN ─── */
+.filter-bar{
+  display:flex;gap:0;padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.filter-btn{
+  padding:5px 14px;font-size:12px;font-weight:600;
+  border:1px solid var(--border2);background:none;
+  color:var(--text3);cursor:pointer;font-family:'Barlow',sans-serif;
+  transition:all .15s;
+}
+.filter-btn:first-child{border-radius:4px 0 0 4px}
+.filter-btn:last-child{border-radius:0 4px 4px 0}
+.filter-btn+.filter-btn{border-left:none}
+.filter-btn.active{background:var(--red);border-color:var(--red);color:#fff}
+
+.project-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 0 80px}
 .project-list::-webkit-scrollbar{display:none}
-.section-label{font-size:10px;color:var(--text2);font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:12px 8px 6px;font-family:'DM Mono',monospace}
-.project-card{background:var(--surface);border-radius:16px;margin-bottom:10px;padding:16px;cursor:pointer;border:1px solid var(--border);transition:transform .1s;position:relative;overflow:hidden}
-.project-card:active{transform:scale(.98);background:var(--surface2)}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
-.card-name{font-size:16px;font-weight:700;line-height:1.2;flex:1;padding-right:8px}
-.card-owner{background:var(--surface2);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;border:1px solid var(--border);white-space:nowrap}
-.phase-bar{display:flex;height:5px;border-radius:5px;overflow:hidden;gap:2px;margin-bottom:10px}
-.phase-seg{height:100%;border-radius:5px;min-width:3px}
-.card-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.card-meta span{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
-.card-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
-.card-status.active{background:rgba(45,212,160,.15);color:var(--green)}
-.card-status.done{background:rgba(139,145,176,.1);color:var(--text2)}
-.card-status.upcoming{background:rgba(79,124,255,.15);color:var(--accent)}
-.chevron{color:var(--border);position:absolute;right:14px;top:50%;transform:translateY(-50%)}
-#detail{background:var(--bg)}
-.detail-header{padding:52px 20px 12px}
-.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;margin-bottom:12px}
-.detail-title{font-size:22px;font-weight:800;letter-spacing:-.3px}
-.detail-sub{font-size:11px;color:var(--text2);margin-top:3px;font-family:'DM Mono',monospace}
-.legend{display:flex;flex-wrap:wrap;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border)}
-.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2);font-family:'DM Mono',monospace}
-.legend-dot{width:7px;height:7px;border-radius:2px}
-.gantt-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
-.gantt-wrap::-webkit-scrollbar{display:none}
-.g-head{display:flex;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
-.g-lh{width:120px;flex-shrink:0;padding:8px 12px;font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;background:var(--bg);border-right:1px solid var(--border)}
-.g-weeks{display:flex}
-.g-wk{display:flex;flex-direction:column;border-right:1px solid var(--border)}
-.g-wl{font-size:9px;color:var(--accent);font-family:'DM Mono',monospace;padding:3px 6px;border-bottom:1px solid var(--border);background:var(--bg)}
-.g-days{display:flex}
-.g-day{font-size:8px;color:var(--text2);font-family:'DM Mono',monospace;width:26px;text-align:center;padding:2px 0;background:var(--bg)}
-.g-day.we{color:var(--border)}
-.g-day.td{color:var(--accent);font-weight:700}
-.g-row{display:flex;align-items:center;border-bottom:1px solid var(--border);min-height:44px}
-.g-label{width:120px;flex-shrink:0;padding:6px 10px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10}
-.g-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-family:'DM Mono',monospace}
-.g-note{font-size:10px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:105px}
-.g-cells{display:flex;position:relative;height:44px}
-.g-cell{width:26px;height:44px;flex-shrink:0}
-.g-cell.we{background:rgba(255,255,255,.015)}
-.g-cell.td{background:rgba(79,124,255,.07)}
-.g-bar{position:absolute;top:50%;transform:translateY(-50%);height:22px;border-radius:7px;z-index:5;display:flex;align-items:center;padding:0 7px;font-size:9px;font-weight:600;white-space:nowrap;overflow:hidden;min-width:6px}
-.g-arow{display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.025);min-height:32px}
-.g-alabel{width:120px;flex-shrink:0;padding:3px 10px 3px 18px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10}
-.g-aname{font-size:10px;color:var(--text2);font-family:'DM Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:98px}
-.g-acells{display:flex;position:relative;height:32px}
-.g-bar.a{height:14px;border-radius:4px;opacity:.65}
-.today-ln{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);z-index:15;opacity:.5;pointer-events:none}
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
-.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+
+.section-label{
+  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);padding:12px 16px 6px;font-family:'Barlow Condensed',sans-serif;
+}
+
+.proj-card{
+  margin:0 12px 6px;
+  background:var(--surface);
+  border-radius:6px;
+  border:1px solid var(--border);
+  padding:12px 14px;
+  cursor:pointer;
+  transition:border-color .15s,background .1s;
+  position:relative;
+  overflow:hidden;
+}
+.proj-card::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--red);
+  border-radius:6px 0 0 6px;
+}
+.proj-card.upcoming::before{background:var(--border2)}
+.proj-card.done::before{background:var(--text3)}
+.proj-card:active{background:var(--surface2)}
+
+.proj-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.proj-name{font-size:15px;font-weight:600;color:var(--text);flex:1;padding-right:8px;line-height:1.2}
+.proj-owner{font-size:10px;color:var(--text3);background:var(--surface2);border:1px solid var(--border2);padding:2px 8px;border-radius:3px;white-space:nowrap;font-weight:500}
+
+.phase-strip{display:flex;height:4px;border-radius:2px;overflow:hidden;gap:1px;margin-bottom:8px}
+.phase-seg{height:4px;border-radius:1px;min-width:3px}
+
+.proj-meta{display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:2px}
+.meta-item{font-size:11px;color:var(--text3);display:flex;align-items:center}
+.meta-item+.meta-item::before{content:'·';margin:0 6px;color:var(--border2)}
+.meta-pct{color:var(--gold);font-weight:600}
+.meta-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:2px;margin-left:8px}
+.badge-active{background:rgba(139,0,0,.25);color:#ff6b6b;border:1px solid rgba(139,0,0,.4)}
+.badge-upcoming{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+.badge-done{background:var(--surface2);color:var(--text3);border:1px solid var(--border2)}
+
+/* ─── GANTT SCREEN ─── */
+.gantt-project-header{
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  background:var(--surface);
+}
+.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.gantt-proj-meta{display:flex;gap:12px;margin-top:3px}
+.gantt-proj-meta span{font-size:11px;color:var(--text3)}
+.gantt-proj-meta .prog{color:var(--gold);font-weight:600}
+
+.gantt-legend{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+.gantt-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;position:relative}
+.gantt-wrap::-webkit-scrollbar{height:3px;width:3px}
+.gantt-wrap::-webkit-scrollbar-track{background:var(--border)}
+.gantt-wrap::-webkit-scrollbar-thumb{background:var(--red)}
+
+.gantt-inner{min-width:max-content}
+.gantt-head{display:flex;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
+.gantt-lh{width:110px;flex-shrink:0;padding:6px 10px;font-size:10px;color:var(--text3);background:var(--bg);border-right:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.05em}
+.gantt-weeks{display:flex}
+.gantt-wk{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.gantt-wl{font-size:9px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:600;padding:2px 6px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+.gantt-days{display:flex}
+.gantt-day{font-size:8px;color:var(--text3);width:28px;text-align:center;padding:3px 0;background:var(--bg)}
+.gantt-day.we{color:var(--border2)}
+.gantt-day.td{color:var(--gold);font-weight:700;background:rgba(201,168,76,.06)}
+
+.gantt-phase-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:48px}
+.gantt-phase-row.has-assignees{min-height:44px}
+.gantt-pl{width:110px;flex-shrink:0;padding:6px 10px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;flex-direction:column;justify-content:center}
+.gantt-pt{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Barlow Condensed',sans-serif}
+.gantt-pn{font-size:10px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94px}
+.gantt-cells{position:relative;display:flex;align-items:center;flex:1}
+.gantt-cell{width:28px;height:100%;flex-shrink:0;border-right:1px solid transparent}
+.gantt-cell.we{background:rgba(255,255,255,.012)}
+.gantt-cell.td{background:rgba(201,168,76,.05)}
+.gantt-bar{
+  position:absolute;top:50%;transform:translateY(-50%);
+  height:26px;border-radius:3px;z-index:5;
+  display:flex;align-items:center;padding:0 8px;
+  font-size:9px;font-weight:600;white-space:nowrap;overflow:hidden;
+  font-family:'Barlow Condensed',sans-serif;letter-spacing:.03em;
+  min-width:6px;
+}
+.gantt-arow{display:flex;align-items:stretch;border-bottom:1px solid rgba(255,255,255,.03);min-height:30px}
+.gantt-al{width:110px;flex-shrink:0;padding:3px 10px 3px 18px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;align-items:center}
+.gantt-aname{font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px}
+.gantt-acells{position:relative;display:flex;align-items:center;flex:1;height:30px}
+.gantt-abar{position:absolute;height:14px;border-radius:2px;opacity:.6}
+
+.today-line{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);z-index:15;opacity:.7;pointer-events:none}
+.today-line::before{content:'';position:absolute;top:0;left:-3px;width:7px;height:7px;background:var(--gold);border-radius:50%}
+
+/* ─── PROGRESS BAR ─── */
+.gantt-progress{padding:8px 16px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;gap:10px}
+.gantt-progress-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.gantt-progress-fill{height:3px;background:var(--gold);border-radius:2px}
+.gantt-progress-pct{font-size:11px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
+.gantt-progress-label{font-size:10px;color:var(--text3)}
+
+/* ─── STATES ─── */
+.spinner-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
+.spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;padding:40px}
-.empty-icon{font-size:44px}.empty-title{font-size:15px;font-weight:600;color:var(--text2);text-align:center}
-.empty-sub{font-size:11px;color:var(--text2);opacity:.6;text-align:center;font-family:'DM Mono',monospace}
+.spinner-text{font-size:11px;color:var(--text3)}
+
+/* ─── TYPE COLORS ─── */
 </style>
 </head>
 <body>
+
+<!-- ═══ HOME SCREEN ═══ -->
 <div class="screen" id="home">
-  <div class="home-header">
-    <h1>Q-Line <span>Planning</span></h1>
-    <div class="home-subtitle" id="sync-sub">Laden...</div>
+  <div class="header">
+    <div class="header-logo">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 10a7 7 0 1 0 14 0A7 7 0 0 0 3 10Z" stroke="#c9a84c" stroke-width="1.5"/>
+        <path d="M10 6v4l3 2" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M3 10H1M19 10h-2M10 1V3M10 17v2" stroke="#c9a84c" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-titles">
+      <div class="header-name">Q-Line <span>Planning</span></div>
+      <div class="header-sub" id="home-sub">Laden...</div>
+    </div>
+    <div class="header-sync">
+      <div class="sync-dot off" id="sync-dot"></div>
+      <span class="sync-label" id="sync-label">--:--</span>
+    </div>
   </div>
-  <div class="sync-bar">
-    <div class="sync-dot" id="sync-dot"></div>
-    <div class="sync-text" id="sync-text">Verbinden...</div>
-    <button class="sync-btn" onclick="loadData()">↻</button>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Alle</button>
+    <button class="filter-btn" data-filter="active" onclick="setFilter('active')">Actief</button>
+    <button class="filter-btn" data-filter="upcoming" onclick="setFilter('upcoming')">Aankomend</button>
+    <button class="filter-btn" data-filter="done" onclick="setFilter('done')">Klaar</button>
   </div>
+
   <div class="project-list" id="project-list">
-    <div class="loading"><div class="spinner"></div></div>
+    <div class="spinner-wrap"><div class="spinner"></div><span class="spinner-text">Projecten laden...</span></div>
   </div>
 </div>
-<div class="screen hidden" id="detail">
-  <div class="detail-header">
+
+<!-- ═══ GANTT SCREEN ═══ -->
+<div class="screen hidden" id="gantt-screen">
+  <div class="header">
     <button class="back-btn" onclick="goBack()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Projecten
+      <svg class="back-arrow" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+      Terug
     </button>
-    <div class="detail-title" id="d-title"></div>
-    <div class="detail-sub" id="d-sub"></div>
+    <div class="header-titles">
+      <div class="header-name" id="gantt-title">Project</div>
+    </div>
+    <div class="header-sync">
+      <div class="sync-dot" id="gantt-sync-dot"></div>
+    </div>
   </div>
-  <div class="legend" id="d-legend"></div>
-  <div class="gantt-wrap" id="gantt"></div>
+  <div class="gantt-project-header">
+    <div class="gantt-proj-name" id="gantt-proj-name"></div>
+    <div class="gantt-proj-meta">
+      <span id="gantt-dates"></span>
+      <span id="gantt-owner"></span>
+      <span class="prog" id="gantt-pct"></span>
+    </div>
+  </div>
+  <div class="gantt-legend" id="gantt-legend"></div>
+  <div class="gantt-wrap" id="gantt-wrap"></div>
+  <div class="gantt-progress">
+    <span class="gantt-progress-label" id="prog-label">Voortgang</span>
+    <div class="gantt-progress-bar"><div class="gantt-progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <span class="gantt-progress-pct" id="prog-pct">0%</span>
+  </div>
 </div>
+
 <script>
-const SK='pp-planner-v7';
-const FB='https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app/plannerData.json';
-const TC={outsourcing:'#ff8c42',installation:'#4f7cff',production:'#2dd4a0',transport:'#ffd166',engineering:'#c97cff',buying:'#ff6bb5'};
-const TN={outsourcing:'Uitbesteding',installation:'Installatie',production:'Productie',transport:'Transport',engineering:'Engineering',buying:'Inkoop'};
-const DW=26;
-let projects=[],curProj=null,gDays=[];
+const SK = 'pp-planner-v7';
+const FB = 'https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app/plannerData.json';
+const TC = {
+  outsourcing:'#8B0000', installation:'#1a4a7a', production:'#1a5c3a',
+  transport:'#7a6000', engineering:'#4a1a6a', buying:'#6a1a3a'
+};
+const TN = {
+  outsourcing:'Uitbesteding', installation:'Installatie', production:'Productie',
+  transport:'Transport', engineering:'Engineering', buying:'Inkoop'
+};
+const TC_TEXT = {
+  outsourcing:'#ff8080', installation:'#80b4e8', production:'#80d4a8',
+  transport:'#ffd980', engineering:'#c980ff', buying:'#ff80b4'
+};
+const DW = 28;
+
+let projects = [], curFilter = 'all', curProj = null, gDays = [];
+
+function ymd(d){return new Date(d instanceof Date?d:d+'T00:00:00').toISOString().slice(0,10)}
+function pd(s){return new Date(s+'T00:00:00')}
+function ad(s,n){const d=pd(s);d.setDate(d.getDate()+n);return ymd(d)}
+function diff(a,b){return Math.round((pd(b)-pd(a))/86400000)}
+function isWE(s){const w=pd(s).getDay();return w===0||w===6}
+function isToday(s){return ymd(new Date())===s}
+function fmt(s){return pd(s).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}
+function buildDays(s,e){const r=[];let c=s;while(c<=e){r.push(c);c=ad(c,1)}return r}
+
 async function loadData(){
-  // Load from cache immediately so UI shows fast
-  const l=localStorage.getItem(SK);
-  if(l){try{const d=JSON.parse(l);if(d&&d.projects&&d.projects.length){projects=d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));setStat('off');renderList();}}catch(e){}}
-  // Then fetch from Firebase in background
+  const local = localStorage.getItem(SK);
+  if(local){
+    try{
+      const d = JSON.parse(local);
+      if(d&&d.projects&&d.projects.length){
+        projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+        setSyncState(false);
+        renderList();
+      }
+    }catch(e){}
+  }
   try{
-    const ctrl=new AbortController();
-    const timer=setTimeout(()=>ctrl.abort(),8000);
-    const r=await fetch(FB+'?t='+Date.now(),{signal:ctrl.signal});
-    clearTimeout(timer);
-    const d=await r.json();
-    if(d&&d.projects&&d.projects.length){projects=d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));localStorage.setItem(SK,JSON.stringify(d));setStat('on');renderList();}
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 8000);
+    const r = await fetch(FB+'?t='+Date.now(), {signal:ctrl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if(d&&d.projects&&d.projects.length){
+      projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+      localStorage.setItem(SK, JSON.stringify(d));
+      setSyncState(true);
+      renderList();
+    }
   }catch(e){
-    if(!projects.length){setStat('off');renderEmpty();}
+    if(!projects.length){setSyncState(false);renderEmpty();}
   }
 }
-function setStat(s){
-  const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text'),sub=document.getElementById('sync-sub');
-  const now=new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
-  if(s==='on'){dot.className='sync-dot';txt.textContent='Live data';sub.textContent='Bijgewerkt '+now;}
-  else if(s==='off'){dot.className='sync-dot offline';txt.textContent='Cached';sub.textContent='Offline';}
-  else{dot.className='sync-dot offline';txt.textContent='Laden...';sub.textContent='';}
+
+function setSyncState(online){
+  const dot = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  const sub = document.getElementById('home-sub');
+  const now = new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  if(online){
+    dot.className='sync-dot';
+    label.textContent=now;
+    sub.textContent='Live · bijgewerkt '+now;
+  } else {
+    dot.className='sync-dot off';
+    label.textContent='cache';
+    sub.textContent='Offline · lokale data';
+  }
 }
-function ymd(d){return new Date(d instanceof Date?d:d+'T00:00:00').toISOString().slice(0,10);}
-function pd(s){return new Date(s+'T00:00:00');}
-function ad(s,n){const d=pd(s);d.setDate(d.getDate()+n);return ymd(d);}
-function isWE(s){const w=pd(s).getDay();return w===0||w===6;}
-function isToday(s){return ymd(new Date())===s;}
-function fmt(s){return pd(s).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});}
-function diff(a,b){return Math.round((pd(b)-pd(a))/86400000);}
-function buildDays(s,e){const r=[];let c=s;while(c<=e){r.push(c);c=ad(c,1);}return r;}
+
+function setFilter(f){
+  curFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.filter===f);
+  });
+  renderList();
+}
+
 function renderList(){
-  const el=document.getElementById('project-list');
-  if(!projects.length){renderEmpty();return;}
-  const today=ymd(new Date());
-  const active=projects.filter(p=>p.start<=today&&p.end>=today);
-  const upcoming=projects.filter(p=>p.start>today);
-  const done=projects.filter(p=>p.end<today);
-  el.innerHTML='';
-  function addSection(label,arr,status){
-    if(!arr.length)return;
-    const lbl=document.createElement('div');
-    lbl.className='section-label';lbl.textContent=label;el.appendChild(lbl);
-    arr.forEach(p=>el.appendChild(card(p,today,status)));
+  const el = document.getElementById('project-list');
+  if(!projects.length){renderEmpty();return}
+  const today = ymd(new Date());
+  let filtered = projects;
+  if(curFilter==='active') filtered = projects.filter(p=>p.start<=today&&p.end>=today);
+  else if(curFilter==='upcoming') filtered = projects.filter(p=>p.start>today);
+  else if(curFilter==='done') filtered = projects.filter(p=>p.end<today);
+
+  if(!filtered.length){
+    el.innerHTML = '<div style="padding:40px 16px;text-align:center;color:var(--text3);font-size:13px">Geen projecten in deze categorie</div>';
+    return;
   }
-  addSection('Actief',active,'active');
-  addSection('Aankomend',upcoming,'upcoming');
-  addSection('Afgerond',done,'done');
+
+  el.innerHTML = '';
+  const active = filtered.filter(p=>p.start<=today&&p.end>=today);
+  const upcoming = filtered.filter(p=>p.start>today);
+  const done = filtered.filter(p=>p.end<today);
+
+  function addSection(label, arr, status){
+    if(!arr.length) return;
+    if(curFilter==='all'){
+      const lbl = document.createElement('div');
+      lbl.className='section-label';lbl.textContent=label;
+      el.appendChild(lbl);
+    }
+    arr.forEach(p=>el.appendChild(buildCard(p,today,status)));
+  }
+  addSection('Actief', active, 'active');
+  addSection('Aankomend', upcoming, 'upcoming');
+  addSection('Afgerond', done, 'done');
 }
-function card(p,today,status){
-  const ph=p.phases||[];
-  const total=Math.max(1,diff(p.start,p.end));
-  const bar=ph.map(ph=>{const l=Math.max(1,diff(ph.start,ph.end));return '<div class="phase-seg" style="background:'+(TC[ph.type]||'#4f7cff')+';flex:'+l+'"></div>';}).join('');
-  const pct=status==='active'?Math.round(Math.max(0,Math.min(diff(p.start,today),total))/total*100):null;
-  const statusLabels={active:'actief',done:'klaar',upcoming:'aankomend'};
-  const div=document.createElement('div');
-  div.className='project-card';
-  div.dataset.id=p.id;
-  div.innerHTML='<div class="card-top"><div class="card-name">'+p.name+'</div>'+(p.owner?'<div class="card-owner">'+p.owner+'</div>':'')+'</div>'
-    +'<div class="phase-bar">'+bar+'</div>'
-    +'<div class="card-meta">'
-    +'<span>'+fmt(p.start)+' → '+fmt(p.end)+'</span>'
-    +'<span>'+ph.length+' fases</span>'
-    +(pct!==null?'<span style="color:var(--green)">'+pct+'%</span>':'')
-    +'<span class="card-status '+status+'">'+statusLabels[status]+'</span>'
+
+function buildCard(p, today, status){
+  const ph = p.phases||[];
+  const total = Math.max(1, diff(p.start, p.end));
+  const pct = Math.round(Math.max(0,Math.min(diff(p.start,today),total))/total*100);
+
+  const card = document.createElement('div');
+  card.className = 'proj-card ' + status;
+
+  const strip = ph.map(ph=>{
+    const l = Math.max(1, diff(ph.start, ph.end));
+    return '<div class="phase-seg" style="background:'+((TC[ph.type]||'#333'))+';flex:'+l+'"></div>';
+  }).join('');
+
+  let badgeHTML = '';
+  if(status==='active') badgeHTML = '<span class="meta-badge badge-active">actief</span>';
+  else if(status==='upcoming') badgeHTML = '<span class="meta-badge badge-upcoming">aankomend</span>';
+  else badgeHTML = '<span class="meta-badge badge-done">klaar</span>';
+
+  card.innerHTML =
+    '<div class="proj-card-top">'
+    +'<div class="proj-name">'+p.name+'</div>'
+    +(p.owner?'<div class="proj-owner">'+p.owner+'</div>':'')
     +'</div>'
-    +'<svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
-  div.addEventListener('click',()=>openProject(p.id));
-  return div;
+    +'<div class="phase-strip">'+strip+'</div>'
+    +'<div class="proj-meta">'
+    +'<span class="meta-item">'+fmt(p.start)+' – '+fmt(p.end)+'</span>'
+    +'<span class="meta-item">'+ph.length+' fases</span>'
+    +(status==='active'?'<span class="meta-item meta-pct">'+pct+'%</span>':'')
+    +badgeHTML
+    +'</div>';
+
+  card.addEventListener('click', ()=>openGantt(p.id));
+  return card;
 }
-function renderEmpty(){document.getElementById('project-list').innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Geen projecten</div><div class="empty-sub">Open de Q-Line planner op desktop om data te synchroniseren.</div></div>';}
-function openProject(id){
-  curProj=projects.find(p=>String(p.id)===String(id));
-  if(!curProj)return;
-  document.getElementById('d-title').textContent=curProj.name;
-  const ph=curProj.phases||[];
-  document.getElementById('d-sub').textContent=fmt(curProj.start)+' → '+fmt(curProj.end)+(curProj.owner?' · '+curProj.owner:'')+' · '+ph.length+' fases';
-  renderGantt(curProj);
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('detail').classList.remove('hidden');
-  document.getElementById('gantt').scrollLeft=0;
-  document.getElementById('gantt').scrollTop=0;
+
+function renderEmpty(){
+  document.getElementById('project-list').innerHTML =
+    '<div style="padding:60px 16px;text-align:center">'
+    +'<div style="font-size:13px;color:var(--text3)">Geen projecten gevonden</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:6px;opacity:.6">Open de Q-Line planner op desktop<br>om data te synchroniseren.</div>'
+    +'</div>';
 }
-function goBack(){document.getElementById('detail').classList.add('hidden');document.getElementById('home').classList.remove('hidden');}
-function renderGantt(proj){
-  const ph=proj.phases||[];
-  if(!ph.length)return;
-  const today=ymd(new Date());
-  gDays=buildDays(proj.start,proj.end);
-  const usedTypes=[...new Set(ph.map(p=>p.type))];
-  document.getElementById('d-legend').innerHTML=usedTypes.map(t=>'<div class="legend-item"><div class="legend-dot" style="background:'+(TC[t]||'#4f7cff')+'"></div>'+(TN[t]||t)+'</div>').join('');
+
+function openGantt(id){
+  curProj = projects.find(p=>String(p.id)===String(id));
+  if(!curProj) return;
+  const today = ymd(new Date());
+  const ph = curProj.phases||[];
+  const total = Math.max(1,diff(curProj.start,curProj.end));
+  const pct = Math.round(Math.max(0,Math.min(diff(curProj.start,today),total))/total*100);
+
+  document.getElementById('gantt-title').textContent = curProj.name;
+  document.getElementById('gantt-proj-name').textContent = curProj.name;
+  document.getElementById('gantt-dates').textContent = fmt(curProj.start)+' – '+fmt(curProj.end);
+  document.getElementById('gantt-owner').textContent = curProj.owner||'';
+  document.getElementById('gantt-pct').textContent = pct+'%';
+  document.getElementById('gantt-sync-dot').className = document.getElementById('sync-dot').className;
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  document.getElementById('prog-label').textContent = pct===100?'Afgerond':pct>50?'Op schema':'In uitvoering';
+
+  buildGantt(curProj);
+
+  const home = document.getElementById('home');
+  const gantt = document.getElementById('gantt-screen');
+  home.classList.add('slide-out');
+  gantt.classList.remove('hidden');
+  gantt.classList.add('slide-in');
+  requestAnimationFrame(()=>{
+    gantt.classList.remove('slide-in');
+    home.addEventListener('transitionend',()=>{home.classList.add('hidden');},{once:true});
+  });
+  const ganttWrap = document.getElementById('gantt-wrap');
+  ganttWrap.scrollTop=0;
+  ganttWrap.scrollLeft=0;
+  setTimeout(()=>{
+    const todayIdx = gDays.indexOf(today);
+    if(todayIdx>0) ganttWrap.scrollLeft = Math.max(0,(todayIdx-3)*DW);
+  },50);
+}
+
+function goBack(){
+  const home = document.getElementById('home');
+  const gantt = document.getElementById('gantt-screen');
+  home.classList.remove('hidden','slide-out');
+  gantt.classList.add('slide-in');
+  gantt.addEventListener('transitionend',()=>{gantt.classList.add('hidden');},{once:true});
+}
+
+function buildGantt(proj){
+  const ph = proj.phases||[];
+  const today = ymd(new Date());
+  gDays = buildDays(proj.start, proj.end);
+
+  // Legend
+  const usedTypes = [...new Set(ph.map(p=>p.type))];
+  document.getElementById('gantt-legend').innerHTML = usedTypes.map(t=>
+    '<div class="legend-item">'
+    +'<div class="legend-dot" style="background:'+(TC[t]||'#333')+'"></div>'
+    +(TN[t]||t)
+    +'</div>'
+  ).join('');
+
   // Build weeks
-  const weeks=[];let i=0;
+  const weeks = [];
+  let i=0;
   while(i<gDays.length){
     const wd=[];let j=i;
-    while(j<gDays.length){wd.push(gDays[j]);j++;if(j<gDays.length&&pd(gDays[j]).getDay()===1)break;}
-    const dt=pd(gDays[i]);const jan1=new Date(dt.getFullYear(),0,1);
+    while(j<gDays.length){
+      wd.push(gDays[j]);j++;
+      if(j<gDays.length&&pd(gDays[j]).getDay()===1)break;
+    }
+    const dt=pd(gDays[i]);
+    const jan1=new Date(dt.getFullYear(),0,1);
     const wn=Math.ceil(((dt-jan1)/86400000+jan1.getDay()+1)/7);
     weeks.push({wn,days:wd});i=j;
   }
-  let head='<div class="g-head"><div class="g-lh">Fase</div><div class="g-weeks">';
+
+  const todayIdx = gDays.indexOf(today);
+  const todayLine = todayIdx>=0
+    ? '<div class="today-line" style="left:'+(todayIdx*DW+DW/2)+'px"></div>'
+    : '';
+
+  // Header
+  let head = '<div class="gantt-inner"><div class="gantt-head"><div class="gantt-lh">Fase</div><div class="gantt-weeks">';
   weeks.forEach(w=>{
-    head+='<div class="g-wk"><div class="g-wl" style="min-width:'+(w.days.length*DW)+'px">W'+w.wn+'</div><div class="g-days">';
-    w.days.forEach(d=>{const dt=pd(d);const dn=['Z','M','D','W','D','V','Z'];const cls=isWE(d)?'we':'';const tc=isToday(d)?'td':'';head+='<div class="g-day '+cls+' '+tc+'">'+dn[dt.getDay()]+'</div>';});
+    head += '<div class="gantt-wk"><div class="gantt-wl" style="min-width:'+(w.days.length*DW)+'px">W'+w.wn+'</div><div class="gantt-days">';
+    w.days.forEach(d=>{
+      const dt=pd(d);const dn=['Z','M','D','W','D','V','Z'];
+      const cls=(isWE(d)?'we':'')+(isToday(d)?' td':'');
+      const dayNum=dt.getDate();
+      head+='<div class="gantt-day '+cls+'">'+(cls.includes('td')?'▼':dn[dt.getDay()])+'<br>'+dayNum+'</div>';
+    });
     head+='</div></div>';
   });
   head+='</div></div>';
+
+  // Rows
   let rows='';
-  const todayIdx=gDays.indexOf(today);
-  const tln=todayIdx>=0?'<div class="today-ln" style="left:'+(todayIdx*DW+DW/2)+'px"></div>':'';
   ph.forEach(phase=>{
-    const col=TC[phase.type]||'#4f7cff';
-    const si=gDays.indexOf(phase.start),ei=gDays.indexOf(phase.end);
-    const bl=Math.max(0,si)*DW,bw=Math.max(DW,(Math.max(0,ei)-Math.max(0,si)+1)*DW);
-    rows+='<div class="g-row">'
-      +'<div class="g-label"><div class="g-type" style="color:'+col+'">'+(TN[phase.type]||phase.type)+'</div>'+(phase.note?'<div class="g-note">'+phase.note+'</div>':'')+'</div>'
-      +'<div class="g-cells" style="width:'+(gDays.length*DW)+'px">'
-      +tln
-      +gDays.map(d=>'<div class="g-cell'+(isWE(d)?' we':'')+(isToday(d)?' td':'')+'"></div>').join('')
-      +'<div class="g-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+(col==='#ffd166'?'#1a1d27':'#fff')+';box-shadow:0 2px 8px '+col+'33">'+(phase.note||'')+'</div>'
-      +'</div></div>';
-    (phase.assignees||[]).forEach(a=>{
-      const asi=gDays.indexOf(a.start),aei=gDays.indexOf(a.end);
-      const al=Math.max(0,asi)*DW,aw=Math.max(DW/2,(Math.max(0,aei)-Math.max(0,asi)+1)*DW);
-      rows+='<div class="g-arow"><div class="g-alabel"><div class="g-aname">↳ '+(a.name||'?')+'</div></div>'
-        +'<div class="g-acells" style="width:'+(gDays.length*DW)+'px">'
-        +'<div class="g-bar a" style="left:'+al+'px;width:'+aw+'px;background:'+col+'"></div>'
-        +'</div></div>';
-    });
+    const col = TC[phase.type]||'#333';
+    const colText = TC_TEXT[phase.type]||'#ccc';
+    const label = TN[phase.type]||phase.type;
+    const si=gDays.indexOf(phase.start);
+    const ei=gDays.indexOf(phase.end);
+    const bl=Math.max(0,si)*DW;
+    const bw=Math.max(DW,(Math.max(0,ei)-Math.max(0,si)+1)*DW);
+    const hasAssignees = phase.assignees&&phase.assignees.length>0;
+
+    rows+='<div class="gantt-phase-row'+(hasAssignees?' has-assignees':'')+'"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div>';
+    rows+='<div class="gantt-cells" style="width:'+(gDays.length*DW)+'px">'+todayLine;
+    rows+=gDays.map(d=>'<div class="gantt-cell'+(isWE(d)?' we':'')+(isToday(d)?' td':'')+'"></div>').join('');
+    rows+='<div class="gantt-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+colText+';box-shadow:0 0 0 1px '+col+'80">'+(phase.note||label)+'</div></div></div>';
+
+    if(hasAssignees){
+      phase.assignees.forEach(a=>{
+        const asi=gDays.indexOf(a.start);const aei=gDays.indexOf(a.end);
+        const al=Math.max(0,asi)*DW;
+        const aw=Math.max(DW/2,(Math.max(0,aei)-Math.max(0,asi)+1)*DW);
+        rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">↳ '+(a.name||'?')+'</div></div>';
+        rows+='<div class="gantt-acells" style="width:'+(gDays.length*DW)+'px">';
+        rows+=todayLine;
+        rows+='<div class="gantt-abar" style="left:'+al+'px;width:'+aw+'px;background:'+col+'"></div></div></div>';
+      });
+    }
   });
-  document.getElementById('gantt').innerHTML=head+rows;
-  setTimeout(()=>{const w=document.getElementById('gantt');w.scrollLeft=Math.max(0,(todayIdx>=0?todayIdx-2:0)*DW);},50);
+
+  document.getElementById('gantt-wrap').innerHTML = head+rows+'</div>';
 }
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw-viewer.js').catch(()=>{});
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw-viewer.js').catch(()=>{});
 loadData();
 </script>
 </body>
