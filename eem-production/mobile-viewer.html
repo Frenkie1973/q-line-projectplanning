@@ -77,14 +77,14 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 
 .proj-meta{display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:2px}
 .meta-item{font-size:11px;color:var(--text3);display:flex;align-items:center}
-.meta-item+.meta-item::before{content:'·';margin:0 6px;color:var(--border2)}
+.meta-item+.meta-item::before{content:'.';margin:0 6px;color:var(--border2)}
 .meta-pct{color:var(--gold);font-weight:600}
 .meta-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:2px;margin-left:8px}
 .badge-active{background:rgba(139,0,0,.25);color:#ff6b6b;border:1px solid rgba(139,0,0,.4)}
 .badge-upcoming{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
 .badge-done{background:var(--surface2);color:var(--text3);border:1px solid var(--border2)}
 
-/* ─── GANTT SCREEN ─── */
+/* --- GANTT SCREEN --- */
 .gantt-project-header{
   padding:10px 16px;
   border-bottom:1px solid var(--border);
@@ -142,25 +142,25 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .today-line{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);z-index:15;opacity:.7;pointer-events:none}
 .today-line::before{content:'';position:absolute;top:0;left:-3px;width:7px;height:7px;background:var(--gold);border-radius:50%}
 
-/* ─── PROGRESS BAR ─── */
+/* --- PROGRESS BAR --- */
 .gantt-progress{padding:8px 16px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;gap:10px}
 .gantt-progress-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
 .gantt-progress-fill{height:3px;background:var(--gold);border-radius:2py}
 .gantt-progress-pct{font-size:11px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
 .gantt-progress-label{font-size:10px;color:var(--text3)}
 
-/* ─── STATES ─── */
+/* --- STATES --- */
 .spinner-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
 .spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner-text{font-size:11px;color:var(--text3)}
 
-/* ─── TYPE COLORS ─── */
+/* --- TYPE COLORS --- */
 </style>
 </head>
 <body>
 
-<!-- ═══ HOME SCREEN ═══ -->
+<!--     HOME SCREEN     -->
 <div class="screen" id="home">
   <div class="header">
     <div class="header-logo">
@@ -192,7 +192,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   </div>
 </div>
 
-<!-- ═══ GANTT SCREEN ═══ -->
+<!--     GANTT SCREEN     -->
 <div class="screen hidden" id="gantt-screen">
   <div class="header">
     <button class="back-btn" onclick="goBack()">
@@ -288,11 +288,11 @@ function setSyncState(online){
   if(online){
     dot.className='sync-dot';
     label.textContent=now;
-    sub.textContent='Live · bijgewerkt '+now;
+    sub.textContent='Live . bijgewerkt '+now;
   } else {
     dot.className='sync-dot off';
     label.textContent='cache';
-    sub.textContent='Offline · lokale data';
+    sub.textContent='Offline . lokale data';
   }
 }
 
@@ -362,7 +362,7 @@ function buildCard(p, today, status){
     +'</div>'
     +'<div class="phase-strip">'+strip+'</div>'
     +'<div class="proj-meta">'
-    +'<span class="meta-item">'+fmt(p.start)+' – '+fmt(p.end)+'</span>'
+    +'<span class="meta-item">'+fmt(p.start)+' - '+fmt(p.end)+'</span>'
     +'<span class="meta-item">'+ph.length+' fases</span>'
     +(status==='active'?'<span class="meta-item meta-pct">'+pct+'%</span>':'')
     +badgeHTML
@@ -390,7 +390,7 @@ function openGantt(id){
 
   document.getElementById('gantt-title').textContent = curProj.name;
   document.getElementById('gantt-proj-name').textContent = curProj.name;
-  document.getElementById('gantt-dates').textContent = fmt(curProj.start)+' – '+fmt(curProj.end);
+  document.getElementById('gantt-dates').textContent = fmt(curProj.start)+' - '+fmt(curProj.end);
   document.getElementById('gantt-owner').textContent = curProj.owner||'';
   document.getElementById('gantt-pct').textContent = pct+'%';
   document.getElementById('gantt-sync-dot').className = document.getElementById('sync-dot').className;
@@ -462,7 +462,7 @@ function buildGantt(proj){
       const dt=pd(d);const dn=['Z','M','D','W','D','V','Z'];
       const cls=(isWE(d)?'we':'')+(isToday(d)?' td':'');
       const dayNum=dt.getDate();
-      head+='<div class="gantt-day '+cls+'">'+(cls.includes('td')?'▼':dn[dt.getDay()])+'<br>'+dayNum+'</div>';
+      head+='<div class="gantt-day '+cls+'">'+(cls.includes('td')?'v':dn[dt.getDay()])+'<br>'+dayNum+'</div>';
     });
     head+='</div></div>';
   });
@@ -486,7 +486,7 @@ function buildGantt(proj){
         const asi=gDays.indexOf(a.start);const aei=gDays.indexOf(a.end);
         const al=Math.max(0,asi)*DW;
         const aw=Math.max(DU/2,(Math.max(0,aei)-Math.max(0,asi)+1)*DW);
-        rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">↳ '+(a.name||'?')+'</div></div>';
+        rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">  '+(a.name||'?')+'</div></div>';
         rows+='<div class="gantt-acells" style="width:'+(gDays.length*DW)+'px">';
         rows+=todayLine;
         rows+='<div class="gantt-abar" style="left:'+al+'px;width:'+av+ 'px;background:'+col+'"></div></div></div>';
