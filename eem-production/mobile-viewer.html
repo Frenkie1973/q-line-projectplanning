@@ -429,7 +429,9 @@ function goBack(){
 function buildGantt(proj){
   const ph = proj.phases||[];
   const today = ymd(new Date());
-  gDays = buildDays(proj.start, proj.end);
+  var rangeEnd = proj.end;
+  ph.forEach(function(p){if(p.end > rangeEnd) rangeEnd = p.end;});
+  gDays = buildDays(proj.start, rangeEnd);
 
   const usedTypes = [...new Set(ph.map(p=>p.type))];
   document.getElementById('gantt-legend').innerHTML = usedTypes.map(t=>
