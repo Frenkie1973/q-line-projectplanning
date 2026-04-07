@@ -1,1 +1,25 @@
-{"name":"Q-Line Planner Viewer","short_name":"Q-Line","description":"Q-Line productie Gantt viewer","start_url":"/q-line-projectplanning/project-planner-viewer.html","scope":"/q-line-projectplanning/","display":"standalone","orientation":"landscape","background_color":"#1a1a2e","theme_color":"#1a1a2e","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "Q-Line Planning",
+  "short_name": "Q-Line",
+  "description": "Q-Line productie planning viewer",
+  "start_url": "/q-line-projectplanning/mobile-viewer.html",
+  "scope": "/q-line-projectplanning/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
