@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Q-Line Editor</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Q-Line Edit">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--surface3:#222;
+  --border:#222;--border2:#2a2a2a;
+  --text:#f0f0f0;--text2:#888;--text3:#555;
+  --red:#8B0000;--red2:#c0392b;--gold:#c9a84c;
+  --green:#2ecc71;--blue:#1a4a7a;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',sans-serif;color:var(--text)}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;will-change:transform;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.screen.slide-out{transform:translateX(-30%)}
+.screen.slide-in{transform:translateX(100%)}
+.screen.hidden{transform:translateX(100%);pointer-events:none}
+
+/* HEADER */
+.header{background:var(--bg);border-bottom:1px solid var(--border);padding:0 16px;height:56px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.header-logo{width:32px;height:32px;background:var(--red);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header-logo svg{width:20px;height:20px}
+.header-titles{flex:1}
+.header-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px}
+.header-name span{color:var(--gold)}
+.header-sub{font-size:11px;color:var(--text3);margin-top:-1px}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;padding:0;flex-shrink:0}
+.back-arrow{width:16px;height:16px;fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.save-btn{background:var(--red);border:none;color:#fff;font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;cursor:pointer;font-family:'Barlow',sans-serif;flex-shrink:0}
+.save-btn:disabled{background:var(--surface3);color:var(--text3)}
+.save-btn.saving{background:var(--gold);color:#000}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sync-dot.off{background:var(--text3)}
+
+/* LIST SCREEN */
+.list-toolbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.add-proj-btn{display:flex;align-items:center;gap:6px;background:var(--red);border:none;color:#fff;font-size:13px;font-weight:600;padding:8px 14px;border-radius:4px;cursor:pointer;font-family:'Barlow',sans-serif;margin-left:auto}
+.project-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 0 80px}
+.project-list::-webkit-scrollbar{display:none}
+.proj-card{margin:0 12px 6px;background:var(--surface);border-radius:6px;border:1px solid var(--border);padding:12px 14px;cursor:pointer;transition:border-color .15s,background .1s;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px}
+.proj-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);border-radius:6px 0 0 6px}
+.proj-card:active{background:var(--surface2)}
+.proj-info{flex:1;min-width:0}
+.proj-name-text{font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-meta-row{font-size:11px;color:var(--text3);margin-top:2px}
+.proj-chevron{color:var(--text3);font-size:18px;flex-shrink:0}
+
+/* EDIT SCREEN */
+.edit-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 100px}
+.edit-scroll::-webkit-scrollbar{display:none}
+
+.section-head{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin:20px 0 8px;padding-left:2px}
+.section-head:first-child{margin-top:0}
+
+.field-group{background:var(--surface);border-radius:6px;border:1px solid var(--border);overflow:hidden;margin-bottom:4px}
+.field-row{display:flex;align-items:center;padding:0 14px;min-height:48px;border-bottom:1px solid var(--border);gap:10px}
+.field-row:last-child{border-bottom:none}
+.field-label{font-size:13px;color:var(--text2);width:90px;flex-shrink:0}
+.field-input{flex:1;background:none;border:none;color:var(--text);font-size:15px;font-family:'Barlow',sans-serif;outline:none;min-width:0;padding:12px 0}
+.field-input::placeholder{color:var(--text3)}
+.field-select{flex:1;background:none;border:none;color:var(--text);font-size:15px;font-family:'Barlow',sans-serif;outline:none;min-width:0;-webkit-appearance:none;cursor:pointer;padding:12px 0}
+.field-select option{background:var(--surface2);color:var(--text)}
+.toggle-row{display:flex;align-items:center;padding:0 14px;min-height:48px;gap:10px}
+.toggle-label{font-size:14px;color:var(--text);flex:1}
+.toggle{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:13px;transition:.2s;cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{bickground:var(--gold)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+
+/* PHASES */
+.phases-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.phase-card{background:var(--surface);border-radius:6px;border:1px solid var(--border);overflow:hidden}
+.phase-header{display:flex;align-items:center;padding:10px 14px;gap:10px;cursor:pointer}
+.phase-color{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.phase-title{flex:1;font-size:14px;font-weight:600}
+.phase-dates{font-size:11px;color:var(--text3)}
+.phase-delete{background:none;border:none;color:var(--text3);font-size:20px;line-height:1;cursor:pointer;padding:4px;flex-shrink:0}
+.phase-delete:active{color:#ff4444}
+.phase-body{padding:0 14px 14px;border-top:1px solid var(--border);display:none}
+.phase-body.open{display:block}
+.phase-field{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
+.phase-field:last-child{border-bottom:none}
+.phase-field-label{font-size:12px;color:var(--text2);width:80px;flex-shrink:0}
+.phase-field-input{flex:1;background:none;border:none;color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;outline:none;min-width:0}
+.phase-field-input::placeholder{color:var(--text3)}
+.phase-field-select{flex:1;background:none;border:none;color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;outline:none;-webkit-appearance:none;cursor:pointer}
+.phase-field-select option{background:var(--surface2)}
+.phase-toggle{position:relative;width:36px;height:22px;flex-shrink:0}
+.phase-toggle input{opacity:0;width:0;height:0;position:absolute}
+.phase-toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:11px;transition:.2s;cursor:pointer}
+.phase-toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.phase-toggle input:checked+.phase-toggle-slider{background:var(--gold)}
+.phase-toggle input:checked+.phase-toggle-slider::before{transform:translateX(14px)}
+
+.add-phase-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--surface);border:1px dashed var(--border2);border-radius:6px;color:var(--text3);font-size:14px;font-family:'Barlow',sans-serif;cursor:pointer;font-weight:600}
+.add-phase-btn:active{background:var(--surface2)}
+
+/* DELETE PROJECT */
+.delete-proj-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:none;border:1px solid rgba(139,0,0,.3);border-radius:6px;color:#ff6b6b;font-size:14px;font-family:'Barlow',sans-serif;cursor:pointer;font-weight:600;margin-top:8px}
+.delete-proj-btn:active{background:rgba(139,0,0,.1)}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:#ff6b6b;color:#ff6b6b}
+
+/* SPINNER */
+.spinner-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
+.spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-text{font-size:11px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<!-- HOME SCREEN -->
+<div class="screen" id="screen-home">
+  <div class="header">
+    <div class="header-logo">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 10a7 7 0 1 0 14 0A7 7 0 0 0 3 10Z" stroke="#c9a84c" stroke-width="1.5"/>
+        <path d="M10 6v4l3 2" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M3 10H1M19 10h-2M10 1V3M10 17v2" stroke="#c9a84c" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-titles">
+      <div class="header-name">Q-Line <span>Editor</span></div>
+      <div class="header-sub" id="home-sub">Laden...</div>
+    </div>
+    <div class="sync-dot off" id="sync-dot"></div>
+  </div>
+
+  <div class="list-toolbar">
+    <span style="font-size:12px;color:var(--text3)" id="proj-count"></span>
+    <button class="add-proj-btn" onclick="newProject()">+ Nieuw project</button>
+  </div>
+
+  <div class="project-list" id="project-list">
+    <div class="spinner-wrap"><div class="spinner"></div><span class="spinner-text">Projecten laden...</span></div>
+  </div>
+</div>
+
+<!-- EDIT SCREEN -->
+<div class="screen hidden" id="screen-edit">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">
+      <svg class="back-arrow" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+      Terug
+    </button>
+    <div class="header-titles">
+      <div class="header-name" id="edit-title">Project</div>
+    </div>
+    <button class="save-btn" id="save-btn" onclick="saveProject()">Opslaan</button>
+  </div>
+
+  <div class="edit-scroll" id="edit-scroll">
+    <!-- dynamisch gegenereerd -->
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FB = 'https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app/plannerData.json';
+const SK = 'pp-planner-v7';
+const TC = {outsourcing:'#8B0000',installation:'#1a4a7a',production:'#1a5c3a',transport:'#7a6000',engineering:'#4a1a6a',buying:'#6a1a3a'};
+const TN = {outsourcing:'Uitbesteding',installation:'Installatie',production:'Productie',transport:'Transport',engineering:'Engineering',buying:'Inkoop'};
+
+let projects = [], curProj = null, curProjCopy = null, isDirty = false;
+
+// ---- DATA ----
+async function loadData(){
+  const local = localStorage.getItem(SK);
+  if(local){
+    try{
+      const d = JSON.parse(local);
+      if(d&&d.projects&&d.projects.length){
+        projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+        setSyncState(false);
+        renderList();
+      }
+    }catch(e){}
+  }
+  try{
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(),8000);
+    const r = await fetch(FB+'?t='+Date.now(),{signal:ctrl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if(d&&d.projects&&d.projects.length){
+      projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+      localStorage.setItem(SK, JSON.stringify(d));
+      setSyncState(true);
+      renderList();
+    }
+  }catch(e){
+    if(!projects.length) renderEmpty();
+  }
+}
+
+async function saveToFirebase(data){
+  const r = await fetch(FB,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  });
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+function setSyncState(online){
+  const dot = document.getElementById('sync-dot');
+  const sub = document.getElementById('home-sub');
+  const now = new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  dot.className = online ? 'sync-dot' : 'sync-dot off';
+  sub.textContent = online ? 'Live bijgewerkt '+now : 'Offline - lokale data';
+}
+
+// ---- LIST ----
+function renderList(){
+  const el = document.getElementById('project-list');
+  document.getElementById('proj-count').textContent = projects.length+' projecten';
+  if(!projects.length){ renderEmpty(); return; }
+  el.innerHTML = projects.map(p=>`
+    <div class="proj-card" onclick="openEdit(${p.id})">
+      <div class="proj-info">
+        <div class="proj-name-text">${p.name||'Naamloos'}</div>
+        <div class="proj-meta-row">${p.owner||''} &nbsp;|&nbsp; ${fmtDate(p.start)} - ${fmtDate(p.end)} &nbsp;|&nbsp; ${(p.phases||[]).length} fases</div>
+      </div>
+      <div class="proj-chevron">&#8250;</div>
+    </div>
+  `).join('');
+}
+
+function renderEmpty(){
+  document.getElementById('project-list').innerHTML = '<div style="padding:60px 16px;text-align:center;color:var(--text3);font-size:13px">Geen projecten gevonden.<br><br>Tik op "+ Nieuw project" om te beginnen.</div>';
+}
+
+// ---- NEW PROJECT ----
+function newProject(){
+  const newId = Date.now();
+  const today = ymd(new Date());
+  const newP = {
+    id: newId, name:'', owner:'', orderNr:'',
+    start: today, end: today,
+    phases: [], open:false, cp:false
+  };
+  openEdit(null, newP);
+}
+
+// ---- EDIT ----
+function openEdit(id, overrideProj){
+  curProj = overrideProj || JSON.parse(JSON.stringify(projects.find(p=>p.id===id)));
+  curProjCopy = JSON.parse(JSON.stringify(curProj));
+  isDirty = !!overrideProj;
+  document.getElementById('edit-title').textContent = curProj.name||'Nieuw project';
+  updateSaveBtn();
+  renderEditForm();
+  // Slide
+  const home = document.getElementById('screen-home');
+  const edit = document.getElementById('screen-edit');
+  home.classList.add('slide-out');
+  edit.classList.remove('hidden');
+  edit.classList.add('slide-in');
+  requestAnimationFrame(()=>{
+    edit.classList.remove('slide-in');
+    home.addEventListener('transitionend',()=>home.classList.add('hidden'),{once:true});
+  });
+  document.getElementById('edit-scroll').scrollTop=0;
+}
+
+function goBack(){
+  if(isDirty){
+    if(!confirm('Wijzigingen niet opgeslagen. Toch terug?')) return;
+  }
+  const home = document.getElementById('screen-home');
+  const edit = document.getElementById('screen-edit');
+  home.classList.remove('hidden','slide-out');
+  edit.classList.add('slide-in');
+  edit.addEventListener('transitionend',()=>edit.classList.add('hidden'),{once:true});
+  curProj = null;
+}
+
+function updateSaveBtn(){
+  const btn = document.getElementById('save-btn');
+  btn.textContent = isDirty ? 'Opslaan*' : 'Opslaan';
+  btn.disabled = false;
+}
+
+function markDirty(){
+  isDirty = true;
+  updateSaveBtn();
+  document.getElementById('edit-title').textContent = (curProj.name||'Project')+' *';
+}
+
+// ---- RENDER EDIT FORM ----
+function renderEditForm(){
+  const ph = curProj.phases||[];
+  const phasesHTML = ph.map((phase,i)=>renderPhaseCard(phase,i)).join('');
+  
+  document.getElementById('edit-scroll').innerHTML = `
+    <div class="section-head">Projectgegevens</div>
+    <div class="field-group">
+      <div class="field-row">
+        <span class="field-label">Naam</span>
+        <input class="field-input" placeholder="Projectnaam" value="${esc(curProj.name||'')}" oninput="updateField('name',this.value)">
+      </div>
+      <div class="field-row">
+        <span class="field-label">Eigenaar</span>
+        <input class="field-input" placeholder="Naam" value="${esc(curProj.owner||'')}" oninput="updateField('owner',this.value)">
+      </div>
+      <div class="field-row">
+        <span class="field-label">Ordernr.</span>
+        <input class="field-input" placeholder="Ordernummer" value="${esc(curProj.orderNr||'')}" oninput="updateField('orderNr',this.value)">
+      </div>
+      <div class="field-row">
+        <span class="field-label">Startdatum</span>
+        <input class="field-input" type="date" value="${curProj.start||''}" oninput="updateField('start',this.value)">
+      </div>
+      <div class="field-row">
+        <span class="field-label">Einddatum</span>
+        <input class="field-input" type="date" value="${curProj.end||''}" oninput="updateField('end',this.value)">
+      </div>
+    </div>
+
+    <div class="section-head">Fases</div>
+    <div class="phases-list" id="phases-list">${phasesHTML}</div>
+    <button class="add-phase-btn" onclick="addPhase()">+ Fase toevoegen</button>
+
+    <button class="delete-proj-btn" onclick="deleteProject()">Verwijder project</button>
+  `;
+}
+
+function renderPhaseCard(phase, i){
+  const col = TC[phase.type]||'#555';
+  const open = phase._open ? 'open' : '';
+  return `<div class="phase-card" id="phase-card-${phase.id}">
+    <div class="phase-header" onclick="togglePhase(${phase.id})">
+      <div class="phase-color" style="background:${col}"></div>
+      <div class="phase-title">${TN[phase.type]||phase.type}</div>
+      <div class="phase-dates">${phase.note||''} ${fmtDate(phase.start)} - ${fmtDate(phase.end)}</div>
+      <button class="phase-delete" onclick="event.stopPropagation();deletePhase(${phase.id})">&#215;</button>
+    </div>
+    <div class="phase-body ${open}" id="phase-body-${phase.id}">
+      <div class="phase-field">
+        <span class="phase-field-label">Type</span>
+        <select class="phase-field-select" onchange="updatePhase(${phase.id},'type',this.value)">
+          ${Object.entries(TN).map(([k,v])=>`<option value="${k}" ${phase.type===k?'selected':''}>${v}</option>`).join('')}
+        </select>
+      </div>
+      <div class="phase-field">
+        <span class="phase-field-label">Notitie</span>
+        <input class="phase-field-input" placeholder="Omschrijving" value="${esc(phase.note||'')}" oninput="updatePhase(${phase.id},'note',this.value)">
+      </div>
+      <div class="phase-field">
+        <span class="phase-field-label">Start</span>
+        <input class="phase-field-input" type="date" value="${phase.start||''}" oninput="updatePhase(${phase.id},'start',this.value)">
+      </div>
+      <div class="phase-field">
+        <span class="phase-field-label">Einde</span>
+        <input class="phase-field-input" type="date" value="${phase.end||''}" oninput="updatePhase(${phase.id},'end',this.value)">
+      </div>
+      <div class="phase-field" style="border-bottom:none">
+        <span class="phase-field-label">Weekends</span>
+        <label class="phase-toggle">
+          <input type="checkbox" ${phase.includeWeekends?'checked':''} onchange="updatePhase(${phase.id},'includeWeekends',this.checked)">
+          <span class="phase-toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function togglePhase(phaseId){
+  const ph = curProj.phases.find(p=>p.id===phaseId);
+  if(ph) ph._open = !ph._open;
+  const body = document.getElementById('phase-body-'+phaseId);
+  if(body) body.classList.toggle('open');
+}
+
+function addPhase(){
+  const today = ymd(new Date());
+  const newPhase = {
+    id: Date.now(), type:'installation', note:'', start:today, end:today,
+    includeWeekends:false, linked:false, _open:true
+  };
+  curProj.phases.push(newPhase);
+  markDirty();
+  const phList = document.getElementById('phases-list');
+  const newCard = document.createElement('div');
+  newCard.innerHTML = renderPhaseCard(newPhase, curProj.phases.length-1);
+  phList.appendChild(newCard.firstElementChild);
+  setTimeout(()=>newCard.scrollIntoView({behavior:'smooth',block:'center'}),100);
+}
+
+function deletePhase(phaseId){
+  if(!confirm('Fase verwijderen?')) return;
+  curProj.phases = curProj.phases.filter(p=>p.id!==phaseId);
+  markDirty();
+  const card = document.getElementById('phase-card-'+phaseId);
+  if(card) card.remove();
+}
+
+function updateField(key, val){
+  curProj[key] = val;
+  if(key==='name') document.getElementById('edit-title').textContent = (val||'Project')+' *';
+  markDirty();
+}
+
+function updatePhase(phaseId, key, val){
+  const ph = curProj.phases.find(p=>p.id===phaseId);
+  if(!ph) return;
+  ph[key] = val;
+  markDirty();
+  const header = document.querySelector('#phase-card-'+phaseId+' .phase-header');
+  if(header){
+    const col = TC[ph.type]||'#555';
+    header.querySelector('.phase-color').style.background = col;
+    header.querySelector('.phase-title').textContent = TN[ph.type]||ph.type;
+    header.querySelector('.phase-dates').textContent = (ph.note||'')+' '+fmtDate(ph.start)+' - '+fmtDate(ph.end);
+  }
+}
+
+function deleteProject(){
+  if(!confirm('Project "'+curProj.name+'" definitief verwijderen?')) return;
+  projects = projects.filter(p=>p.id!==curProj.id);
+  saveAllToFirebase(true);
+}
+
+async function saveProject(){
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Opslaan...';
+  btn.disabled = true;
+  btn.classList.add('saving');
+  const cleanProj = JSON.parse(JSON.stringify(curProj));
+  cleanProj.phases.forEach(ph=>delete ph._open);
+  const idx = projects.findIndex(p=>p.id===curProj.id);
+  if(idx>=0) projects[idx] = cleanProj;
+  else projects.push(cleanProj);
+  projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+  await saveAllToFirebase(false);
+}
+
+async function saveAllToFirebase(goBackAfter){
+  const btn = document.getElementById('save-btn');
+  try{
+    const payload = {projects};
+    await saveToFirebase(payload);
+    localStorage.setItem(SK, JSON.stringify(payload));
+    setSyncState(true);
+    isDirty = false;
+    showToast('Opgeslagen', 'success');
+    renderList();
+    if(goBackAfter){
+      setTimeout(()=>goBack(),600);
+    } else {
+      btn.textContent = 'Opgeslagen';
+      btn.classList.remove('saving');
+      document.getElementById('edit-title').textContent = curProj.name||'Project';
+      setTimeout(()=>{ btn.textContent='Opslaan'; btn.disabled=false; },1500);
+    }
+  }catch(e){
+    showToast('Fout bij opslaan: '+e.message, 'error');
+    btn.textContent = 'Opslaan*';
+    btn.disabled = false;
+    btn.classList.remove('saving');
+  }
+}
+
+function ymd(d){
+  var x=d instanceof Date?d:new Date(d+'T00:00:00');
+  return x.getFullYear()+'-'+('0'+(x.getMonth()+1)).slice(-2)+'-'+('0'+x.getDate()).slice(-2);
+}
+function fmtDate(s){
+  if(!s) return '';
+  try{ return new Date(s+'T00:00:00').toLocaleDateString('nl-NL',{day:'numeric',month:'short'}); }
+  catch(e){ return s; }
+}
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show '+(type||'');
+  setTimeout(()=>t.className='toast',2500);
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+  caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+}
+loadData();
+</script>
+</body>
+</html>
