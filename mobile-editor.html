@@ -664,7 +664,10 @@ function openGantt(){
   gantt.classList.add('slide-in');
   requestAnimationFrame(()=>{
     gantt.classList.remove('slide-in');
-    edit.addEventListener('transitionend',()=>edit.classList.add('hidden'),{once:true});
+    edit.addEventListener('transitionend',()=>{
+      edit.classList.add('hidden');
+      edit.classList.remove('slide-out');
+    },{once:true});
   });
 }
 
@@ -673,7 +676,10 @@ function closeGantt(){
   const gantt = document.getElementById('screen-gantt');
   edit.classList.remove('hidden','slide-out');
   gantt.classList.add('slide-in');
-  gantt.addEventListener('transitionend',()=>gantt.classList.add('hidden'),{once:true});
+  gantt.addEventListener('transitionend',()=>{
+    gantt.classList.add('hidden');
+    gantt.classList.remove('slide-in');
+  },{once:true});
 }
 
 </script>
