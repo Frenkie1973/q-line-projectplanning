@@ -476,8 +476,10 @@ function buildGantt(proj){
     const label = TN[phase.type]||phase.type;
     const si=gDays.indexOf(phase.start);
     const ei=gDays.indexOf(phase.end);
-    const bl=Math.max(0,si)*DW;
-    const bw=Math.max(DW,(Math.max(0,ei)-Math.max(0,si)+1)*DW);
+    const si2=si>=0?si:0;
+    const ei2=ei>=0?ei:gDays.length-1;
+    const bl=si2*DW;
+    const bw=Math.max(DW,(ei2-si2+1)*DW);
     const hasAssignees = phase.assignees&&phase.assignees.length>0;
     rows+='<div class="gantt-phase-row'+(hasAssignees?' has-assignees':'')+'"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div>';
     rows+='<div class="gantt-cells" style="width:'+(gDays.length*DW)+'px">'+todayLine;
