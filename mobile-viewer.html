@@ -531,8 +531,10 @@ function buildGantt(proj){
     const label = TN[phase.type]||phase.type;
     const si=gDays.indexOf(phase.start);
     const ei=gDays.indexOf(phase.end);
-    const bl=Math.max(0,si)*DW;
-    const bw=Math.max(DW,(Math.max(0,ei)-Math.max(0,si)+1)*DW);
+    const si2=si>=0?si:0;
+    const ei2=ei>=0?ei:gDays.length-1;
+    const bl=si2*DW;
+    const bw=Math.max(DW,(ei2-si2+1)*DW);
     const hasAssignees = phase.assignees&&phase.assignees.length>0;
 
     rows+='<div class="gantt-phase-row'+(hasAssignees?' has-assignees':'')+'"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div>';
@@ -543,8 +545,10 @@ function buildGantt(proj){
     if(hasAssignees){
       phase.assignees.forEach(a=>{
         const asi=gDays.indexOf(a.start);const aei=gDays.indexOf(a.end);
-        const al=Math.max(0,asi)*DW;
-        const aw=Math.max(DW/2,(Math.max(0,aei)-Math.max(0,asi)+1)*DW);
+        const asi2=asi>=0?asi:0;
+        const aei2=aei>=0?aei:gDays.length-1;
+        const al=asi2*DW;
+        const aw=Math.max(DW/2,(aei2-asi2+1)*DW);
         rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">  '+(a.name||'?')+'</div></div>';
         rows+='<div class="gantt-acells" style="width:'+(gDays.length*DW)+'px">';
         rows+=todayLine;
