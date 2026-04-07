@@ -499,7 +499,10 @@ function buildGantt(proj){
   });
   document.getElementById('gantt-wrap').innerHTML = head+rows+'</div>';
 }
-if('serviceWorker' in navigator) navigator.serviceWorker.register('../sw-viewer.js').catch(()=>{});
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+  caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+}
 loadData();
 </script>
 </body>
