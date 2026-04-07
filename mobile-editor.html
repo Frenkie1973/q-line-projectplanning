@@ -125,6 +125,52 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner-text{font-size:11px;color:var(--text3)}
+
+/* GANTT SCREEN */
+.gantt-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;position:relative}
+.gantt-wrap::-webkit-scrollbar{height:3px;width:3px}
+.gantt-wrap::-webkit-scrollbar-track{background:var(--border)}
+.gantt-wrap::-webkit-scrollbar-thumb{background:var(--red)}
+.gantt-inner{min-width:max-content}
+.gantt-head{display:flex;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
+.gantt-lh{width:110px;flex-shrink:0;padding:6px 10px;font-size:10px;color:var(--text3);background:var(--bg);border-right:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:600}
+.gantt-weeks{display:flex}
+.gantt-wk{display:flex;flex-direction:column;border-right:1px solid var(--border)}
+.gantt-wl{font-size:9px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:600;padding:2px 6px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+.gantt-days{display:flex}
+.gantt-day{font-size:8px;color:var(--text3);width:28px;text-align:center;padding:3px 0;background:var(--bg)}
+.gantt-day.we{color:var(--border2)}
+.gantt-day.td{color:var(--gold);font-weight:700;background:rgba(201,168,76,.06)}
+.gantt-phase-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:48px}
+.gantt-pl{width:110px;flex-shrink:0;padding:6px 10px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;flex-direction:column;justify-content:center}
+.gantt-pt{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Barlow Condensed',sans-serif}
+.gantt-pn{font-size:10px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94px}
+.gantt-cells{position:relative;display:flex;align-items:center;flex:1}
+.gantt-cell{width:28px;height:100%;flex-shrink:0}
+.gantt-cell.we{background:rgba(255,255,255,.012)}
+.gantt-cell.td{background:rgba(201,168,76,.05)}
+.gantt-bar{position:absolute;top:50%;transform:translateY(-50%);height:26px;border-radius:3px;z-index:5;display:flex;align-items:center;padding:0 8px;font-size:9px;font-weight:600;white-space:nowrap;overflow:hidden;font-family:'Barlow Condensed',sans-serif;min-width:6px}
+.gantt-arow{display:flex;align-items:stretch;border-bottom:1px solid rgba(255,255,255,.03);min-height:30px}
+.gantt-al{width:110px;flex-shrink:0;padding:3px 10px 3px 18px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;align-items:center}
+.gantt-aname{font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px}
+.gantt-acells{position:relative;display:flex;align-items:center;flex:1;height:30px}
+.gantt-abar{position:absolute;height:14px;border-radius:2px;opacity:.6}
+.today-line{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);z-index:15;opacity:.7;pointer-events:none}
+.today-line::before{content:'';position:absolute;top:0;left:-3px;width:7px;height:7px;background:var(--gold);border-radius:50%}
+.gantt-proj-header{padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface)}
+.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.gantt-proj-meta{display:flex;gap:12px;margin-top:3px}
+.gantt-proj-meta span{font-size:11px;color:var(--text3)}
+.gantt-proj-meta .prog{color:var(--gold);font-weight:600}
+.gantt-legend{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.gantt-progress{padding:8px 16px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;gap:10px}
+.gantt-progress-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
+.gantt-progress-fill{height:3px;background:var(--gold);border-radius:2px}
+.gantt-progress-pct{font-size:11px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
+.view-gantt-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--surface);border:1px solid var(--border2);border-radius:6px;color:var(--gold);font-size:14px;font-family:'Barlow',sans-serif;cursor:pointer;font-weight:600;margin-top:8px}
+.view-gantt-btn:active{background:var(--surface2)}
 </style>
 </head>
 <body>
@@ -343,6 +389,7 @@ function renderEditForm(){
     <div class="phases-list" id="phases-list">${phasesHTML}</div>
     <button class="add-phase-btn" onclick="addPhase()">+ Fase toevoegen</button>
 
+    <button class="view-gantt-btn" onclick="openGantt()">Bekijk strokenplanning</button>
     <button class="delete-proj-btn" onclick="deleteProject()">Verwijder project</button>
   `;
 }
@@ -506,6 +553,158 @@ if('serviceWorker' in navigator){
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
 }
 loadData();
+
+
+// GANTT
+const DW = 28;
+let gDays = [];
+
+function ymd2(d){var x=d instanceof Date?d:new Date(d+'T00:00:00');return x.getFullYear()+'-'+('0'+(x.getMonth()+1)).slice(-2)+'-'+('0'+x.getDate()).slice(-2)}
+function pd2(s){return new Date(s+'T00:00:00')}
+function ad2(s,n){var d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return ymd2(d)}
+function isWE2(s){var w=pd2(s).getDay();return w===0||w===6}
+function isToday2(s){return ymd2(new Date())===s}
+function buildDays2(s,e){var r=[];var c=s;var g=0;while(c<=e&&g++<400){r.push(c);c=ad2(c,1)}return r}
+
+function openGantt(){
+  if(!curProj) return;
+  const proj = curProj;
+  const ph = proj.phases||[];
+  const today = ymd2(new Date());
+  const total = Math.max(1, Math.round((pd2(proj.end)-pd2(proj.start))/86400000));
+  const pct = Math.round(Math.max(0,Math.min(Math.round((pd2(today)-pd2(proj.start))/86400000),total))/total*100);
+
+  document.getElementById('gantt-title').textContent = proj.name||'Planning';
+  document.getElementById('gantt-proj-name').textContent = proj.name||'';
+  document.getElementById('gantt-dates').textContent = fmtDate(proj.start)+' - '+fmtDate(proj.end);
+  document.getElementById('gantt-owner').textContent = proj.owner||'';
+  document.getElementById('gantt-pct').textContent = pct+'%';
+  document.getElementById('gantt-prog-fill').style.width = pct+'%';
+  document.getElementById('gantt-prog-pct').textContent = pct+'%';
+  document.getElementById('gantt-prog-label').textContent = pct===100?'Afgerond':pct>50?'Op schema':'In uitvoering';
+
+  // Build days
+  var rangeEnd = proj.end;
+  ph.forEach(function(p){if(p.end>rangeEnd)rangeEnd=p.end;});
+  gDays = buildDays2(proj.start, rangeEnd);
+
+  // Legend
+  const usedTypes = [...new Set(ph.map(p=>p.type))];
+  document.getElementById('gantt-legend').innerHTML = usedTypes.map(t=>
+    '<div class="legend-item"><div class="legend-dot" style="background:'+(TC[t]||'#333')+'"></div>'+(TN[t]||t)+'</div>'
+  ).join('');
+
+  // Build gantt
+  const todayIdx = gDays.indexOf(today);
+  const todayLine = todayIdx>=0 ? '<div class="today-line" style="left:'+(todayIdx*DW+DW/2)+'px"></div>' : '';
+
+  // Weeks
+  const weeks = [];
+  let i=0;
+  while(i<gDays.length){
+    const wd=[];let j=i;
+    while(j<gDays.length){wd.push(gDays[j]);j++;if(j<gDays.length&&pd2(gDays[j]).getDay()===1)break;}
+    const dt=pd2(gDays[i]);
+    const jan1=new Date(dt.getFullYear(),0,1);
+    const wn=Math.ceil(((dt-jan1)/86400000+jan1.getDay()+1)/7);
+    weeks.push({wn,days:wd});i=j;
+  }
+
+  let head = '<div class="gantt-inner"><div class="gantt-head"><div class="gantt-lh">Fase</div><div class="gantt-weeks">';
+  weeks.forEach(w=>{
+    head += '<div class="gantt-wk"><div class="gantt-wl" style="min-width:'+(w.days.length*DW)+'px">W'+w.wn+'</div><div class="gantt-days">';
+    w.days.forEach(d=>{
+      const dt=pd2(d);const dn=['Z','M','D','W','D','V','Z'];
+      const cls=(isWE2(d)?'we':'')+(isToday2(d)?' td':'');
+      head+='<div class="gantt-day '+cls+'">'+(isToday2(d)?'*':dn[dt.getDay()])+'<br>'+dt.getDate()+'</div>';
+    });
+    head+='</div></div>';
+  });
+  head+='</div></div>';
+
+  let rows='';
+  ph.forEach(phase=>{
+    const col=TC[phase.type]||'#333';
+    const colText=TC_TEXT[phase.type]||'#ccc';
+    const label=TN[phase.type]||phase.type;
+    const si=gDays.indexOf(phase.start);
+    const ei=gDays.indexOf(phase.end);
+    const si2=si>=0?si:0;
+    const ei2=ei>=0?ei:gDays.length-1;
+    const bl=si2*DW;
+    const bw=Math.max(DW,(ei2-si2+1)*DW);
+    const hasA=phase.assignees&&phase.assignees.length>0;
+    rows+='<div class="gantt-phase-row"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div>';
+    rows+='<div class="gantt-cells" style="width:'+(gDays.length*DW)+'px">'+todayLine;
+    rows+=gDays.slice(0,400).map(d=>'<div class="gantt-cell'+(isWE2(d)?' we':'')+(isToday2(d)?' td':'')+'"></div>').join('');
+    rows+='<div class="gantt-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+colText+';box-shadow:0 0 0 1px '+col+'80">'+(phase.note||label)+'</div></div></div>';
+    if(hasA){
+      phase.assignees.forEach(a=>{
+        const asi=gDays.indexOf(a.start);const aei=gDays.indexOf(a.end);
+        const asi2=asi>=0?asi:0;const aei2=aei>=0?aei:gDays.length-1;
+        const al=asi2*DW;const aw=Math.max(DW/2,(aei2-asi2+1)*DW);
+        rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">- '+(a.name||'?')+'</div></div>';
+        rows+='<div class="gantt-acells" style="width:'+(gDays.length*DW)+'px">'+todayLine+'<div class="gantt-abar" style="left:'+al+'px;width:'+aw+'px;background:'+col+'"></div></div></div>';
+      });
+    }
+  });
+
+  document.getElementById('gantt-wrap').innerHTML = head+rows+'</div>';
+
+  // Scroll naar vandaag
+  const wrap = document.getElementById('gantt-wrap');
+  wrap.scrollTop=0; wrap.scrollLeft=0;
+  setTimeout(()=>{if(todayIdx>0)wrap.scrollLeft=Math.max(0,(todayIdx-3)*DW);},50);
+
+  // Slide in
+  const edit = document.getElementById('screen-edit');
+  const gantt = document.getElementById('screen-gantt');
+  edit.classList.add('slide-out');
+  gantt.classList.remove('hidden');
+  gantt.classList.add('slide-in');
+  requestAnimationFrame(()=>{
+    gantt.classList.remove('slide-in');
+    edit.addEventListener('transitionend',()=>edit.classList.add('hidden'),{once:true});
+  });
+}
+
+function closeGantt(){
+  const edit = document.getElementById('screen-edit');
+  const gantt = document.getElementById('screen-gantt');
+  edit.classList.remove('hidden','slide-out');
+  gantt.classList.add('slide-in');
+  gantt.addEventListener('transitionend',()=>gantt.classList.add('hidden'),{once:true});
+}
+
 </script>
+
+<!-- GANTT SCHERM -->
+<div class="screen hidden" id="screen-gantt">
+  <div class="header">
+    <button class="back-btn" onclick="closeGantt()">
+      <svg class="back-arrow" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+      Terug
+    </button>
+    <div class="header-titles">
+      <div class="header-name" id="gantt-title">Planning</div>
+    </div>
+  </div>
+  <div class="gantt-proj-header">
+    <div class="gantt-proj-name" id="gantt-proj-name"></div>
+    <div class="gantt-proj-meta">
+      <span id="gantt-dates"></span>
+      <span id="gantt-owner"></span>
+      <span class="prog" id="gantt-pct"></span>
+    </div>
+  </div>
+  <div class="gantt-legend" id="gantt-legend"></div>
+  <div class="gantt-wrap" id="gantt-wrap"></div>
+  <div class="gantt-progress">
+    <span style="font-size:10px;color:var(--text3)" id="gantt-prog-label">Voortgang</span>
+    <div class="gantt-progress-bar"><div class="gantt-progress-fill" id="gantt-prog-fill" style="width:0%"></div></div>
+    <span class="gantt-progress-pct" id="gantt-prog-pct">0%</span>
+  </div>
+</div>
+
 </body>
 </html>
