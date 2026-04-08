@@ -171,6 +171,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .gantt-progress-pct{font-size:11px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
 .view-gantt-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--surface);border:1px solid var(--border2);border-radius:6px;color:var(--gold);font-size:14px;font-family:'Barlow',sans-serif;cursor:pointer;font-weight:600;margin-top:8px}
 .view-gantt-btn:active{background:var(--surface2)}
+.refresh-btn{background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:.7}
+.refresh-btn:active{opacity:1}
+.refresh-btn svg{width:18px;height:18px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.refresh-btn.spinning svg{animation:spin .7s linear infinite}
 </style>
 </head>
 <body>
@@ -190,6 +194,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
       <div class="header-sub" id="home-sub">Laden...</div>
     </div>
     <div class="sync-dot off" id="sync-dot"></div>
+    <button class="refresh-btn" id="refresh-btn" onclick="refreshData()" title="Vernieuwen">
+      <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
   </div>
 
   <div class="list-toolbar">
@@ -231,6 +238,27 @@ const TN = {outsourcing:'Uitbesteding',installation:'Installatie',production:'Pr
 let projects = [], curProj = null, curProjCopy = null, isDirty = false;
 
 // ---- DATA ----
+async function refreshData(){
+  const btn = document.getElementById('refresh-btn');
+  if(btn) btn.classList.add('spinning');
+  try{
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 8000);
+    const r = await fetch(FB+'?t='+Date.now(), {signal:ctrl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if(d&&d.projects&&d.projects.length){
+      projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+      localStorage.setItem(SK, JSON.stringify(d));
+      setSyncState(true);
+      renderList();
+    }
+  }catch(e){
+    setSyncState(false);
+  }
+  if(btn) btn.classList.remove('spinning');
+}
+
 async function loadData(){
   const local = localStorage.getItem(SK);
   if(local){
