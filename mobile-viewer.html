@@ -299,6 +299,7 @@ function fmt(s){return pd(s).toLocaleDateString('nl-NL',{day:'numeric',month:'sh
 function buildDays(s,e){var r=[];var c=s;var g=0;while(c<=e&&g++<400){r.push(c);c=ad(c,1)}return r}
 
 async function loadData(){
+  // Toon cache direct voor snelle weergave
   const local = localStorage.getItem(SK);
   if(local){
     try{
@@ -310,6 +311,7 @@ async function loadData(){
       }
     }catch(e){}
   }
+  // Haal ALTIJD Firebase op - ook als cache aanwezig is
   try{
     const ctrl = new AbortController();
     const t = setTimeout(()=>ctrl.abort(), 8000);
@@ -320,7 +322,7 @@ async function loadData(){
       projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
       localStorage.setItem(SK, JSON.stringify(d));
       setSyncState(true);
-      renderList();
+      renderList(); // Altijd opnieuw renderen met verse data
     }
   }catch(e){
     if(!projects.length){setSyncState(false);renderEmpty();}
