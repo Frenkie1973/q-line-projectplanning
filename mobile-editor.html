@@ -405,11 +405,11 @@ function renderEditForm(){
       </div>
       <div class="field-row">
         <span class="field-label">Startdatum</span>
-        <input class="field-input" type="date" value="${curProj.start||''}" oninput="updateField('start',this.value)">
+        <input class="field-input" type="date" value="${curProj.start||''}" onchange="updateField('start',this.value)">
       </div>
       <div class="field-row">
         <span class="field-label">Einddatum</span>
-        <input class="field-input" type="date" value="${curProj.end||''}" oninput="updateField('end',this.value)">
+        <input class="field-input" type="date" value="${curProj.end||''}" onchange="updateField('end',this.value)">
       </div>
     </div>
 
@@ -445,11 +445,11 @@ function renderPhaseCard(phase, i){
       </div>
       <div class="phase-field">
         <span class="phase-field-label">Start</span>
-        <input class="phase-field-input" type="date" value="${phase.start||''}" oninput="updatePhase(${phase.id},'start',this.value)">
+        <input class="phase-field-input" type="date" value="${phase.start||''}" onchange="updatePhase(${phase.id},'start',this.value)">
       </div>
       <div class="phase-field">
         <span class="phase-field-label">Einde</span>
-        <input class="phase-field-input" type="date" value="${phase.end||''}" oninput="updatePhase(${phase.id},'end',this.value)">
+        <input class="phase-field-input" type="date" value="${phase.end||''}" onchange="updatePhase(${phase.id},'end',this.value)">
       </div>
       <div class="phase-field" style="border-bottom:none">
         <span class="phase-field-label">Weekends</span>
