@@ -529,7 +529,7 @@ function openGantt(){
   if(!curProj)return;
   var proj=curProj,ph=proj.phases||[],today=ymd(new Date());
   var total=Math.max(1,Math.round((new Date(proj.end+'T00:00:00')-new Date(proj.start+'T00:00:00'))/86400000));
-  var pct=Math.round(Math.max(0,Math.min(Math.round((new Date(today+T00:00:00')-new Date(proj.start+'T00:00:00'))/86400000),total))/total*100);
+  var pct=Math.round(Math.max(0,Math.min(Math.round((new Date(today+'T00:00:00')-new Date(proj.start+'T00:00:00'))/86400000),total))/total*100);
 ment.getElementById('gantt-prog-fill').style.width=pct+'%';
   document.getElementById('gantt-prog-pct').textContent=pct+'%';
   document.getElementById('gantt-prog-label').textContent=pct===100?'Afgerond':pct>50?'Op schema':'In uitvoering';
