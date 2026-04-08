@@ -570,10 +570,9 @@ function openGantt(){
   if(!curProj) return;
   const proj = curProj;
   const ph = proj.phases||[];
-  const today = ymd2(new Date());
+  const today = ymd(new Date());
   const total = Math.max(1, Math.round((pd2(proj.end)-pd2(proj.start))/86400000));
   const pct = Math.round(Math.max(0,Math.min(Math.round((pd2(today)-pd2(proj.start))/86400000),total))/total*100);
-
   document.getElementById('gantt-title').textContent = proj.name||'Planning';
   document.getElementById('gantt-proj-name').textContent = proj.name||'';
   document.getElementById('gantt-dates').textContent = fmtDate(proj.start)+' - '+fmtDate(proj.end);
@@ -582,84 +581,26 @@ function openGantt(){
   document.getElementById('gantt-prog-fill').style.width = pct+'%';
   document.getElementById('gantt-prog-pct').textContent = pct+'%';
   document.getElementById('gantt-prog-label').textContent = pct===100?'Afgerond':pct>50?'Op schema':'In uitvoering';
-
-  // Build days
   var rangeEnd = proj.end;
   ph.forEach(function(p){if(p.end>rangeEnd)rangeEnd=p.end;});
   gDays = buildDays2(proj.start, rangeEnd);
-
-  // Legend
   const usedTypes = [...new Set(ph.map(p=>p.type))];
-  document.getElementById('gantt-legend').innerHTML = usedTypes.map(t=>
-    '<div class="legend-item"><div class="legend-dot" style="background:'+(TC[t]||'#333')+'"></div>'+(TN[t]||t)+'</div>'
-  ).join('');
-
-  // Build gantt
+  document.getElementById('gantt-legend').innerHTML = usedTypes.map(t=>'<div class="legend-item"><div class="legend-dot" style="background:'+(TC[t]||'#333')+'"></div>'+(TN[t]||t)+'</div>').join('');
   const todayIdx = gDays.indexOf(today);
-  const todayLine = todayIdx>=0 ? '<div class="today-line" style="left:'+(todayIdx*DW+DW/2)+'px"></div>' : '';
-
-  // Weeks
-  const weeks = [];
-  let i=0;
-  while(i<gDays.length){
-    const wd=[];let j=i;
-    while(j<gDays.length){wd.push(gDays[j]);j++;if(j<gDays.length&&pd2(gDays[j]).getDay()===1)break;}
-    const dt=pd2(gDays[i]);
-    const jan1=new Date(dt.getFullYear(),0,1);
-    const wn=Math.ceil(((dt-jan1)/86400000+jan1.getDay()+1)/7);
-    weeks.push({wn,days:wd});i=j;
-  }
-
-  let head = '<div class="gantt-inner"><div class="gantt-head"><div class="gantt-lh">Fase</div><div class="gantt-weeks">';
-  weeks.forEach(w=>{
-    head += '<div class="gantt-wk"><div class="gantt-wl" style="min-width:'+(w.days.length*DW)+'px">W'+w.wn+'</div><div class="gantt-days">';
-    w.days.forEach(d=>{
-      const dt=pd2(d);const dn=['Z','M','D','W','D','V','Z'];
-      const cls=(isWE2(d)?'we':'')+(isToday2(d)?' td':'');
-      head+='<div class="gantt-day '+cls+'">'+(isToday2(d)?'*':dn[dt.getDay()])+'<br>'+dt.getDate()+'</div>';
-    });
-    head+='</div></div>';
-  });
+  const todayLine = todayIdx>=0?'<div class="today-line" style="left:'+(todayIdx*DW+DW/2)+'px"></div>':'';
+  const weeks=[];let i=0;
+  while(i<gDays.length){const wd=[];let j=i;while(j<gDays.length){wd.push(gDays[j]);j++;if(j<gDays.length&&pd2(gDays[j]).getDay()===1)break;}const dt=pd2(gDays[i]);const jan1=new Date(dt.getFullYear(),0,1);const wn=Math.ceil(((dt-jan1)/86400000+jan1.getDay()+1)/7);weeks.push({wn,days:wd});i=j;}
+  let head='<div class="gantt-inner"><div class="gantt-head"><div class="gantt-lh">Fase</div><div class="gantt-weeks">';
+  weeks.forEach(w=>{head+='<div class="gantt-wk"><div class="gantt-wl" style="min-width:'+(w.days.length*DW)+'px">W'+w.wn+'</div><div class="gantt-days">';w.days.forEach(d=>{const dt=pd2(d);const dn=['Z','M','D','W','D','V','Z'];const cls=(isWE2(d)?'we':'')+(isToday2(d)?' td':'');head+='<div class="gantt-day '+cls+'">'+(isToday2(d)?'*':dn[dt.getDay()])+'<br>'+dt.getDate()+'</div>';});head+='</div></div>';});
   head+='</div></div>';
-
   let rows='';
-  ph.forEach(phase=>{
-    const col=TC[phase.type]||'#333';
-    const colText=TC_TEXT[phase.type]||'#ccc';
-    const label=TN[phase.type]||phase.type;
-    const si=gDays.indexOf(phase.start);
-    const ei=gDays.indexOf(phase.end);
-    const si2=si>=0?si:0;
-    const ei2=ei>=0?ei:gDays.length-1;
-    const bl=si2*DW;
-    const bw=Math.max(DW,(ei2-si2+1)*DW);
-    const hasA=phase.assignees&&phase.assignees.length>0;
-    rows+='<div class="gantt-phase-row"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div>';
-    rows+='<div class="gantt-cells" style="width:'+(gDays.length*DW)+'px">'+todayLine;
-    rows+=gDays.slice(0,400).map(d=>'<div class="gantt-cell'+(isWE2(d)?' we':'')+(isToday2(d)?' td':'')+'"></div>').join('');
-    rows+='<div class="gantt-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+colText+';box-shadow:0 0 0 1px '+col+'80">'+(phase.note||label)+'</div></div></div>';
-    if(hasA){
-      phase.assignees.forEach(a=>{
-        const asi=gDays.indexOf(a.start);const aei=gDays.indexOf(a.end);
-        const asi2=asi>=0?asi:0;const aei2=aei>=0?aei:gDays.length-1;
-        const al=asi2*DW;const aw=Math.max(DW/2,(aei2-asi2+1)*DW);
-        rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">- '+(a.name||'?')+'</div></div>';
-        rows+='<div class="gantt-acells" style="width:'+(gDays.length*DW)+'px">'+todayLine+'<div class="gantt-abar" style="left:'+al+'px;width:'+aw+'px;background:'+col+'"></div></div></div>';
-      });
-    }
-  });
-
+  ph.forEach(phase=>{const col=TC[phase.type]||'#333';const colText=TC_TEXT[phase.type]||'#ccc';const label=TN[phase.type]||phase.type;const si=gDays.indexOf(phase.start);const ei=gDays.indexOf(phase.end);const si2=si>=0?si:0;const ei2=ei>=0?ei:gDays.length-1;const bl=si2*DW;const bw=Math.max(DW,(ei2-si2+1)*DW);const hasA=phase.assignees&&phase.assignees.length>0;rows+='<div class="gantt-phase-row"><div class="gantt-pl"><div class="gantt-pt" style="color:'+colText+'">'+label+'</div>'+(phase.note?'<div class="gantt-pn">'+phase.note+'</div>':'')+'</div><div class="gantt-cells" style="width:'+(gDays.length*DW)+'px">'+todayLine+gDays.slice(0,400).map(d=>'<div class="gantt-cell'+(isWE2(d)?' we':'')+(isToday2(d)?' td':'')+'"></div>').join('')+'<div class="gantt-bar" style="left:'+bl+'px;width:'+bw+'px;background:'+col+';color:'+colText+';box-shadow:0 0 0 1px '+col+'80">'+(phase.note||label)+'</div></div></div>';if(hasA){phase.assignees.forEach(a=>{const asi=gDays.indexOf(a.start);const aei=gDays.indexOf(a.end);const asi2=asi>=0?asi:0;const aei2=aei>=0?aei:gDays.length-1;const al=asi2*DW;const aw=Math.max(DW/2,(aei2-asi2+1)*DW);rows+='<div class="gantt-arow"><div class="gantt-al"><div class="gantt-aname">- '+(a.name||'?')+'</div></div><div class="gantt-acells" style="width:'+(gDays.length*DW)+'px">'+todayLine+'<div class="gantt-abar" style="left:'+al+'px;width:'+aw+'px;background:'+col+'"></div></div></div>';});}});
   document.getElementById('gantt-wrap').innerHTML = head+rows+'</div>';
-
-  // Scroll naar vandaag
   const wrap = document.getElementById('gantt-wrap');
-  wrap.scrollTop=0; wrap.scrollLeft=0;
+  wrap.scrollTop=0;wrap.scrollLeft=0;
   setTimeout(()=>{if(todayIdx>0)wrap.scrollLeft=Math.max(0,(todayIdx-3)*DW);},50);
-
-  // Wissel schermen
   document.getElementById('screen-edit').classList.add('hidden');
-  const gantt = document.getElementById('screen-gantt');
-  gantt.classList.remove('hidden','slide-in');
+  document.getElementById('screen-gantt').classList.remove('hidden');
 }
 
 function closeGantt(){
