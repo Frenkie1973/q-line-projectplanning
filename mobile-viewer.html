@@ -203,6 +203,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .spinner-text{font-size:11px;color:var(--text3)}
 
 /* --- TYPE COLORS --- */
+.refresh-btn{background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:.7}
+.refresh-btn:active{opacity:1}
+.refresh-btn svg{width:18px;height:18px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.refresh-btn.spinning svg{animation:spin .7s linear infinite}
 </style>
 </head>
 <body>
@@ -297,6 +301,27 @@ function isWE(s){var w=pd(s).getDay();return w===0||w===6}
 function isToday(s){return ymd(new Date())===s}
 function fmt(s){return pd(s).toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}
 function buildDays(s,e){var r=[];var c=s;var g=0;while(c<=e&&g++<400){r.push(c);c=ad(c,1)}return r}
+
+async function refreshData(){
+  const btn = document.getElementById('refresh-btn');
+  if(btn) btn.classList.add('spinning');
+  try{
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 8000);
+    const r = await fetch(FB+'?t='+Date.now(), {signal:ctrl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if(d&&d.projects&&d.projects.length){
+      projects = d.projects.sort((a,b)=>new Date(a.start)-new Date(b.start));
+      localStorage.setItem(SK, JSON.stringify(d));
+      setSyncState(true);
+      renderList();
+    }
+  }catch(e){
+    setSyncState(false);
+  }
+  if(btn) btn.classList.remove('spinning');
+}
 
 async function loadData(){
   // Toon cache direct voor snelle weergave
