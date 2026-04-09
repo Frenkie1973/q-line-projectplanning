@@ -323,6 +323,7 @@ function setPh(id,k,v){
   for(var i=0;i<cur.phases.length;i++){if(cur.phases[i].id===id){ph=cur.phases[i];break;}}
   if(!ph)return;
   ph[k]=v;
+  if(k==='end'&&v&&cur.end&&v>cur.end){cur.end=v;var _ei=document.getElementById('proj-end-input');if(_ei)_ei.value=v;}
   markDirty();
   // Live header update
   var hdr=document.querySelector('#pc-'+id+' .phlbl');
@@ -452,7 +453,7 @@ function openGantt(){
   document.getElementById('gppc').textContent=pct+'%';
   document.getElementById('gplbl').textContent=pct===100?'Afgerond':pct>50?'Op schema':'In uitvoering';
   // rangeEnd = max van project.end en alle fase einddata
-  var rangeEnd=proj.end;
+  var rangeEnd=proj.end;ph.forEach(function(p){if(p.start&&p.start<rangeStart)rangeStart=p.start;if(p.end&&p.end>rangeEnd)rangeEnd=p.end;});
   ph.forEach(function(p){if(p.end>rangeEnd)rangeEnd=p.end;});
   gdays=buildDays(proj.start,rangeEnd);
   // Legenda
