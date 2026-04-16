@@ -2,7 +2,7 @@
   "name": "Q-Line Editor",
   "short_name": "Q-Line Edit",
   "description": "Q-Line planning bewerken",
-  "start_url": "/q-line-projectplanning/mobile-editor.html",
+  "start_url": "/q-line-projectplanning/mobile-editor.html?v=2",
   "scope": "/q-line-projectplanning/",
   "display": "standalone",
   "orientation": "portrait",
