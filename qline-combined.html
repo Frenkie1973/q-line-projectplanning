@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Line Werkplanning — Frank & Douwe</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyB68SftXlT_DqHsxDevP-UF5b1sZSGKS_E",
+    authDomain: "workflow-33ba4.firebaseapp.com",
+    projectId: "workflow-33ba4",
+    storageBucket: "workflow-33ba4.firebasestorage.app",
+    messagingSenderId: "56220306217",
+    appId: "1:56220306217:web:bf15fa46053226982b8538"
+  });
+  const db = firebase.firestore();
+  window.__db = db;
+  window.__fbReady = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;font-size:14px}
+:root{
+  --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--bg4:#252d3d;
+  --border:#2a3347;--border2:#3a4560;
+  --text:#e2e8f0;--text2:#8892a4;--text3:#5a6478;
+  --blue:#3b82f6;--blue2:#1d4ed8;--blue-bg:#1e3a5f;
+  --green:#22c55e;--green-bg:#14432a;
+  --red:#ef4444;--red-bg:#4a1515;
+  --orange:#f97316;--orange-bg:#4a2210;
+  --yellow:#eab308;--yellow-bg:#3d3010;
+  --radius:6px;--radius2:10px;
+}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:200px;min-width:200px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 0}
+.sidebar-logo{padding:0 16px 20px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.sidebar-logo h1{font-size:16px;font-weight:700;color:#fff;letter-spacing:.5px}
+.sidebar-logo p{font-size:11px;color:var(--text2);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--text2);transition:all .15s;font-size:13px;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:var(--bg3)}
+.nav-item.active{color:var(--blue);background:var(--blue-bg);border-left-color:var(--blue)}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.topbar{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);min-height:52px}
+.topbar h2{font-size:15px;font-weight:600;color:#fff}
+.content{flex:1;overflow-y:auto;padding:20px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);border:none;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue2)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid #7f1d1d}.btn-danger:hover{background:#6b1a1a}
+.btn-success{background:var(--green-bg);color:var(--green);border:1px solid #14532d}.btn-success:hover{background:#1a5c36}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.stat-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:24px;font-weight:700;color:#fff}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500}
+.badge-new{background:#1e2535;color:#8892a4;border:1px solid var(--border)}
+.badge-planned{background:var(--blue-bg);color:var(--blue)}
+.badge-inprogress{background:#1a3a4a;color:#38bdf8}
+.badge-waiting{background:var(--yellow-bg);color:var(--yellow)}
+.badge-done{background:var(--green-bg);color:var(--green)}
+.badge-late{background:var(--red-bg);color:var(--red)}
+.badge-conflict{background:var(--orange-bg);color:var(--orange)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:8px 12px;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg3);font-weight:500}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+tr:hover td{background:var(--bg3)}
+.input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;color:var(--text);font-size:13px;width:100%;outline:none}
+.input:focus{border-color:var(--blue)}
+select.input{cursor:pointer}
+textarea.input{resize:vertical;min-height:70px;font-family:inherit}
+label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{margin-bottom:12px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius2);width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1}
+.modal-header h3{font-size:15px;font-weight:600;color:#fff}
+.modal-body{padding:20px}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;background:var(--bg2)}
+.alert{padding:10px 14px;border-radius:var(--radius);font-size:13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.alert-danger{background:var(--red-bg);border:1px solid #7f1d1d;color:#fca5a5}
+.alert-warning{background:var(--orange-bg);border:1px solid #7c2d12;color:#fdba74}
+.alert-info{background:var(--blue-bg);border:1px solid #1e3a8a;color:#93c5fd}
+.progress-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .3s}
+.timer-display{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;color:#fff;letter-spacing:2px}
+.section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.conflict-banner{background:var(--orange-bg);border:1px solid var(--orange);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.overrun{color:var(--red)!important;font-weight:600}
+.click-row{cursor:pointer}
+.search-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.filter-select{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;color:var(--text);font-size:12px;cursor:pointer;outline:none}
+.mb-4{margin-bottom:16px}.mb-3{margin-bottom:12px}.mb-2{margin-bottom:8px}
+.mt-3{margin-top:12px}.mt-2{margin-top:8px}.mt-1{margin-top:4px}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}
+.gap-3{gap:12px}.gap-2{gap:8px}.gap-1{gap:4px}
+.text-sm{font-size:12px}.text-xs{font-size:11px}
+.text-red{color:var(--red)}.text-green{color:var(--green)}.text-orange{color:var(--orange)}
+.text-blue{color:var(--blue)}.text-muted{color:var(--text2)}.text-yellow{color:var(--yellow)}
+.font-600{font-weight:600}.w-full{width:100%}
+.border-t{border-top:1px solid var(--border)}.pt-3{padding-top:12px}.p-2{padding:8px}
+.rounded{border-radius:var(--radius)}
+.task-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:var(--radius);margin-bottom:6px;background:var(--bg3);transition:background .15s;border:1px solid transparent}
+.task-row:hover{background:var(--bg4)}
+.timer-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--radius);border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;white-space:nowrap}
+.timer-btn-start{background:var(--green-bg);color:var(--green);border:1px solid #14532d}.timer-btn-start:hover{background:#1a5c36}
+.timer-btn-stop{background:var(--red-bg);color:var(--red);border:1px solid #7f1d1d}.timer-btn-stop:hover{background:#6b1a1a}
+.elapsed{font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:var(--green);min-width:54px;text-align:right}
+.sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+@keyframes blink{0%,100%{box-shadow:0 0 6px var(--green)}50%{box-shadow:0 0 14px var(--green)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useRef,useCallback}=React;
+// Gebruikers en hun capaciteit
+const USERS=[
+  {name:'Frank', capacity:4, color:'#3b82f6'},
+  {name:'Douwe', capacity:6, color:'#22c55e'},
+];
+const DAILY_CAP=10; // totaal per dag (Frank 4h + Douwe 6h)
+const STATUSES=['New','Planned','In progress','Waiting','Done','Late'];
+
+// ── helpers ──────────────────────────────────────────────────
+function genId(){return 'T'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,4).toUpperCase()}
+function today(){return new Date().toISOString().split('T')[0]}
+function fmtDate(iso){if(!iso)return'—';return new Date(iso+'T12:00:00').toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',year:'2-digit'})}
+function fmtDateTime(ts){if(!ts)return'—';const d=new Date(ts);return d.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}
+function fmtDur(ms){if(!ms||ms<=0)return'0:00:00';const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);return h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s}
+function fmtDurShort(ms){if(!ms||ms<=0)return'0:00';const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);return h+':'+(m<10?'0':'')+m}
+function fmtHours(h){return(+(h||0)).toFixed(1)}
+function isWeekend(d){const day=new Date(d+'T12:00:00').getDay();return day===0||day===6}
+function addWorkDays(dateStr,days){let d=new Date(dateStr+'T12:00:00'),added=0;while(added<days){d.setDate(d.getDate()+1);if(!isWeekend(d.toISOString().split('T')[0]))added++;}return d.toISOString().split('T')[0]}
+function daysUntil(dateStr){const now=new Date();now.setHours(0,0,0,0);return Math.ceil((new Date(dateStr+'T12:00:00')-now)/86400000)}
+function calcActual(logs,taskId){return logs.filter(l=>l.taskId===taskId).reduce((s,l)=>{if(l.end)return s+(l.end-l.start)/3600000;if(l.running)return s+(Date.now()-l.start)/3600000;return s;},0)}
+function getUserCap(name){
+  const u=USERS.find(x=>x.name===name);
+  return u?u.capacity:4;
+}
+
+function planTasks(tasks,timeLogs,pinnedStarts={}){
+  // Eerste werkdag = vandaag of volgende maandag als weekend
+  let firstWorkDay=today();
+  while(isWeekend(firstWorkDay)){
+    const nd=new Date(firstWorkDay+'T12:00:00');nd.setDate(nd.getDate()+1);
+    firstWorkDay=nd.toISOString().split('T')[0];
+  }
+
+  // Sorteer per persoon op vroegste deadline dan invoerdatum
+  const active=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+    const diff=new Date(a.deadline)-new Date(b.deadline);
+    return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
+  });
+
+  // Per persoon eigen dayLoad bijhouden
+  const dayLoadPerUser={};
+  USERS.forEach(u=>{ dayLoadPerUser[u.name]={}; });
+
+  const result={};
+
+  function userAvail(user,day){
+    const cap=getUserCap(user);
+    return cap-(dayLoadPerUser[user][day]||0);
+  }
+
+  function prevWorkDay(d){
+    while(true){const nd=new Date(d+'T12:00:00');nd.setDate(nd.getDate()-1);d=nd.toISOString().split('T')[0];if(!isWeekend(d))return d;}
+  }
+  function nextWorkDay(d){
+    while(true){const nd=new Date(d+'T12:00:00');nd.setDate(nd.getDate()+1);d=nd.toISOString().split('T')[0];if(!isWeekend(d))return d;}
+  }
+  function isDirectlyBefore(x,y){return nextWorkDay(x)===y;}
+
+  function findBlock(hours, deadline, responsible){
+    // Probeer elk mogelijk eindpunt voor deadline, van achter naar voor
+    let endDay=prevWorkDay(deadline);
+
+    while(endDay>=firstWorkDay){
+      let hoursLeft=hours;
+      const tryDays={};
+      let d=endDay;
+      let broken=false;
+
+      while(hoursLeft>0){
+        if(d<firstWorkDay){broken=true;break;}
+        const a=userAvail(responsible,d);
+        if(a<=0){broken=true;break;}
+        const take=Math.min(a,hoursLeft);
+        tryDays[d]=take;
+        hoursLeft-=take;
+        if(hoursLeft>0){
+          const prev=prevWorkDay(d);
+          if(!isDirectlyBefore(prev,d)){broken=true;break;}
+          d=prev;
+        }
+      }
+
+      if(!broken&&hoursLeft<=0) return{days:tryDays,fits:true};
+      endDay=prevWorkDay(endDay);
+    }
+
+    // Conflict: eerste aaneengesloten blok forward
+    let startDay=firstWorkDay;
+    for(let i=0;i<90;i++){
+      if(userAvail(responsible,startDay)<=0){startDay=nextWorkDay(startDay);continue;}
+      let hoursLeft=hours;
+      const tryDays={};
+      let d=startDay;
+      let broken=false;
+      while(hoursLeft>0){
+        const a=userAvail(responsible,d);
+        if(a<=0){broken=true;break;}
+        const take=Math.min(a,hoursLeft);
+        tryDays[d]=take;
+        hoursLeft-=take;
+        if(hoursLeft>0) d=nextWorkDay(d);
+      }
+      if(!broken&&hoursLeft<=0){
+        const endD=Object.keys(tryDays).sort().pop();
+        return{days:tryDays,fits:endD<deadline};
+      }
+      startDay=nextWorkDay(startDay);
+    }
+    return{days:{},fits:false};
+  }
+
+  active.forEach(task=>{
+    const actual=calcActual(timeLogs,task.id);
+    const remaining=Math.max(0,task.estimatedHours-actual);
+    const responsible=task.responsible||'Frank';
+
+    if(remaining<=0){
+      result[task.id]={start:firstWorkDay,end:firstWorkDay,fits:true,remaining:0,days:{},responsible};
+      return;
+    }
+
+    const{days:taskDays,fits}=findBlock(remaining,task.deadline,responsible);
+
+    Object.entries(taskDays).forEach(([day,h])=>{
+      dayLoadPerUser[responsible][day]=(dayLoadPerUser[responsible][day]||0)+h;
+    });
+
+    const scheduledDays=Object.keys(taskDays).sort();
+    const startDate=scheduledDays[0]||firstWorkDay;
+    const endDate=scheduledDays[scheduledDays.length-1]||firstWorkDay;
+    result[task.id]={start:startDate,end:endDate,fits,remaining,days:taskDays,responsible};
+  });
+
+  // Combined dayLoad voor weergave
+  const dl={};
+  USERS.forEach(u=>{
+    Object.entries(dayLoadPerUser[u.name]).forEach(([day,h])=>{
+      dl[day]=(dl[day]||0)+h;
+    });
+  });
+  result.__dayLoad=dl;
+  result.__dayLoadPerUser=dayLoadPerUser;
+  return result;
+}
+
+
+// ── Firebase helpers (compat SDK) ─────────────────────────────
+function useFirestore(){
+  const [ready,setReady]=useState(!!window.__fbReady);
+  useEffect(()=>{
+    if(window.__fbReady){setReady(true);return;}
+    const h=()=>setReady(true);
+    window.addEventListener('firebase-ready',h);
+    return()=>window.removeEventListener('firebase-ready',h);
+  },[]);
+  return ready;
+}
+
+function useCollection(colName,ready){
+  const [data,setData]=useState([]);
+  useEffect(()=>{
+    if(!ready)return;
+    const unsub=db.collection(colName).onSnapshot(snap=>{
+      setData(snap.docs.map(d=>({...d.data(),id:d.id})));
+    },err=>console.error('Firestore error:',err));
+    return unsub;
+  },[colName,ready]);
+  return data;
+}
+
+async function saveDoc(colName,id,data){
+  const clean={};
+  Object.entries(data).forEach(([k,v])=>{if(v!==undefined&&v!==null)clean[k]=v;});
+  await db.collection(colName).doc(id).set(clean,{merge:true});
+}
+
+async function deleteDocById(colName,id){
+  await db.collection(colName).doc(id).delete();
+}
+
+// ── sub-components ───────────────────────────────────────────
+function StatusBadge({status}){
+  const m={'New':'new','Planned':'planned','In progress':'inprogress','Waiting':'waiting','Done':'done','Late':'late'};
+  return <span className={`badge badge-${m[status]||'new'}`}>{status}</span>;
+}
+
+function ProgressBar({actual,estimated}){
+  const pct=estimated>0?Math.min((actual/estimated)*100,100):0;
+  const over=actual>estimated;
+  return(
+    <div>
+      <div className="progress-bar"><div className="progress-fill" style={{width:pct+'%',background:over?'var(--red)':pct>80?'var(--orange)':'var(--blue)'}}/></div>
+      <div className="flex justify-between mt-1">
+        <span className="text-xs text-muted">{fmtHours(actual)}h gewerkt</span>
+        <span className={`text-xs ${over?'text-red':''}`}>{fmtHours(estimated)}h geschat</span>
+      </div>
+    </div>
+  );
+}
+
+function InlineTimer({taskId,timeLogs,onStart,onStop}){
+  const [tick,setTick]=useState(0);
+  const activeLog=timeLogs.find(l=>l.taskId===taskId&&l.running);
+  useEffect(()=>{if(!activeLog)return;const t=setInterval(()=>setTick(p=>p+1),1000);return()=>clearInterval(t);},[activeLog]);
+  if(activeLog){
+    return(
+      <div className="flex items-center gap-2" onClick={e=>e.stopPropagation()}>
+        <span className="elapsed">{fmtDurShort(Date.now()-activeLog.start)}</span>
+        <button className="timer-btn timer-btn-stop" onClick={()=>onStop(activeLog)}>⏹ Stop</button>
+      </div>
+    );
+  }
+  return <button className="timer-btn timer-btn-start" onClick={e=>{e.stopPropagation();onStart(taskId);}}>▶ Start</button>;
+}
+
+function TimerWidget({task,timeLogs,onStart,onStop}){
+  const [tick,setTick]=useState(0);
+  const [comment,setComment]=useState('');
+  const [manHours,setManHours]=useState('');
+  const [manComment,setManComment]=useState('');
+  const activeLog=timeLogs.find(l=>l.taskId===task.id&&l.running);
+  useEffect(()=>{if(!activeLog)return;const t=setInterval(()=>setTick(p=>p+1),1000);return()=>clearInterval(t);},[activeLog]);
+
+  function stopWithComment(){onStop(activeLog,comment);setComment('');}
+  function pauseWithComment(){onStop(activeLog,'[Pauze] '+comment);setComment('');}
+  async function addManual(){
+    const h=parseFloat(manHours);
+    if(!h||h<=0){alert('Voer geldige uren in.');return;}
+    const now=Date.now();
+    const logId='L'+Date.now();
+    await saveDoc('qline_logs',logId,{id:logId,taskId:task.id,start:now-h*3600000,end:now,running:false,comment:'[Handmatig] '+(manComment||'')});
+    setManHours('');setManComment('');
+  }
+
+  const taskLogs=timeLogs.filter(l=>l.taskId===task.id).sort((a,b)=>b.start-a.start);
+
+  return(
+    <div>
+      <div className="section-title">Tijdregistratie</div>
+      {activeLog?(
+        <div className="card mb-3" style={{background:'var(--bg3)'}}>
+          <div className="flex items-center justify-between mb-3">
+            <div><div className="text-xs text-muted mb-1">Timer loopt...</div><div className="timer-display">{fmtDur(Date.now()-activeLog.start)}</div></div>
+            <div style={{width:12,height:12,borderRadius:'50%',background:'var(--green)',animation:'blink 1.5s infinite'}}/>
+          </div>
+          <input className="input mb-2" placeholder="Opmerking (optioneel)" value={comment} onChange={e=>setComment(e.target.value)}/>
+          <div className="flex gap-2">
+            <button className="btn btn-warning btn-sm" onClick={pauseWithComment}>⏸ Pauze</button>
+            <button className="btn btn-danger btn-sm" onClick={stopWithComment}>⏹ Stop & opslaan</button>
+          </div>
+        </div>
+      ):(
+        <button className="btn btn-primary mb-3" style={{width:'100%',justifyContent:'center'}} onClick={()=>onStart(task.id)}>▶ Start timer</button>
+      )}
+      <div className="card mb-3" style={{background:'var(--bg3)'}}>
+        <div className="text-xs font-600 text-muted mb-2">Handmatige invoer</div>
+        <div className="form-row">
+          <div><label>Uren</label><input className="input" type="number" min="0.1" step="0.25" placeholder="bv. 1.5" value={manHours} onChange={e=>setManHours(e.target.value)}/></div>
+          <div><label>Opmerking</label><input className="input" placeholder="optioneel" value={manComment} onChange={e=>setManComment(e.target.value)}/></div>
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={addManual}>+ Toevoegen</button>
+      </div>
+      {taskLogs.length>0&&(
+        <div>
+          <div className="text-xs text-muted font-600 mb-2">Logboek ({taskLogs.length})</div>
+          {taskLogs.map(l=>{
+            const dur=l.end?l.end-l.start:l.running?Date.now()-l.start:0;
+            return(
+              <div key={l.id} className="flex justify-between items-center p-2 rounded mb-1" style={{background:'var(--bg4)',fontSize:12}}>
+                <div>
+                  <span className="text-muted">{fmtDateTime(l.start)}</span>
+                  {l.running&&<span className="badge badge-inprogress" style={{fontSize:10,marginLeft:8}}>ACTIEF</span>}
+                  {l.comment&&<span style={{marginLeft:8,color:'var(--text3)',fontSize:11}}>{l.comment}</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span style={{fontWeight:600,fontVariantNumeric:'tabular-nums'}}>{fmtDur(dur)}</span>
+                  <button onClick={()=>{if(confirm('Verwijderen?'))deleteDocById('qline_logs',l.id)}} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:16,lineHeight:1,padding:'0 2px'}}>×</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── task modal ───────────────────────────────────────────────
+// ── email modal ───────────────────────────────────────────────
+const THIJS_EMAIL='Thijs@q-line.com';
+
+const DEFAULT_TEMPLATE=`Hoi Thijs,
+
+Order {orderNumber} — {customer} is afgerond.
+
+Werkzaamheden:
+{description}
+
+Nacalculatie:
+  Geschat:   {estimatedHours} uur
+  Gewerkt:   {actualHours} uur
+  Verschil:  {diffHours} uur {diffLabel}
+
+{notes}
+Met vriendelijke groet,
+Frank
+`;
+
+function EmailModal({task,emailLogs,timeLogs,onClose}){
+  const actualHours=calcActual(timeLogs||[],task.id);
+  const diff=actualHours-task.estimatedHours;
+  const diffLabel=diff>0?'(meerwerk)':diff<0?'(minder)':'(exact)';
+
+  const [subject,setSubject]=useState(`Order ${task.orderNumber} afgerond — ${task.customer}`);
+  const [body,setBody]=useState(
+    DEFAULT_TEMPLATE
+      .replace('{customer}',task.customer||'')
+      .replace('{orderNumber}',task.orderNumber||'')
+      .replace('{description}',task.description||'')
+      .replace('{estimatedHours}',fmtHours(task.estimatedHours))
+      .replace('{actualHours}',fmtHours(actualHours))
+      .replace('{diffHours}',fmtHours(Math.abs(diff)))
+      .replace('{diffLabel}',diffLabel)
+      .replace('{notes}',task.notes?`Opmerking: ${task.notes}\n\n`:'')
+  );
+  const [recipient,setRecipient]=useState(THIJS_EMAIL);
+  const [sending,setSending]=useState(false);
+  const [sent,setSent]=useState(false);
+
+  async function sendEmail(){
+    if(!recipient.trim()){alert('Voer een e-mailadres in.');return;}
+    setSending(true);
+
+    // Sla op in Firebase als log
+    const logId='M'+Date.now();
+    const logEntry={
+      id:logId,
+      taskId:task.id,
+      sentAt:Date.now(),
+      recipient,
+      subject,
+      body,
+    };
+    await saveDoc('qline_emails',logId,logEntry);
+    if(recipient!==task.customerEmail){
+      await saveDoc('qline_tasks',task.id,{...task,customerEmail:recipient});
+    }
+
+    // Open Outlook/Gmail via mailto
+    const mailto=`mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href=mailto;
+
+    setSending(false);
+    setSent(true);
+  }
+
+  async function copyToClipboard(){
+    const full=`Aan: ${recipient}\nOnderwerp: ${subject}\n\n${body}`;
+    await navigator.clipboard.writeText(full);
+    alert('E-mail gekopieerd naar klembord.');
+  }
+
+  const sentLogs=(emailLogs||[]).filter(l=>l.taskId===task.id).sort((a,b)=>b.sentAt-a.sentAt);
+
+  if(sent) return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal" style={{maxWidth:480}}>
+        <div className="modal-header"><h3>E-mail verstuurd ✓</h3><button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button></div>
+        <div className="modal-body" style={{textAlign:'center',padding:'40px 20px'}}>
+          <div style={{fontSize:48,marginBottom:16}}>✅</div>
+          <div style={{fontWeight:600,fontSize:16,color:'var(--green)',marginBottom:8}}>E-mail verstuurd</div>
+          <div className="text-muted text-sm">Naar: {recipient}</div>
+          <div className="text-muted text-sm">Onderwerp: {subject}</div>
+          <div className="mt-4">
+            <button className="btn btn-primary" onClick={onClose}>Sluiten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal" style={{maxWidth:620}}>
+        <div className="modal-header">
+          <h3>📧 Afmelding sturen — {task.orderNumber}</h3>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <label>Aan</label>
+            <input className="input" type="email" value={recipient} onChange={e=>setRecipient(e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label>Onderwerp</label>
+            <input className="input" value={subject} onChange={e=>setSubject(e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label>Bericht</label>
+            <textarea className="input" value={body} onChange={e=>setBody(e.target.value)} style={{minHeight:220,fontFamily:'inherit',fontSize:13,lineHeight:1.6}}/>
+          </div>
+          {sentLogs.length>0&&(
+            <div className="border-t pt-3">
+              <div className="section-title">Eerdere verzendingen ({sentLogs.length})</div>
+              {sentLogs.map(l=>(
+                <div key={l.id} className="flex justify-between items-center p-2 rounded mb-1" style={{background:'var(--bg3)',fontSize:12}}>
+                  <div>
+                    <span style={{color:'var(--green)'}}>✓</span>
+                    <span className="text-muted ml-2">{fmtDateTime(l.sentAt)}</span>
+                    <span className="text-muted ml-2">→ {l.recipient}</span>
+                  </div>
+                  <span className="text-xs text-muted">{l.subject}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost btn-sm" onClick={copyToClipboard}>📋 Kopieer</button>
+          <div className="flex gap-2">
+            <button className="btn btn-ghost" onClick={onClose}>Annuleer</button>
+            <button className="btn btn-primary" onClick={sendEmail} disabled={sending}>
+              {sending?'Versturen...':'📧 Verstuur afmelding'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
+  const [form,setForm]=useState({...task});
+  const [saving,setSaving]=useState(false);
+  const [showEmail,setShowEmail]=useState(false);
+  const [tick,setTick]=useState(0);
+  useEffect(()=>{const t=setInterval(()=>setTick(p=>p+1),5000);return()=>clearInterval(t);},[]);
+
+  const actual=calcActual(timeLogs,task.id);
+  const overrun=actual>form.estimatedHours;
+  const remaining=Math.max(0,form.estimatedHours-actual);
+  const plan=planData[task.id]||{};
+
+  function set(k,v){setForm(p=>({...p,[k]:v}))}
+
+  async function save(){
+    setSaving(true);
+    await saveDoc('qline_tasks',form.id,{...form,estimatedHours:parseFloat(form.estimatedHours)||0});
+    setSaving(false);
+    onClose();
+  }
+
+  async function del(){
+    if(!confirm('Taak verwijderen? Alle tijdregistraties worden ook verwijderd.'))return;
+    await deleteDocById('qline_tasks',task.id);
+    timeLogs.filter(l=>l.taskId===task.id).forEach(l=>deleteDocById('qline_logs',l.id));
+    onClose();
+  }
+
+  return(<>
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal">
+        <div className="modal-header">
+          <div>
+            <h3>{form.orderNumber} — {form.customer}</h3>
+            <div className="flex gap-2 mt-1">
+              <StatusBadge status={form.status}/>
+              {overrun&&<span className="badge badge-conflict">Meeruren</span>}
+              {plan.fits===false&&<span className="badge badge-late">Conflict</span>}
+            </div>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="grid-3 mb-4">
+            <div className="stat-card"><div className="stat-label">Geschat</div><div className="stat-value" style={{fontSize:22}}>{fmtHours(form.estimatedHours)}h</div></div>
+            <div className="stat-card"><div className="stat-label">Gewerkt</div><div className="stat-value" style={{fontSize:22,color:overrun?'var(--red)':'var(--green)'}}>{fmtHours(actual)}h</div></div>
+            <div className="stat-card"><div className="stat-label">Resterend</div><div className="stat-value" style={{fontSize:22,color:overrun?'var(--red)':''}}>{overrun?'+'+fmtHours(actual-form.estimatedHours)+'h':fmtHours(remaining)+'h'}</div></div>
+          </div>
+          <ProgressBar actual={actual} estimated={form.estimatedHours}/>
+          <div className="flex gap-2 mt-3 mb-4" style={{flexWrap:'wrap'}}>
+            {plan.start&&<span className="tag">📅 Start: {fmtDate(plan.start)}</span>}
+            {plan.end&&<span className={`tag ${plan.fits===false?'text-red':''}`}>🏁 Einde: {fmtDate(plan.end)}</span>}
+            {plan.fits===false&&<span className="badge badge-conflict">Na deadline!</span>}
+          </div>
+          <div className="border-t pt-3 mb-4">
+            <div className="form-row">
+              <div><label>Ordernummer</label><input className="input" value={form.orderNumber} onChange={e=>set('orderNumber',e.target.value)}/></div>
+              <div><label>Klantnaam</label><input className="input" value={form.customer} onChange={e=>set('customer',e.target.value)}/></div>
+            </div>
+            <div className="form-group"><label>Omschrijving</label><textarea className="input" value={form.description} onChange={e=>set('description',e.target.value)}/></div>
+            <div className="form-row">
+              <div><label>Invoerdatum</label><input className="input" type="date" value={form.entryDate} onChange={e=>set('entryDate',e.target.value)}/></div>
+              <div><label>Deadline</label><input className="input" type="date" value={form.deadline} onChange={e=>set('deadline',e.target.value)}/></div>
+            </div>
+            <div className="form-row">
+              <div><label>Geschatte uren</label><input className="input" type="number" min="0.5" step="0.5" value={form.estimatedHours} onChange={e=>set('estimatedHours',e.target.value)}/></div>
+              <div><label>Status</label><select className="input" value={form.status} onChange={e=>set('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
+            </div>
+            <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes||''} onChange={e=>set('notes',e.target.value)}/></div>
+            <div className="form-group">
+              <label>E-mailadres klant</label>
+              <input className="input" type="email" value={form.customerEmail||''} onChange={e=>set('customerEmail',e.target.value)} placeholder="klant@bedrijf.nl"/>
+            </div>
+          </div>
+          <TimerWidget task={task} timeLogs={timeLogs} onStart={onStart} onStop={onStop}/>
+
+          {/* Email sectie */}
+          {(()=>{
+            const sentEmails=(emailLogs||[]).filter(l=>l.taskId===task.id).sort((a,b)=>b.sentAt-a.sentAt);
+            const lastSent=sentEmails[0];
+            return(
+              <div className="border-t pt-3 mt-3">
+                <div className="section-title">E-mail communicatie</div>
+                {lastSent&&(
+                  <div className="alert alert-success mb-2" style={{background:'var(--green-bg)',border:'1px solid #14532d',color:'#86efac'}}>
+                    <span>✓</span>
+                    <div>
+                      <strong>Afmelding verstuurd</strong> op {fmtDateTime(lastSent.sentAt)}
+                      <div className="text-xs" style={{color:'#86efac',opacity:.8}}>Naar: {lastSent.recipient}</div>
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-2">
+                  {form.status==='Done'?(
+                    <button className="btn btn-success btn-sm" onClick={()=>setShowEmail(true)}>
+                      {lastSent?'📧 Opnieuw sturen':'📧 Stuur afmelding'}
+                    </button>
+                  ):(
+                    <button className="btn btn-ghost btn-sm" onClick={()=>setShowEmail(true)}>
+                      📧 E-mail opstellen
+                    </button>
+                  )}
+                  {!form.customerEmail&&<span className="text-xs text-orange" style={{alignSelf:'center'}}>⚠ Geen e-mailadres</span>}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-danger btn-sm" onClick={del}>🗑 Verwijderen</button>
+          <div className="flex gap-2">
+            <button className="btn btn-ghost" onClick={onClose}>Annuleer</button>
+            <button className="btn btn-primary" onClick={save} disabled={saving}>{saving?'Opslaan...':'Opslaan'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {showEmail&&<EmailModal task={{...form,customerEmail:form.customerEmail||task.customerEmail}} emailLogs={emailLogs} timeLogs={timeLogs} onClose={()=>setShowEmail(false)}/>}
+  </>
+  );
+}
+
+function NewTaskModal({onClose}){
+  const [form,setForm]=useState({orderNumber:'',customer:'',customerEmail:'',description:'',entryDate:today(),deadline:'',estimatedHours:4,responsible:'Frank',status:'New',notes:''});
+  const [saving,setSaving]=useState(false);
+  function set(k,v){setForm(p=>({...p,[k]:v}))}
+  async function save(){
+    if(!form.orderNumber.trim()||!form.customer.trim()||!form.deadline){alert('Vul ordernummer, klant en deadline in.');return;}
+    setSaving(true);
+    const id=genId();
+    await saveDoc('qline_tasks',id,{...form,id,estimatedHours:parseFloat(form.estimatedHours)||4});
+    setSaving(false);
+    onClose();
+  }
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal" style={{maxWidth:540}}>
+        <div className="modal-header"><h3>Nieuwe taak</h3><button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button></div>
+        <div className="modal-body">
+          <div className="form-row">
+            <div><label>Ordernummer *</label><input className="input" value={form.orderNumber} onChange={e=>set('orderNumber',e.target.value)} placeholder="2025-006" autoFocus/></div>
+            <div><label>Klantnaam *</label><input className="input" value={form.customer} onChange={e=>set('customer',e.target.value)} placeholder="Naam klant"/></div>
+          </div>
+          <div className="form-group"><label>E-mailadres klant</label><input className="input" type="email" value={form.customerEmail||''} onChange={e=>set('customerEmail',e.target.value)} placeholder="klant@bedrijf.nl"/></div>
+          <div className="form-group"><label>Omschrijving</label><textarea className="input" value={form.description} onChange={e=>set('description',e.target.value)} placeholder="Wat moet er gedaan worden?"/></div>
+          <div className="form-row">
+            <div><label>Invoerdatum</label><input className="input" type="date" value={form.entryDate} onChange={e=>set('entryDate',e.target.value)}/></div>
+            <div><label>Deadline *</label><input className="input" type="date" value={form.deadline} onChange={e=>set('deadline',e.target.value)}/></div>
+          </div>
+          <div className="form-row">
+            <div><label>Geschatte uren</label><input className="input" type="number" min="0.5" step="0.5" value={form.estimatedHours} onChange={e=>set('estimatedHours',e.target.value)}/></div>
+            <div><label>Status</label><select className="input" value={form.status} onChange={e=>set('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
+          </div>
+          <div className="form-row">
+            <div><label>Verantwoordelijke</label>
+              <select className="input" value={form.responsible||'Frank'} onChange={e=>set('responsible',e.target.value)}>
+                {USERS.map(u=><option key={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+            <div></div>
+          </div>
+          <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes} onChange={e=>set('notes',e.target.value)}/></div>
+        </div>
+        <div className="modal-footer" style={{justifyContent:'flex-end'}}><div className="flex gap-2"><button className="btn btn-ghost" onClick={onClose}>Annuleer</button><button className="btn btn-primary" onClick={save} disabled={saving}>{saving?'Aanmaken...':'Aanmaken'}</button></div></div>
+      </div>
+    </div>
+  );
+}
+
+// ── dashboard ────────────────────────────────────────────────
+function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
+  const td=today();
+  const [tick,setTick]=useState(0);
+  useEffect(()=>{const t=setInterval(()=>setTick(p=>p+1),1000);return()=>clearInterval(t);},[]);
+  const activeLog=timeLogs.find(l=>l.running);
+  const overdue=tasks.filter(t=>t.status!=='Done'&&t.deadline<td);
+  const conflicts=tasks.filter(t=>t.status!=='Done'&&planData[t.id]?.fits===false);
+  const waiting=tasks.filter(t=>t.status==='Waiting');
+  const done=tasks.filter(t=>t.status==='Done');
+  const overruns=tasks.filter(t=>t.status!=='Done'&&calcActual(timeLogs,t.id)>t.estimatedHours);
+  const totalRemaining=tasks.filter(t=>t.status!=='Done').reduce((s,t)=>s+Math.max(0,t.estimatedHours-calcActual(timeLogs,t.id)),0);
+  const allActive=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{const d=new Date(a.deadline)-new Date(b.deadline);return d!==0?d:new Date(a.entryDate)-new Date(b.entryDate);});
+  const dueWeek=tasks.filter(t=>t.status!=='Done'&&t.deadline>=td&&t.deadline<=addWorkDays(td,4));
+
+  return(
+    <div>
+      {conflicts.length>0&&(
+        <div className="conflict-banner mb-4">
+          <div className="flex items-center gap-2 mb-1"><span>⚠️</span><span style={{fontWeight:700,color:'var(--orange)'}}>PLANNING CONFLICT — {conflicts.length} {conflicts.length===1?'taak past':'taken passen'} niet voor deadline ({DAILY_CAP}h/dag)</span></div>
+          {conflicts.map(t=><div key={t.id} style={{color:'#fbd38d',fontSize:13,marginLeft:24,cursor:'pointer',marginTop:4}} onClick={()=>openTask(t)}>→ {t.orderNumber} | {t.customer} | deadline {fmtDate(t.deadline)} | nog {fmtHours(planData[t.id]?.remaining||0)}h</div>)}
+        </div>
+      )}
+      {overdue.length>0&&(
+        <div className="alert alert-danger mb-4">
+          <span>🔴</span>
+          <div><strong>Verlopen: {overdue.length} {overdue.length===1?'taak':'taken'}</strong>{overdue.map(t=><div key={t.id} style={{cursor:'pointer',marginTop:3,fontSize:12}} onClick={()=>openTask(t)}>→ {t.orderNumber} | {t.customer} | was {fmtDate(t.deadline)}</div>)}</div>
+        </div>
+      )}
+      {activeLog&&(()=>{const t=tasks.find(x=>x.id===activeLog.taskId);return(
+        <div className="alert alert-info mb-4">
+          <div style={{width:8,height:8,borderRadius:'50%',background:'var(--green)',marginTop:3,flexShrink:0,animation:'blink 1.5s infinite'}}/>
+          <div className="flex justify-between w-full items-center">
+            <div><strong>Timer loopt:</strong> {t?.orderNumber} — {t?.customer}</div>
+            <span style={{fontVariantNumeric:'tabular-nums',fontWeight:700,color:'var(--green)'}}>{fmtDur(Date.now()-activeLog.start)}</span>
+          </div>
+        </div>
+      );})()}
+      <div className="grid-4 mb-4">
+        <div className="stat-card"><div className="stat-label">Open taken</div><div className="stat-value">{tasks.filter(t=>t.status!=='Done').length}</div><div className="stat-sub">{done.length} afgerond</div></div>
+        <div className="stat-card"><div className="stat-label">Deadline deze week</div><div className="stat-value" style={{color:'var(--blue)'}}>{dueWeek.length}</div><div className="stat-sub">{overdue.length} verlopen</div></div>
+        <div className="stat-card"><div className="stat-label">Totaal resterend</div><div className="stat-value">{fmtHours(totalRemaining)}h</div><div className="stat-sub">≈ {Math.ceil(totalRemaining/DAILY_CAP)} werkdagen</div></div>
+        <div className="stat-card"><div className="stat-label">Conflicten</div><div className="stat-value" style={{color:conflicts.length?'var(--orange)':'var(--green)'}}>{conflicts.length}</div><div className="stat-sub">{overruns.length} meeruren</div></div>
+      </div>
+      <div className="card mb-4">
+        <div className="section-title">Alle open taken — klik om te openen · ▶ om direct te klokken</div>
+        {allActive.length===0?<div className="text-muted text-sm">Geen open taken. Goed bezig!</div>:allActive.map(t=>{
+          const actual=calcActual(timeLogs,t.id);
+          const remaining=Math.max(0,t.estimatedHours-actual);
+          const overrun=actual>t.estimatedHours;
+          const du=daysUntil(t.deadline);
+          const isLate=t.deadline<td;
+          const plan=planData[t.id]||{};
+          const isActive=!!timeLogs.find(l=>l.taskId===t.id&&l.running);
+          return(
+            <div key={t.id} className="task-row" style={{background:isActive?'#1a3a2a':undefined,border:isActive?'1px solid #14532d':'1px solid transparent'}}>
+              <div style={{flex:1,cursor:'pointer',minWidth:0}} onClick={()=>openTask(t)}>
+                <div className="flex items-center gap-2" style={{marginBottom:3}}>
+                  <span style={{fontWeight:700,fontSize:13,color:isLate?'var(--red)':'var(--blue)'}}>{t.orderNumber}</span>
+                  <span style={{fontSize:12,color:'var(--text2)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:160}}>{t.customer}</span>
+                  <StatusBadge status={t.status}/>
+                  {plan.fits===false&&<span className="badge badge-conflict" style={{fontSize:10}}>conflict</span>}
+                  {overrun&&<span className="badge badge-late" style={{fontSize:10}}>+uren</span>}
+                </div>
+                <div style={{fontSize:12,color:'var(--text2)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:400}}>{t.description}</div>
+              </div>
+              <div className="flex items-center gap-3" style={{flexShrink:0,marginLeft:12}}>
+                <div style={{textAlign:'right'}}>
+                  <div className={`text-xs ${isLate?'text-red':du<=3?'text-orange':du<=7?'text-yellow':'text-muted'}`}>{isLate?'verlopen':du===0?'vandaag':du===1?'morgen':du+' dagen'}</div>
+                  <div className={`text-xs ${overrun?'text-red':'text-muted'}`}>{overrun?'+'+fmtHours(actual-t.estimatedHours)+'h over':fmtHours(remaining)+'h rest'}</div>
+                </div>
+                <InlineTimer taskId={t.id} timeLogs={timeLogs} onStart={onStart} onStop={onStop}/>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="grid-2">
+        <div className="card">
+          <div className="section-title">Wachtrij ({waiting.length})</div>
+          {waiting.length===0?<div className="text-muted text-sm">Geen taken in de wacht.</div>:waiting.map(t=>(
+            <div key={t.id} className="flex justify-between items-center p-2 rounded mb-1 click-row" style={{background:'var(--bg3)'}} onClick={()=>openTask(t)}>
+              <div><div style={{fontWeight:600,fontSize:13}}>{t.orderNumber}</div><div className="text-xs text-muted">{t.notes||t.customer}</div></div>
+              <span className="tag">{fmtDate(t.deadline)}</span>
+            </div>
+          ))}
+        </div>
+        <div className="card">
+          <div className="section-title">Meeruren ({overruns.length})</div>
+          {overruns.length===0?<div className="text-muted text-sm">Geen taken met meeruren.</div>:overruns.map(t=>{
+            const a=calcActual(timeLogs,t.id);
+            return(
+              <div key={t.id} className="flex justify-between items-center p-2 rounded mb-1 click-row" style={{background:'var(--red-bg)'}} onClick={()=>openTask(t)}>
+                <div><div style={{fontWeight:600,fontSize:13,color:'var(--red)'}}>{t.orderNumber}</div><div className="text-xs" style={{color:'#fca5a5'}}>{t.customer}</div></div>
+                <span className="text-xs text-red">+{fmtHours(a-t.estimatedHours)}h</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── task list ────────────────────────────────────────────────
+function TaskList({tasks,timeLogs,planData,openTask,onStart,onStop}){
+  const [search,setSearch]=useState('');
+  const [filterStatus,setFilterStatus]=useState('');
+  const [filterPerson,setFilterPerson]=useState('');
+  const [sortBy,setSortBy]=useState('deadline');
+  const [sortDir,setSortDir]=useState(1);
+  // Secondary sort: always entryDate when deadlines are equal
+
+  const [tick,setTick]=useState(0);
+  useEffect(()=>{const t=setInterval(()=>setTick(p=>p+1),1000);return()=>clearInterval(t);},[]);
+  function toggleSort(col){if(sortBy===col)setSortDir(d=>d*-1);else{setSortBy(col);setSortDir(1);}}
+  const filtered=useMemo(()=>{
+    let r=tasks.filter(t=>{
+      const q=search.toLowerCase();
+      if(q&&!t.orderNumber.toLowerCase().includes(q)&&!t.customer.toLowerCase().includes(q)&&!(t.description||'').toLowerCase().includes(q))return false;
+      if(filterStatus&&t.status!==filterStatus)return false;
+      if(filterPerson&&(t.responsible||'Frank')!==filterPerson)return false;
+      return true;
+    });
+    r.sort((a,b)=>{
+      let va,vb;
+      if(sortBy==='deadline'){va=a.deadline;vb=b.deadline;}
+      else if(sortBy==='entryDate'){va=a.entryDate;vb=b.entryDate;}
+      else if(sortBy==='estimatedHours'){va=a.estimatedHours;vb=b.estimatedHours;}
+      else if(sortBy==='actual'){va=calcActual(timeLogs,a.id);vb=calcActual(timeLogs,b.id);}
+      else{va=a[sortBy]||'';vb=b[sortBy]||'';}
+      if(va<vb)return-1*sortDir;if(va>vb)return 1*sortDir;
+      // tiebreaker: vroegste invoerdatum eerst
+      const ea=a.entryDate||'',eb=b.entryDate||'';
+      if(ea<eb)return-1;if(ea>eb)return 1;return 0;
+    });
+    return r;
+  },[tasks,timeLogs,search,filterStatus,sortBy,sortDir]);
+  function SortTh({col,label}){return<th onClick={()=>toggleSort(col)} style={{cursor:'pointer',userSelect:'none',whiteSpace:'nowrap'}}>{label}{sortBy===col?(sortDir===1?' ↑':' ↓'):''}</th>;}
+  return(
+    <div>
+      <div className="search-bar">
+        <input className="input" style={{width:280}} placeholder="Zoek op order, klant, omschrijving..." value={search} onChange={e=>setSearch(e.target.value)}/>
+        <select className="filter-select" value={filterStatus} onChange={e=>setFilterStatus(e.target.value)}>
+          <option value="">Alle statussen</option>{STATUSES.map(s=><option key={s}>{s}</option>)}
+        </select>
+        <select className="filter-select" value={filterPerson} onChange={e=>setFilterPerson(e.target.value)}>
+          <option value="">Iedereen</option>
+          {USERS.map(u=><option key={u.name}>{u.name}</option>)}
+        </select>
+        <span className="text-xs text-muted">{filtered.length} van {tasks.length} taken</span>
+      </div>
+      <div className="card" style={{padding:0,overflow:'hidden'}}>
+        <div style={{overflowX:'auto'}}>
+          <table>
+            <thead><tr><SortTh col="orderNumber" label="Order"/><SortTh col="customer" label="Klant"/><th>Omschrijving</th><SortTh col="deadline" label="Deadline"/><SortTh col="responsible" label="Wie"/><SortTh col="estimatedHours" label="Geschat"/><SortTh col="actual" label="Gewerkt"/><th>Rest.</th><th>Status</th><th>Timer</th></tr></thead>
+            <tbody>
+              {filtered.length===0&&<tr><td colSpan={9} style={{textAlign:'center',padding:40,color:'var(--text3)'}}>Geen taken gevonden.</td></tr>}
+              {filtered.map(t=>{
+                const actual=calcActual(timeLogs,t.id);
+                const remaining=Math.max(0,t.estimatedHours-actual);
+                const overrun=actual>t.estimatedHours;
+                const du=daysUntil(t.deadline);
+                const isLate=t.status!=='Done'&&t.deadline<today();
+                return(
+                  <tr key={t.id}>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}><span style={{fontWeight:600,color:'var(--blue)'}}>{t.orderNumber}</span></td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer',maxWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.customer}</td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer',maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.description}</td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}><span className={isLate?'text-red font-600':du<=3?'text-orange':du<=7?'text-yellow':''}>{fmtDate(t.deadline)}</span></td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}>{fmtHours(t.estimatedHours)}h</td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}} className={overrun?'overrun':''}>{fmtHours(actual)}h</td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}} className={overrun?'overrun':''}>{overrun?<span className="text-red">+{fmtHours(actual-t.estimatedHours)}h</span>:fmtHours(remaining)+'h'}</td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}>{(()=>{const u=USERS.find(x=>x.name===(t.responsible||'Frank'));return<span style={{color:u?.color,fontWeight:600,fontSize:12}}>{u?.name}</span>;})()}</td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}><StatusBadge status={t.status}/></td>
+                    <td onClick={e=>e.stopPropagation()}><InlineTimer taskId={t.id} timeLogs={timeLogs} onStart={onStart} onStop={onStop}/></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── planning board ───────────────────────────────────────────
+function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
+  const td=today();
+  // Toon alle dagen incl weekenden zodat vr→ma aaneengesloten lijkt
+  const days=[];
+  let d=td;
+  for(let i=0;i<35;i++){
+    days.push(d);
+    const nd=new Date(d+'T12:00:00');nd.setDate(nd.getDate()+1);
+    d=nd.toISOString().split('T')[0];
+  }
+
+  const [dragTaskId,setDragTaskId]=useState(null);
+  const [dropDay,setDropDay]=useState(null);
+
+  const activeTasks=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+    const diff=new Date(a.deadline)-new Date(b.deadline);
+    return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
+  });
+  const conflicts=activeTasks.filter(t=>planData[t.id]?.fits===false);
+  const planReady=activeTasks.length===0||activeTasks.some(t=>planData[t.id]?.days);
+
+  function onDeadlineDragStart(e,taskId){
+    e.dataTransfer.effectAllowed='move';
+    e.dataTransfer.setData('text/plain',taskId);
+    setDragTaskId(taskId);
+  }
+  function onDragOver(e,day){
+    e.preventDefault();
+    setDropDay(day);
+  }
+  function onDrop(e,day){
+    e.preventDefault();
+    const taskId=e.dataTransfer.getData('text/plain')||dragTaskId;
+    if(taskId&&day){
+      const task=tasks.find(t=>t.id===taskId);
+      if(task){
+        setDeadlineOverrides(prev=>({...prev,[taskId]:day}));
+        saveDoc('qline_tasks',taskId,{...task,deadline:day}).then(()=>{
+          setDeadlineOverrides(prev=>{const n={...prev};delete n[taskId];return n;});
+        });
+      }
+    }
+    setDragTaskId(null);setDropDay(null);
+  }
+
+  // Bouw per dag een gesorteerde lijst van taken met hun uren
+  // zodat offset berekening altijd klopt
+  function getDaySegments(day){
+    const segs=[];
+    // Loop in zelfde volgorde als planTasks (vroegste deadline eerst)
+    const sorted=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+      const diff=new Date(a.deadline)-new Date(b.deadline);
+      return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
+    });
+    let offset=0;
+    sorted.forEach(t=>{
+      const h=planData[t.id]?.days?.[day]||0;
+      if(h>0){
+        segs.push({taskId:t.id,hours:h,offset,width:h/DAILY_CAP});
+        offset+=h/DAILY_CAP;
+      }
+    });
+    return segs;
+  }
+
+  return(<div>
+    {conflicts.length>0&&<div className="alert alert-warning mb-4"><span>⚠️</span><div><strong>Conflict:</strong> {conflicts.map(t=>t.orderNumber).join(', ')} — niet gereed voor deadline bij {DAILY_CAP}h/dag.</div></div>}
+    <div className="card">
+      <div className="section-title">Tijdlijn — sleep de D cirkel om deadline te verplaatsen</div>
+      <div style={{overflowX:'auto'}}>
+        <table style={{tableLayout:'fixed',minWidth:1000}}>
+          <thead>
+            <tr>
+              <th style={{width:160,minWidth:160}}>Taak</th>
+              {days.map(day=>{
+                const isToday=day===td;
+                const isHover=dropDay===day;
+                const weekend=isWeekend(day);
+                return<th key={day}
+                  onDragOver={!weekend?(e=>onDragOver(e,day)):undefined}
+                  onDrop={!weekend?(e=>onDrop(e,day)):undefined}
+                  style={{width:weekend?28:56,textAlign:'center',
+                    background:isHover?'rgba(59,130,246,0.3)':weekend?'var(--bg)':isToday?'var(--blue-bg)':undefined,
+                    color:weekend?'var(--text3)':isToday?'var(--blue)':'var(--text2)',
+                    fontSize:weekend?8:10,padding:'8px 1px',
+                    outline:isHover?'2px dashed var(--blue)':undefined,
+                    opacity:weekend?0.4:1,
+                  }}>{weekend?'':fmtDate(day)}</th>;
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {activeTasks.length===0&&<tr><td colSpan={days.length+1} style={{textAlign:'center',padding:30,color:'var(--text3)'}}>Geen actieve taken.</td></tr>}
+            {planReady&&activeTasks.map(t=>{
+              const plan=planData[t.id]||{};
+              const isLate=t.deadline<td;
+              const isDragging=dragTaskId===t.id;
+              return(<tr key={t.id} style={{opacity:isDragging?0.4:1}}>
+                <td style={{fontSize:12,padding:'6px 10px'}}>
+                  <div style={{fontWeight:600,color:isLate?'var(--red)':'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.orderNumber}</div>
+                  <div className="text-xs text-muted" style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.customer}</div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <StatusBadge status={t.status}/>
+                    {(()=>{const u=USERS.find(x=>x.name===(t.responsible||'Frank'));return<span style={{fontSize:10,color:u?.color||'var(--blue)',fontWeight:600}}>{u?.name}</span>;})()}
+                  </div>
+                </td>
+                {days.map(day=>{
+                  const hoursThisDay=plan.days?.[day]||0;
+                  const isDeadline=day===t.deadline;
+                  const isHover=dropDay===day;
+                  // Bereken offset op basis van gesorteerde segmenten
+                  const segs=getDaySegments(day);
+                  const mySeg=segs.find(s=>s.taskId===t.id);
+                  const leftPct=mySeg?Math.round(mySeg.offset*100)+'%':'0%';
+                  const widthPct=mySeg?Math.round(mySeg.width*100)+'%':'0%';
+                  const taskUser=USERS.find(u=>u.name===(t.responsible||'Frank'));
+                  const barColor=plan.fits===false?'var(--orange)':(taskUser?.color||'var(--blue)');
+                  return(
+                    <td key={day}
+                      onDragOver={!isWeekend(day)?(e=>onDragOver(e,day)):undefined}
+                      onDrop={!isWeekend(day)?(e=>onDrop(e,day)):undefined}
+                      style={{padding:'3px 1px',position:'relative',height:30,
+                        width:isWeekend(day)?28:56,
+                        background:isHover?'rgba(59,130,246,0.08)':isWeekend(day)?'var(--bg)':undefined,
+                        opacity:isWeekend(day)?0.3:1}}>
+                      {isHover&&<div style={{position:'absolute',inset:0,border:'2px dashed var(--blue)',borderRadius:3,pointerEvents:'none',zIndex:5}}/>}
+                      {hoursThisDay>0&&(
+                        <div style={{
+                          position:'absolute',
+                          left:leftPct,
+                          width:widthPct,
+                          top:'50%',transform:'translateY(-50%)',
+                          background:barColor,
+                          borderRadius:3,height:18,
+                          display:'flex',alignItems:'center',justifyContent:'center',
+                          fontSize:9,color:'#fff',fontWeight:600,
+                          overflow:'hidden',boxSizing:'border-box',zIndex:2,
+                        }}>
+                          {hoursThisDay<DAILY_CAP?hoursThisDay+'h':''}
+                        </div>
+                      )}
+                      {isDeadline&&(
+                        // D cirkel staat ALTIJD op de deadline kolom
+                        // ook als er werk van een andere taak op die dag staat — dat is normaal
+                        <div
+                          draggable={true}
+                          onDragStart={e=>onDeadlineDragStart(e,t.id)}
+                          title="Sleep om deadline te verplaatsen"
+                          style={{
+                            position:'absolute',
+                            right:1,top:'50%',marginTop:-9,
+                            width:24,height:24,borderRadius:'50%',
+                            background:'var(--red-bg)',
+                            border:'2px solid var(--red)',
+                            display:'flex',alignItems:'center',justifyContent:'center',
+                            fontSize:10,color:'var(--red)',
+                            cursor:'grab',zIndex:20,fontWeight:700,
+                            boxShadow:'0 0 6px rgba(239,68,68,.4)',
+                            userSelect:'none',
+                          }}>D</div>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>);
+            })}
+            <tr style={{borderTop:'2px solid var(--border2)'}}>
+              <td style={{fontSize:11,color:'var(--text2)',fontWeight:600,padding:'6px 10px'}}>Uren gepland</td>
+              {days.map(day=>{
+                const h=(planData.__dayLoad&&planData.__dayLoad[day])||0;
+                const over=h>DAILY_CAP;
+                if(isWeekend(day)) return<td key={day} style={{width:28,background:'var(--bg)',opacity:.3}}/>;
+                return<td key={day}
+                  onDragOver={e=>onDragOver(e,day)}
+                  onDrop={e=>onDrop(e,day)}
+                  style={{textAlign:'center',fontSize:10,fontWeight:600,
+                    color:over?'var(--orange)':h>=DAILY_CAP?'var(--blue)':h>0?'var(--text2)':'var(--text3)',
+                    padding:'6px 2px'}}>
+                  {h>0?Math.round(h*10)/10+'h':'—'}
+                </td>;
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style={{marginTop:12,fontSize:11,color:'var(--text3)'}}>
+        Sleep de <strong style={{color:'var(--blue)'}}>D</strong> cirkel naar een andere dag om de deadline aan te passen. De rest herplant automatisch.
+      </div>
+    </div>
+  </div>);
+}
+
+
+function TimeLogView({tasks,timeLogs}){
+  const [tick,setTick]=useState(0);
+  useEffect(()=>{const t=setInterval(()=>setTick(p=>p+1),5000);return()=>clearInterval(t);},[]);
+  const totalMs=timeLogs.reduce((s,l)=>s+(l.end?l.end-l.start:l.running?Date.now()-l.start:0),0);
+  const now=new Date();const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay()+1);weekStart.setHours(0,0,0,0);
+  const thisWeekMs=timeLogs.filter(l=>new Date(l.start)>=weekStart).reduce((s,l)=>s+(l.end?l.end-l.start:l.running?Date.now()-l.start:0),0);
+  const logs=[...timeLogs].sort((a,b)=>b.start-a.start);
+  return(
+    <div>
+      <div className="grid-3 mb-4">
+        <div className="stat-card"><div className="stat-label">Totaal gewerkt</div><div className="stat-value">{fmtHours(totalMs/3600000)}h</div></div>
+        <div className="stat-card"><div className="stat-label">Deze week</div><div className="stat-value" style={{color:'var(--blue)'}}>{fmtHours(thisWeekMs/3600000)}h</div></div>
+        <div className="stat-card"><div className="stat-label">Registraties</div><div className="stat-value">{timeLogs.length}</div><div className="stat-sub">{timeLogs.filter(l=>l.running).length} actief</div></div>
+      </div>
+      <div className="card" style={{padding:0,overflow:'hidden'}}>
+        <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)'}}><span style={{fontSize:11,fontWeight:600,color:'var(--text2)',textTransform:'uppercase',letterSpacing:'.5px'}}>Alle tijdregistraties ({logs.length})</span></div>
+        <table>
+          <thead><tr><th>Taak</th><th>Start</th><th>Einde</th><th>Duur</th><th>Opmerking</th><th></th></tr></thead>
+          <tbody>
+            {logs.length===0&&<tr><td colSpan={6} style={{textAlign:'center',padding:40,color:'var(--text3)'}}>Geen tijdregistraties.</td></tr>}
+            {logs.map(l=>{
+              const task=tasks.find(t=>t.id===l.taskId);
+              const dur=l.end?l.end-l.start:l.running?Date.now()-l.start:0;
+              return(
+                <tr key={l.id}>
+                  <td><span style={{color:'var(--blue)',fontWeight:600}}>{task?.orderNumber||l.taskId}</span><div className="text-xs text-muted">{task?.customer||''}</div></td>
+                  <td className="text-sm text-muted">{fmtDateTime(l.start)}</td>
+                  <td className="text-sm text-muted">{l.running?<span className="badge badge-inprogress">ACTIEF</span>:fmtDateTime(l.end)}</td>
+                  <td style={{fontWeight:600,fontVariantNumeric:'tabular-nums'}}>{fmtDur(dur)}</td>
+                  <td className="text-xs text-muted" style={{maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.comment||'—'}</td>
+                  <td><button onClick={()=>{if(confirm('Verwijderen?'))deleteDocById('qline_logs',l.id)}} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:16,padding:'0 4px'}}>×</button></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── loading screen ───────────────────────────────────────────
+function Loading(){
+  return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:16}}>
+      <div style={{width:32,height:32,border:'3px solid var(--border)',borderTop:'3px solid var(--blue)',borderRadius:'50%',animation:'spin 1s linear infinite'}}/>
+      <div style={{color:'var(--text2)',fontSize:14}}>Verbinden met Firebase...</div>
+    </div>
+  );
+}
+
+// ── app root ─────────────────────────────────────────────────
+function App(){
+  const fbReady=useFirestore();
+  const rawTasks=useCollection('qline_tasks',fbReady);
+  const timeLogs=useCollection('qline_logs',fbReady);
+  const emailLogs=useCollection('qline_emails',fbReady);
+  // Lokale deadline overrides voor directe visuele feedback bij slepen
+  const [deadlineOverrides,setDeadlineOverrides]=useState({});
+  // Merge: lokale overrides hebben prioriteit boven Firebase data
+  const tasks=rawTasks.map(t=>deadlineOverrides[t.id]?{...t,deadline:deadlineOverrides[t.id]}:t);
+  const [view,setView]=useState('dashboard');
+  const [selectedTask,setSelectedTask]=useState(null);
+  const [showNew,setShowNew]=useState(false);
+  const [tick,setTick]=useState(0);
+
+  useEffect(()=>{const t=setInterval(()=>setTick(p=>p+1),15000);return()=>clearInterval(t);},[]);
+
+  const [pinnedStarts,setPinnedStarts]=useState({});
+  const [planData,setPlanData]=useState({__dayLoad:{}});
+  useEffect(()=>{
+    if(tasks.length===0&&timeLogs.length===0)return;
+    setPlanData(planTasks(tasks,timeLogs,{}));
+  },[tasks,timeLogs,tick]);
+
+  // timer actions
+  async function handleStart(taskId){
+    const logId='L'+Date.now();
+    await saveDoc('qline_logs',logId,{id:logId,taskId,start:Date.now(),end:null,running:true,comment:''});
+    // auto-set status to In progress
+    const task=tasks.find(t=>t.id===taskId);
+    if(task&&task.status==='New'||task?.status==='Planned'){
+      await saveDoc('qline_tasks',taskId,{...task,status:'In progress'});
+    }
+  }
+  async function handleStop(activeLog,comment=''){
+    await saveDoc('qline_logs',activeLog.id,{...activeLog,end:Date.now(),running:false,comment:comment||''});
+  }
+
+  function openTask(t){setSelectedTask(tasks.find(x=>x.id===t.id)||t);}
+
+  const conflicts=tasks.filter(t=>t.status!=='Done'&&planData[t.id]?.fits===false).length;
+  const activeLog=timeLogs.find(l=>l.running);
+  const overdue=tasks.filter(t=>t.status!=='Done'&&t.deadline<today()).length;
+
+  const VIEWS=[{id:'dashboard',icon:'◉',label:'Dashboard'},{id:'tasks',icon:'≡',label:'Taakoverzicht'},{id:'planning',icon:'▦',label:'Planning'},{id:'timelog',icon:'◷',label:'Tijdregistratie'}];
+  const TITLES={dashboard:'Dashboard',tasks:'Taakoverzicht',planning:'Planning',timelog:'Tijdregistraties'};
+
+  if(!fbReady)return <Loading/>;
+
+  return(
+    <div className="app">
+      <div className="sidebar">
+        <div className="sidebar-logo">
+          <h1>Q-LINE</h1>
+          <p>Frank 4h · Douwe 6h / dag</p>
+        </div>
+        {VIEWS.map(v=>(
+          <div key={v.id} className={`nav-item ${view===v.id?'active':''}`} onClick={()=>setView(v.id)}>
+            <span style={{width:16,textAlign:'center'}}>{v.icon}</span><span>{v.label}</span>
+          </div>
+        ))}
+        <div style={{marginTop:'auto',padding:'16px',borderTop:'1px solid var(--border)'}}>
+          <div className="text-xs text-muted mb-2" style={{fontWeight:600,textTransform:'uppercase',letterSpacing:'.5px'}}>Status</div>
+          <div style={{fontSize:12,color:'var(--text)',marginBottom:4}}>{tasks.filter(t=>t.status!=='Done').length} open taken</div>
+          {conflicts>0&&<div style={{fontSize:12,color:'var(--orange)',marginBottom:4}}>⚠ {conflicts} conflict{conflicts!==1?'en':''}</div>}
+          {activeLog&&<div style={{fontSize:12,color:'var(--green)',marginBottom:4}}>● Timer loopt</div>}
+          {overdue>0&&<div style={{fontSize:12,color:'var(--red)',marginBottom:4}}>! {overdue} verlopen</div>}
+          <div style={{fontSize:10,color:'var(--text3)',marginTop:8,display:'flex',alignItems:'center',gap:4}}>
+            <span className="sync-dot" style={{background:'var(--green)'}}/>Firebase sync actief
+          </div>
+        </div>
+      </div>
+      <div className="main">
+        <div className="topbar">
+          <h2>{TITLES[view]}</h2>
+          <div className="flex gap-2 items-center">
+            {activeLog&&<span className="badge badge-inprogress">● Timer loopt</span>}
+            {conflicts>0&&<span className="badge badge-conflict">⚠ {conflicts} conflict{conflicts!==1?'en':''}</span>}
+            {overdue>0&&<span className="badge badge-late">! {overdue} verlopen</span>}
+            <button className="btn btn-primary btn-sm" onClick={()=>setShowNew(true)}>+ Nieuwe taak</button>
+          </div>
+        </div>
+        <div className="content">
+          {view==='dashboard'&&<Dashboard tasks={tasks} timeLogs={timeLogs} planData={planData} openTask={openTask} onStart={handleStart} onStop={handleStop}/>}
+          {view==='tasks'&&<TaskList tasks={tasks} timeLogs={timeLogs} planData={planData} openTask={openTask} onStart={handleStart} onStop={handleStop}/>}
+          {view==='planning'&&<PlanningBoard tasks={tasks} timeLogs={timeLogs} planData={planData} setDeadlineOverrides={setDeadlineOverrides}/>}
+          {view==='timelog'&&<TimeLogView tasks={tasks} timeLogs={timeLogs}/>}
+        </div>
+      </div>
+      {selectedTask&&<TaskModal task={selectedTask} timeLogs={timeLogs} emailLogs={emailLogs} onStart={handleStart} onStop={handleStop} planData={planData} onClose={()=>setSelectedTask(null)}/>}
+      {showNew&&<NewTaskModal onClose={()=>setShowNew(false)}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
