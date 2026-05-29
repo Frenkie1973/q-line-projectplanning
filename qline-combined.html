@@ -1188,6 +1188,10 @@ function App(){
 
   // timer actions
   async function handleStart(taskId){
+    // Stop alle lopende timers eerst
+    const running=timeLogs.filter(l=>l.running);
+    await Promise.all(running.map(l=>saveDoc('qline_logs',l.id,{...l,end:Date.now(),running:false,comment:''})));
+    // Start nieuwe timer
     const logId='L'+Date.now();
     await saveDoc('qline_logs',logId,{id:logId,taskId,start:Date.now(),end:null,running:true,comment:''});
     // auto-set status to In progress
