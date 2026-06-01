@@ -225,8 +225,8 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
         let remaining=hours;
         const fixedDays={};
         sortedDays.forEach(day=>{
-          const avail=userAvail(responsible,day)+(tryDays[day]||0);
-          const take=Math.min(avail,remaining);
+          const cap=getUserCap(responsible); // max uren per dag voor deze tekenaar
+          const take=Math.min(cap,remaining);
           fixedDays[day]=take;
           remaining-=take;
         });
