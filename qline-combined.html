@@ -135,7 +135,8 @@ const USERS=[
   {name:'Frank', capacity:4, color:'#3b82f6'},
   {name:'Douwe', capacity:6, color:'#22c55e'},
 ];
-const DAILY_CAP=10; // totaal per dag (Frank 4h + Douwe 6h)
+const DAILY_CAP=7;  // tekenststation: max 7h/dag totaal
+const STATION_CAP=7; // zelfde, voor leesbaarheid
 const STATUSES=['New','Planned','In progress','Waiting','Done','Late'];
 
 // ── helpers ──────────────────────────────────────────────────
@@ -156,34 +157,34 @@ function getUserCap(name){
 }
 
 function planTasks(tasks,timeLogs,pinnedStarts={}){
-  // Eerste werkdag = vandaag of volgende maandag als weekend
   let firstWorkDay=today();
   while(isWeekend(firstWorkDay)){
     const nd=new Date(firstWorkDay+'T12:00:00');nd.setDate(nd.getDate()+1);
     firstWorkDay=nd.toISOString().split('T')[0];
   }
 
-  // Sorteer per persoon op vroegste deadline dan invoerdatum
+  // Sorteer: vroegste deadline eerst, dan oudste invoerdatum
   // Sla taken over zonder geldige deadline
-  const active=[...tasks.filter(t=>t.status!=='Done' && t.deadline && !isNaN(new Date(t.deadline)))].sort((a,b)=>{
+  const active=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{
     const diff=new Date(a.deadline)-new Date(b.deadline);
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
 
-  // Per persoon eigen dayLoad bijhouden
-  const dayLoadPerUser={};
-  USERS.forEach(u=>{ dayLoadPerUser[u.name]={}; });
-
-  // Dagen die al door iemand geclaimd zijn (1 tekenststation = exclusief per dag)
-  const claimedByUser={}; // dag -> naam van de gebruiker die die dag heeft
+  // stationLoad[dag] = totaal geplande uren op het tekenststation die dag (max DAILY_CAP=7)
+  const stationLoad={};
+  // perUserLoad[user][dag] = uren voor die tekenaar die dag (max getUserCap)
+  const perUserLoad={};
+  USERS.forEach(u=>{perUserLoad[u.name]={};});
 
   const result={};
 
+  // Hoeveel uur kan 'user' nog op 'day'?
   function userAvail(user,day){
-    // Als dag al door een ANDERE gebruiker geclaimd is: niet beschikbaar
-    if(claimedByUser[day] && claimedByUser[day]!==user) return 0;
-    const cap=getUserCap(user);
-    return cap-(dayLoadPerUser[user][day]||0);
+    const userCap=getUserCap(user);
+    const userUsed=perUserLoad[user][day]||0;
+    const stationUsed=stationLoad[day]||0;
+    // Beperkt door: eigen cap en station cap
+    return Math.min(userCap-userUsed, DAILY_CAP-stationUsed);
   }
 
   function prevWorkDay(d){
@@ -195,9 +196,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   function isDirectlyBefore(x,y){return nextWorkDay(x)===y;}
 
   function findBlock(hours, deadline, responsible){
-    // Eindpunt is altijd de werkdag VOOR deadline (nooit op deadline zelf)
     let endDay=prevWorkDay(deadline);
-    if(endDay>=deadline) endDay=prevWorkDay(deadline);
 
     while(endDay>=firstWorkDay){
       let hoursLeft=hours;
@@ -220,12 +219,12 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       }
 
       if(!broken&&hoursLeft<=0){
-        // Herverdeel uren voorwaarts: eerste dagen vol, laatste dag het restant
+        // Herverdeel: eerste dagen vol, laatste dag restant
         const sortedDays=Object.keys(tryDays).sort();
         let remaining=hours;
         const fixedDays={};
         sortedDays.forEach(day=>{
-          const cap=getUserCap(responsible); // max uren per dag voor deze tekenaar
+          const cap=Math.min(getUserCap(responsible), DAILY_CAP-(stationLoad[day]||0));
           const take=Math.min(cap,remaining);
           fixedDays[day]=take;
           remaining-=take;
@@ -235,7 +234,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       endDay=prevWorkDay(endDay);
     }
 
-    // Conflict: eerste aaneengesloten blok forward — maar NOOIT op of na deadline
+    // Conflict: eerste aaneengesloten blok forward — nooit op of na deadline
     let startDay=firstWorkDay;
     for(let i=0;i<90;i++){
       if(userAvail(responsible,startDay)<=0||startDay>=deadline){startDay=nextWorkDay(startDay);continue;}
@@ -244,7 +243,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       let d=startDay;
       let broken=false;
       while(hoursLeft>0){
-        if(d>=deadline){broken=true;break;} // nooit op of na deadline plannen
+        if(d>=deadline){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
         const take=Math.min(a,hoursLeft);
@@ -274,8 +273,8 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     const{days:taskDays,fits}=findBlock(remaining,task.deadline,responsible);
 
     Object.entries(taskDays).forEach(([day,h])=>{
-      dayLoadPerUser[responsible][day]=(dayLoadPerUser[responsible][day]||0)+h;
-      claimedByUser[day]=responsible; // dag is nu exclusief voor deze tekenaar
+      perUserLoad[responsible][day]=(perUserLoad[responsible][day]||0)+h;
+      stationLoad[day]=(stationLoad[day]||0)+h;
     });
 
     const scheduledDays=Object.keys(taskDays).sort();
@@ -284,15 +283,18 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     result[task.id]={start:startDate,end:endDate,fits,remaining,days:taskDays,responsible};
   });
 
-  // Combined dayLoad voor weergave
+  // dayLoad voor weergave
   const dl={};
+  const dlpu={};
   USERS.forEach(u=>{
-    Object.entries(dayLoadPerUser[u.name]).forEach(([day,h])=>{
+    dlpu[u.name]={};
+    Object.entries(perUserLoad[u.name]).forEach(([day,h])=>{
       dl[day]=(dl[day]||0)+h;
+      dlpu[u.name][day]=h;
     });
   });
   result.__dayLoad=dl;
-  result.__dayLoadPerUser=dayLoadPerUser;
+  result.__dayLoadPerUser=dlpu;
   return result;
 }
 
