@@ -219,7 +219,19 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
         }
       }
 
-      if(!broken&&hoursLeft<=0) return{days:tryDays,fits:true};
+      if(!broken&&hoursLeft<=0){
+        // Herverdeel uren voorwaarts: eerste dagen vol, laatste dag het restant
+        const sortedDays=Object.keys(tryDays).sort();
+        let remaining=hours;
+        const fixedDays={};
+        sortedDays.forEach(day=>{
+          const avail=userAvail(responsible,day)+(tryDays[day]||0);
+          const take=Math.min(avail,remaining);
+          fixedDays[day]=take;
+          remaining-=take;
+        });
+        return{days:fixedDays,fits:true};
+      }
       endDay=prevWorkDay(endDay);
     }
 
