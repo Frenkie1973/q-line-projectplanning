@@ -562,12 +562,20 @@ function EmailModal({task,emailLogs,timeLogs,onClose}){
 }
 
 // ── ICS / Outlook agenda export ───────────────────────────────
+// E-mailadressen van de tekenaars
+const TEKENAAR_EMAILS={
+  'Frank': 'frank@q-line.com',
+  'Douwe': 'douwe@q-line.com',
+};
+
 function exportICS(task){
   if(!task.deadline){ alert('Geen deadline ingesteld.'); return; }
 
-  // Formatteer datum als YYYYMMDD voor ICS
+  const responsible=task.responsible||'Frank';
+  const tekenaarsEmail=TEKENAAR_EMAILS[responsible]||'frank@q-line.com';
+
+  // Datum formatteren voor ICS
   const d=task.deadline.replace(/-/g,'');
-  // Volgende dag = einde van de all-day event
   const nextDay=(()=>{
     const nd=new Date(task.deadline+'T12:00:00');
     nd.setDate(nd.getDate()+1);
@@ -576,8 +584,8 @@ function exportICS(task){
 
   const uid=`qline-${task.id}-${Date.now()}@q-line.com`;
   const now=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
-  const responsible=task.responsible||'Frank';
 
+  // ICS vergaderverzoek: Thijs organiseert, tekenaar is attendee
   const ics=[
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -589,28 +597,41 @@ function exportICS(task){
     `DTSTAMP:${now}`,
     `DTSTART;VALUE=DATE:${d}`,
     `DTEND;VALUE=DATE:${nextDay}`,
-    `SUMMARY:⚠ Deadline: ${task.orderNumber} — ${task.customer}`,
+    `SUMMARY:Deadline: ${task.orderNumber} \u2014 ${task.customer}`,
     `DESCRIPTION:Order: ${task.orderNumber}\\nKlant: ${task.customer}\\nOmschrijving: ${task.description||''}\\nVerantwoordelijke: ${responsible}\\nGeschat: ${task.estimatedHours}h`,
-    `LOCATION:Q-Line`,
+    `ORGANIZER;CN=Thijs Q-Line:mailto:Thijs@q-line.com`,
+    `ATTENDEE;CN=${responsible};ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${tekenaarsEmail}`,
     'TRANSP:TRANSPARENT',
     'BEGIN:VALARM',
     'TRIGGER:-P1D',
     'ACTION:DISPLAY',
-    `DESCRIPTION:Morgen deadline: ${task.orderNumber} — ${task.customer}`,
+    `DESCRIPTION:Morgen deadline: ${task.orderNumber}`,
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');
 
-  // Download als .ics — Outlook opent dit automatisch
+  // Stap 1: download .ics vergaderverzoek
   const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
-  a.download=`deadline-${task.orderNumber}.ics`;
+  a.download=`vergaderverzoek-${task.orderNumber}.ics`;
   a.click();
   URL.revokeObjectURL(url);
+
+  // Stap 2: open Outlook met e-mail aan de tekenaar
+  const subject=encodeURIComponent(`Deadline planning: ${task.orderNumber} \u2014 ${task.customer}`);
+  const body=encodeURIComponent(
+    `Hoi ${responsible},\n\nBijgevoegd het vergaderverzoek voor order ${task.orderNumber} (${task.customer}).\n`+
+    `Deadline: ${task.deadline}\nGeschat: ${task.estimatedHours} uur\n\n`+
+    `Voeg de .ics bijlage toe om de deadline in je agenda te zetten.\n\nMet vriendelijke groet,\nThijs`
+  );
+  setTimeout(()=>{
+    window.location.href=`mailto:${tekenaarsEmail}?subject=${subject}&body=${body}`;
+  },600);
 }
+
 
 function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
   const [form,setForm]=useState({...task});
