@@ -195,8 +195,9 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   function isDirectlyBefore(x,y){return nextWorkDay(x)===y;}
 
   function findBlock(hours, deadline, responsible){
-    // Probeer elk mogelijk eindpunt voor deadline, van achter naar voor
+    // Eindpunt is altijd de werkdag VOOR deadline (nooit op deadline zelf)
     let endDay=prevWorkDay(deadline);
+    if(endDay>=deadline) endDay=prevWorkDay(deadline);
 
     while(endDay>=firstWorkDay){
       let hoursLeft=hours;
@@ -222,15 +223,16 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       endDay=prevWorkDay(endDay);
     }
 
-    // Conflict: eerste aaneengesloten blok forward
+    // Conflict: eerste aaneengesloten blok forward — maar NOOIT op of na deadline
     let startDay=firstWorkDay;
     for(let i=0;i<90;i++){
-      if(userAvail(responsible,startDay)<=0){startDay=nextWorkDay(startDay);continue;}
+      if(userAvail(responsible,startDay)<=0||startDay>=deadline){startDay=nextWorkDay(startDay);continue;}
       let hoursLeft=hours;
       const tryDays={};
       let d=startDay;
       let broken=false;
       while(hoursLeft>0){
+        if(d>=deadline){broken=true;break;} // nooit op of na deadline plannen
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
         const take=Math.min(a,hoursLeft);
