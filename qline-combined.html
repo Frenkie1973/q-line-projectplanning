@@ -173,9 +173,14 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   const dayLoadPerUser={};
   USERS.forEach(u=>{ dayLoadPerUser[u.name]={}; });
 
+  // Dagen die al door iemand geclaimd zijn (1 tekenststation = exclusief per dag)
+  const claimedByUser={}; // dag -> naam van de gebruiker die die dag heeft
+
   const result={};
 
   function userAvail(user,day){
+    // Als dag al door een ANDERE gebruiker geclaimd is: niet beschikbaar
+    if(claimedByUser[day] && claimedByUser[day]!==user) return 0;
     const cap=getUserCap(user);
     return cap-(dayLoadPerUser[user][day]||0);
   }
@@ -255,6 +260,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
 
     Object.entries(taskDays).forEach(([day,h])=>{
       dayLoadPerUser[responsible][day]=(dayLoadPerUser[responsible][day]||0)+h;
+      claimedByUser[day]=responsible; // dag is nu exclusief voor deze tekenaar
     });
 
     const scheduledDays=Object.keys(taskDays).sort();
