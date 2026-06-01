@@ -164,7 +164,8 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   }
 
   // Sorteer per persoon op vroegste deadline dan invoerdatum
-  const active=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+  // Sla taken over zonder geldige deadline
+  const active=[...tasks.filter(t=>t.status!=='Done' && t.deadline && !isNaN(new Date(t.deadline)))].sort((a,b)=>{
     const diff=new Date(a.deadline)-new Date(b.deadline);
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
@@ -1264,7 +1265,11 @@ function App(){
   const [planData,setPlanData]=useState({__dayLoad:{}});
   useEffect(()=>{
     if(tasks.length===0&&timeLogs.length===0)return;
-    setPlanData(planTasks(tasks,timeLogs,{}));
+    try{
+      setPlanData(planTasks(tasks,timeLogs,{}));
+    }catch(e){
+      console.error('planTasks error:',e);
+    }
   },[tasks,timeLogs,tick]);
 
   // timer actions
