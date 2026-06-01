@@ -724,6 +724,11 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
               <div><label>Geschatte uren</label><input className="input" type="number" min="0.5" step="0.5" value={form.estimatedHours} onChange={e=>set('estimatedHours',e.target.value)}/></div>
               <div><label>Status</label><select className="input" value={form.status} onChange={e=>set('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
             </div>
+            <div className="form-group"><label>Verantwoordelijke</label>
+              <select className="input" value={form.responsible||'Frank'} onChange={e=>set('responsible',e.target.value)}>
+                {USERS.map(u=><option key={u.name}>{u.name}</option>)}
+              </select>
+            </div>
             <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes||''} onChange={e=>set('notes',e.target.value)}/></div>
             <div className="form-group">
               <label>E-mailadres klant</label>
