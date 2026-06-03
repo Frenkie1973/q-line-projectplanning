@@ -267,7 +267,7 @@ table{border-collapse:collapse;table-layout:fixed;}
       <input type="checkbox" id="f-fweekends" style="width:15px;height:15px;cursor:pointer;accent-color:var(--accent);">
       <label id="lbl-fweekends-lbl" for="f-fweekends" style="font-size:12px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:0;cursor:pointer;">Weekenden inbegrepen</label>
     </div>
-    <div class="field wide"><label id="lbl-fnote">Opmerking (optioneel)</label><input id="f-fnote" placeholder="bijv. galvanisatie, leverancierâ¦"></div>
+    <div class="field wide"><label id="lbl-fnote">Opmerking (optioneel)</label><input id="f-fnote" placeholder="bijv. galvanisatie, leverancierÃ¢ÂÂ¦"></div>
   </div>
   <div class="assignee-section">
     <div class="assignee-section-label" id="lbl-assignees">Medewerkers &amp; hun datums binnen deze fase</div>
@@ -289,7 +289,7 @@ table{border-collapse:collapse;table-layout:fixed;}
 <div class="form-panel" id="form-milestone">
   <div class="form-header"><div class="form-title" id="form-ms-title">Mijlpaal toevoegen</div><button class="btn-ghost" onclick="closeForm('milestone')">&#10005;</button></div>
   <div class="form-grid">
-    <div class="field wide"><label>Label</label><input id="f-mname" placeholder="bijv. Oplevering, Go-liveâ¦"></div>
+    <div class="field wide"><label>Label</label><input id="f-mname" placeholder="bijv. Oplevering, Go-liveÃ¢ÂÂ¦"></div>
     <div class="field"><label>Project</label><select id="f-mproject"></select></div>
     <div class="field"><label id="lbl-mdate">Datum</label><input type="date" id="f-mdate"></div>
   </div>
@@ -318,7 +318,7 @@ table{border-collapse:collapse;table-layout:fixed;}
 </div>
 <script>
 
-/* ââ LANGUAGE ââ */
+/* Ã¢ÂÂÃ¢ÂÂ LANGUAGE Ã¢ÂÂÃ¢ÂÂ */
 var LANG_KEY = 'pp-lang';
 var currentLang = 'nl';
 
@@ -340,12 +340,12 @@ var T = {
     startDate:'Startdatum', endDate:'Einddatum', duration:'Duur (dagen)',
     inclWeekends:'Weekenden inbegrepen', note:'Opmerking (optioneel)',
     phaseType:'Fase type', assignees:'Medewerkers & hun datums binnen deze fase',
-    addPerson:'+ Persoon toevoegen', addPersonPh:'Persoon toevoegenâ¦',
+    addPerson:'+ Persoon toevoegen', addPersonPh:'Persoon toevoegenÃ¢ÂÂ¦',
     saveProject:'Project opslaan', deleteProject:'Project verwijderen',
     savePhase:'Fase opslaan', deletePhase:'Fase verwijderen',
     saveMilestone:'Mijlpaal opslaan', deleteMilestone:'Mijlpaal verwijderen',
     saveContacts:'Contacten opslaan', cancel:'Annuleren',
-    copy:'KopiÃ«ren', close:'Sluiten',
+    copy:'KopiÃÂ«ren', close:'Sluiten',
     sure:'Zeker? Klik nogmaals om te bevestigen',
     editProject:'Project bewerken', newProjectTitle:'Nieuw project',
     editPhase:'Fase bewerken', addPhaseTitle:'Fase toevoegen',
@@ -372,7 +372,7 @@ var T = {
     orDropHere:'of sleep een .json back-up hiernaartoe',
     savedAs:'Opgeslagen als ', downloaded:'Gedownload als ',
     putInTeams:'zet dit in je gedeelde Teams map',
-    loaded:'Geladen â ', projectsRestored:'projecten hersteld',
+    loaded:'Geladen Ã¢ÂÂ ', projectsRestored:'projecten hersteld',
     loadError:'Fout bij laden: ',
   },
   en: {
@@ -392,7 +392,7 @@ var T = {
     startDate:'Start date', endDate:'End date', duration:'Duration (days)',
     inclWeekends:'Include weekends', note:'Note (optional)',
     phaseType:'Phase type', assignees:'Assignees & their dates within this phase',
-    addPerson:'+ Add person', addPersonPh:'Add personâ¦',
+    addPerson:'+ Add person', addPersonPh:'Add personÃ¢ÂÂ¦',
     saveProject:'Save project', deleteProject:'Delete project',
     savePhase:'Save phase', deletePhase:'Delete phase',
     saveMilestone:'Save milestone', deleteMilestone:'Delete milestone',
@@ -424,7 +424,7 @@ var T = {
     orDropHere:'or drag &amp; drop a .json backup here',
     savedAs:'Saved as ', downloaded:'Downloaded as ',
     putInTeams:'put this in your shared Teams folder',
-    loaded:'Loaded â ', projectsRestored:'projects restored',
+    loaded:'Loaded Ã¢ÂÂ ', projectsRestored:'projects restored',
     loadError:'Error loading: ',
   }
 };
@@ -489,7 +489,7 @@ function fmtLong(s){return new Date(s).toLocaleDateString('en-GB',{weekday:'long
 function fmtShort(s){return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
 function isoWeek(d){const dt=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=dt.getUTCDay()||7;dt.setUTCDate(dt.getUTCDate()+4-day);const ys=new Date(Date.UTC(dt.getUTCFullYear(),0,1));return Math.ceil((((dt-ys)/86400000)+1)/7);}
 
-/* ââ persistence ââ */
+/* Ã¢ÂÂÃ¢ÂÂ persistence Ã¢ÂÂÃ¢ÂÂ */
 var _localSaveTimer = null;
 function save(){
   const now = new Date().toISOString();
@@ -505,7 +505,7 @@ function save(){
   }
 }
 
-/* ââ TEAMS FILE SYNC ââ */
+/* Ã¢ÂÂÃ¢ÂÂ TEAMS FILE SYNC Ã¢ÂÂÃ¢ÂÂ */
 let hasUnsavedChanges=false;
 function setSyncStatus(state){
   const dot=document.getElementById('sync-dot'),label=document.getElementById('sync-label');
@@ -562,7 +562,7 @@ function showToast(msg,isError){
 }
 
 function sanitizeData(){
-  // Ensure all phases have assignees array â fixes crash on old data
+  // Ensure all phases have assignees array Ã¢ÂÂ fixes crash on old data
   (projects||[]).forEach(p=>{
     if(!p.phases) p.phases=[];
     p.phases.forEach(ph=>{
@@ -576,12 +576,7 @@ function load(){
     const d=JSON.parse(localStorage.getItem(PKEY)||'null');
     if(d){projects=d.projects||[];milestones=d.milestones||[];nPid=d.nPid||1;nPhid=d.nPhid||1;nMid=d.nMid||1;sanitizeData();return;}
   }catch(e){}
-  projects=[{id:1,name:'Vitafloor USA',orderNr:'PO 30260181',owner:'',start:'2026-03-25',end:'2026-04-29',cp:false,open:true,phases:[
-    {id:1,type:'engineering',start:'2026-03-25',end:'2026-03-25',note:'',includeWeekends:false,linked:true,assignees:[{name:'Frank',start:'2026-03-25',end:'2026-03-25'},{name:'Douwe',start:'2026-03-25',end:'2026-03-25'}],assigneesOpen:true},
-    {id:2,type:'buying',start:'2026-03-26',end:'2026-04-15',note:'',includeWeekends:false,linked:true,assignees:[],assigneesOpen:false},
-    {id:3,type:'production',start:'2026-04-16',end:'2026-04-22',note:'',includeWeekends:false,linked:true,assignees:[],assigneesOpen:false},
-    {id:4,type:'outsourcing',start:'2026-04-23',end:'2026-04-29',note:'galvanisation',includeWeekends:false,linked:false,assignees:[],assigneesOpen:false},
-  ]}];
+  projects=[];
   milestones=[];nPid=2;nPhid=5;nMid=1;
 }
 function loadContacten(){try{contactBook=JSON.parse(localStorage.getItem(CKEY)||'{}');}catch(e){contactBook={};}}
@@ -1014,7 +1009,7 @@ loadLang();loadContacten();load();
 projects.forEach(p=>{p.phases.forEach(ph=>{if(!ph.includeWeekends){if(isWeekend(ph.start))ph.start=snapToWorkday(ph.start);if(isWeekend(ph.end))ph.end=snapToWorkdayBack(ph.end);(ph.assignees||[]).forEach(a=>{if(isWeekend(a.start))a.start=snapToWorkday(a.start);if(isWeekend(a.end))a.end=snapToWorkdayBack(a.end);});}});});
 save();appInitializing=false;setSyncStatus('saved');render();applyLang();
 
-/* ââ FIREBASE SYNC ââ */
+/* Ã¢ÂÂÃ¢ÂÂ FIREBASE SYNC Ã¢ÂÂÃ¢ÂÂ */
 var _fbConfig={apiKey:"AIzaSyDpSORIjbgg27stQNvKYd2qenr5QrV7lwY",authDomain:"q-line-planning.firebaseapp.com",databaseURL:"https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app",projectId:"q-line-planning",storageBucket:"q-line-planning.firebasestorage.app",messagingSenderId:"699669136620",appId:"1:699669136620:web:c9d5153cfb87f815bb11c9"};
 var _fbRef=null;
 function pushToFirebase(){
