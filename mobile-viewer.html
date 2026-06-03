@@ -59,14 +59,14 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 }
 .header-logo svg{width:20px;height:20px}
 .header-titles{flex:1}
-.header-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px;color:var(--text)}
+.header-name{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;letter-spacing:.5px;color:var(--text)}
 .header-name span{color:var(--gold)}
-.header-sub{font-size:13px;color:#999;margin-top:-1px}
+.header-sub{font-size:30px;color:#999;margin-top:-1px}
 .header-sync{display:flex;align-items:center;gap:5px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;flex-shrink:0}
 .sync-dot.off{background:var(--text3)}
-.sync-label{font-size:10px;color:var(--text3)}
-.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;padding:0;flex-shrink:0}
+.sync-label{font-size:16px;color:var(--text3)}
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--gold);font-size:30px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;padding:0;flex-shrink:0}
 .back-arrow{width:16px;height:16px;fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* --- HOME SCREEN --- */
@@ -76,7 +76,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   flex-shrink:0;
 }
 .filter-btn{
-  padding:8px 18px;font-size:14px;font-weight:600;
+  padding:8px 18px;font-size:19px;font-weight:600;
   border:1px solid var(--border2);background:none;
   color:#bbb;cursor:pointer;font-family:'Barlow',sans-serif;
   transition:all .15s;
@@ -90,7 +90,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .project-list::-webkit-scrollbar{display:none}
 
 .section-label{
-  font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  font-size:30px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:#ccc;padding:14px 16px 8px;font-family:'Barlow Condensed',sans-serif;
 }
 
@@ -117,17 +117,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .proj-card:active{background:var(--surface2)}
 
 .proj-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-.proj-name{font-size:22px;font-weight:700;color:#fff;flex:1;padding-right:8px;line-height:1.2}
-.proj-owner{font-size:12px;color:#ccc;background:var(--surface2);border:1px solid var(--border2);padding:3px 10px;border-radius:3px;white-space:nowrap;font-weight:600}
+.proj-name{font-size:30px;font-weight:700;color:#fff;flex:1;padding-right:8px;line-height:1.2}
+.proj-owner{font-size:17px;color:#ccc;background:var(--surface2);border:1px solid var(--border2);padding:3px 10px;border-radius:3px;white-space:nowrap;font-weight:600}
 
 .phase-strip{display:flex;height:4px;border-radius:2px;overflow:hidden;gap:1px;margin-bottom:8px}
 .phase-seg{height:4px;border-radius:1px;min-width:3px}
 
 .proj-meta{display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:2px}
-.meta-item{font-size:14px;color:#aaa;display:flex;align-items:center}
+.meta-item{font-size:19px;color:#aaa;display:flex;align-items:center}
 .meta-item+.meta-item::before{content:'.';margin:0 6px;color:var(--border2)}
 .meta-pct{color:var(--gold);font-weight:600}
-.meta-badge{font-size:12px;font-weight:700;padding:3px 9px;border-radius:4px;margin-left:8px}
+.meta-badge{font-size:17px;font-weight:700;padding:3px 9px;border-radius:4px;margin-left:8px}
 .badge-active{background:rgba(139,0,0,.25);color:#ff6b6b;border:1px solid rgba(139,0,0,.4)}
 .badge-upcoming{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
 .badge-done{background:var(--surface2);color:var(--text3);border:1px solid var(--border2)}
@@ -139,13 +139,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   flex-shrink:0;
   background:var(--surface);
 }
-.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:.3px}
+.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:.3px}
 .gantt-proj-meta{display:flex;gap:12px;margin-top:3px}
-.gantt-proj-meta span{font-size:14px;color:#bbb}
+.gantt-proj-meta span{font-size:19px;color:#bbb}
 .gantt-proj-meta .prog{color:var(--gold);font-weight:600}
 
 .gantt-legend{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
-.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:16px;color:var(--text3)}
 .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
 .gantt-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;position:relative}
@@ -155,20 +155,20 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 
 .gantt-inner{min-width:max-content}
 .gantt-head{display:flex;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
-.gantt-lh{width:110px;flex-shrink:0;padding:6px 10px;font-size:10px;color:var(--text3);background:var(--bg);border-right:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.05em}
+.gantt-lh{width:110px;flex-shrink:0;padding:6px 10px;font-size:16px;color:var(--text3);background:var(--bg);border-right:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.05em}
 .gantt-weeks{display:flex}
 .gantt-wk{display:flex;flex-direction:column;border-right:1px solid var(--border)}
-.gantt-wl{font-size:9px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:600;padding:2px 6px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+.gantt-wl{font-size:28px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:600;padding:2px 6px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
 .gantt-days{display:flex}
-.gantt-day{font-size:8px;color:var(--text3);width:28px;text-align:center;padding:3px 0;background:var(--bg)}
+.gantt-day{font-size:19px;color:var(--text3);width:28px;text-align:center;padding:3px 0;background:var(--bg)}
 .gantt-day.we{color:var(--border2)}
 .gantt-day.td{color:var(--gold);font-weight:700;background:rgba(201,168,76,.06)}
 
 .gantt-phase-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:48px}
 .gantt-phase-row.has-assignees{min-height:44px}
 .gantt-pl{width:110px;flex-shrink:0;padding:6px 10px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;flex-direction:column;justify-content:center}
-.gantt-pt{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Barlow Condensed',sans-serif}
-.gantt-pn{font-size:10px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94px}
+.gantt-pt{font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Barlow Condensed',sans-serif}
+.gantt-pn{font-size:16px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94px}
 .gantt-cells{position:relative;display:flex;align-items:center;flex:1}
 .gantt-cell{width:28px;height:100%;flex-shrink:0;border-right:1px solid transparent}
 .gantt-cell.we{background:rgba(255,255,255,.012)}
@@ -177,13 +177,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   position:absolute;top:50%;transform:translateY(-50%);
   height:26px;border-radius:3px;z-index:5;
   display:flex;align-items:center;padding:0 8px;
-  font-size:9px;font-weight:600;white-space:nowrap;overflow:hidden;
+  font-size:28px;font-weight:600;white-space:nowrap;overflow:hidden;
   font-family:'Barlow Condensed',sans-serif;letter-spacing:.03em;
   min-width:6px;
 }
 .gantt-arow{display:flex;align-items:stretch;border-bottom:1px solid rgba(255,255,255,.03);min-height:30px}
 .gantt-al{width:110px;flex-shrink:0;padding:3px 10px 3px 18px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;align-items:center}
-.gantt-aname{font-size:9px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px}
+.gantt-aname{font-size:28px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px}
 .gantt-acells{position:relative;display:flex;align-items:center;flex:1;height:30px}
 .gantt-abar{position:absolute;height:14px;border-radius:2px;opacity:.6}
 
@@ -194,14 +194,14 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .gantt-progress{padding:8px 16px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;gap:10px}
 .gantt-progress-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
 .gantt-progress-fill{height:3px;background:var(--gold);border-radius:2px}
-.gantt-progress-pct{font-size:11px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
-.gantt-progress-label{font-size:10px;color:var(--text3)}
+.gantt-progress-pct{font-size:17px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
+.gantt-progress-label{font-size:16px;color:var(--text3)}
 
 /* --- STATES --- */
 .spinner-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
 .spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner-text{font-size:11px;color:var(--text3)}
+.spinner-text{font-size:17px;color:var(--text3)}
 
 /* --- TYPE COLORS --- */
 .refresh-btn{background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:.7}
@@ -215,17 +215,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   <div style="background:#8B0000;width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
     <svg width="32" height="32" viewBox="0 0 20 20" fill="none"><path d="M3 10a7 7 0 1 0 14 0A7 7 0 0 0 3 10Z" stroke="#c9a84c" stroke-width="1.5"/><path d="M10 6v4l3 2" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/></svg>
   </div>
-  <div style="font-size:26px;font-weight:700;color:#f0f0f0;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">Q-Line Planning</div>
-  <div style="font-size:15px;color:#666;margin-bottom:36px">Voer uw klantcode in</div>
+  <div style="font-size:30px;font-weight:700;color:#f0f0f0;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">Q-Line Planning</div>
+  <div style="font-size:28px;color:#666;margin-bottom:36px">Voer uw klantcode in</div>
   <input id="cc-input" type="text" placeholder="Klantcode (bijv. ZDH)" 
-    style="width:100%;max-width:320px;background:#111;border:2px solid #333;border-radius:10px;padding:18px 20px;font-size:20px;color:#f0f0f0;font-family:'Barlow',sans-serif;outline:none;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px"
+    style="width:100%;max-width:320px;background:#111;border:2px solid #333;border-radius:10px;padding:18px 20px;font-size:28px;color:#f0f0f0;font-family:'Barlow',sans-serif;outline:none;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px"
     oninput="this.value=this.value.toUpperCase()"
     onkeydown="if(event.key==='Enter')document.getElementById('cc-btn').click()">
   <button id="cc-btn" onclick="applyCC()" 
-    style="width:100%;max-width:320px;background:#8B0000;border:none;border-radius:10px;padding:18px;font-size:18px;font-weight:700;color:#fff;font-family:'Barlow',sans-serif;cursor:pointer">
+    style="width:100%;max-width:320px;background:#8B0000;border:none;border-radius:10px;padding:18px;font-size:30px;font-weight:700;color:#fff;font-family:'Barlow',sans-serif;cursor:pointer">
     Bekijk mijn planning
   </button>
-  <div id="cc-err" style="color:#f77;font-size:14px;margin-top:12px;display:none">Geen projecten gevonden voor deze code.</div>
+  <div id="cc-err" style="color:#f77;font-size:19px;margin-top:12px;display:none">Geen projecten gevonden voor deze code.</div>
 </div>
 
 <!--     HOME SCREEN     -->
@@ -408,7 +408,7 @@ function renderList(){
   else if(curFilter==='done') filtered = projects.filter(p=>p.end<today);
 
   if(!filtered.length){
-    el.innerHTML = '<div style="padding:40px 16px;text-align:center;color:var(--text3);font-size:13px">Geen projecten in deze categorie</div>';
+    el.innerHTML = '<div style="padding:40px 16px;text-align:center;color:var(--text3);font-size:30px">Geen projecten in deze categorie</div>';
     return;
   }
 
@@ -469,8 +469,8 @@ function buildCard(p, today, status){
 function renderEmpty(){
   document.getElementById('project-list').innerHTML =
     '<div style="padding:60px 16px;text-align:center">'
-    +'<div style="font-size:13px;color:var(--text3)">Geen projecten gevonden</div>'
-    +'<div style="font-size:11px;color:var(--text3);margin-top:6px;opacity:.6">Open de Q-Line planner op desktop<br>om data te synchroniseren.</div>'
+    +'<div style="font-size:30px;color:var(--text3)">Geen projecten gevonden</div>'
+    +'<div style="font-size:17px;color:var(--text3);margin-top:6px;opacity:.6">Open de Q-Line planner op desktop<br>om data te synchroniseren.</div>'
     +'</div>';
 }
 
@@ -643,7 +643,7 @@ function showCCScreen(){
 </script>
 
 <button onclick="localStorage.removeItem('qline_cc');window._CC='';document.getElementById('cc-input').value='';document.getElementById('cc-err').style.display='none';showCCScreen();" 
-  style="position:fixed;bottom:20px;right:20px;background:#1a1a1a;border:1px solid #333;color:#666;font-size:12px;font-family:'Barlow',sans-serif;padding:8px 14px;border-radius:20px;cursor:pointer;z-index:100">
+  style="position:fixed;bottom:20px;right:20px;background:#1a1a1a;border:1px solid #333;color:#666;font-size:17px;font-family:'Barlow',sans-serif;padding:8px 14px;border-radius:20px;cursor:pointer;z-index:100">
   Andere klantcode
 </button></body>
 </html>
