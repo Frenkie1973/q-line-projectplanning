@@ -211,6 +211,22 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 </style>
 </head>
 <body>
+<div id="cc-screen" style="display:none;position:fixed;inset:0;background:#0a0a0a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;font-family:'Barlow',sans-serif">
+  <div style="background:#8B0000;width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+    <svg width="32" height="32" viewBox="0 0 20 20" fill="none"><path d="M3 10a7 7 0 1 0 14 0A7 7 0 0 0 3 10Z" stroke="#c9a84c" stroke-width="1.5"/><path d="M10 6v4l3 2" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </div>
+  <div style="font-size:26px;font-weight:700;color:#f0f0f0;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">Q-Line Planning</div>
+  <div style="font-size:15px;color:#666;margin-bottom:36px">Voer uw klantcode in</div>
+  <input id="cc-input" type="text" placeholder="Klantcode (bijv. ZDH)" 
+    style="width:100%;max-width:320px;background:#111;border:2px solid #333;border-radius:10px;padding:18px 20px;font-size:20px;color:#f0f0f0;font-family:'Barlow',sans-serif;outline:none;text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px"
+    oninput="this.value=this.value.toUpperCase()"
+    onkeydown="if(event.key==='Enter')document.getElementById('cc-btn').click()">
+  <button id="cc-btn" onclick="applyCC()" 
+    style="width:100%;max-width:320px;background:#8B0000;border:none;border-radius:10px;padding:18px;font-size:18px;font-weight:700;color:#fff;font-family:'Barlow',sans-serif;cursor:pointer">
+    Bekijk mijn planning
+  </button>
+  <div id="cc-err" style="color:#f77;font-size:14px;margin-top:12px;display:none">Geen projecten gevonden voor deze code.</div>
+</div>
 
 <!--     HOME SCREEN     -->
 <div class="screen" id="home">
@@ -276,7 +292,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 </div>
 
 <script>
-window._CC=(new URLSearchParams(location.search)).get('client')?.toUpperCase()?.trim()||'';
+window._CC=(new URLSearchParams(location.search)).get('client')?.toUpperCase()?.trim()||localStorage.getItem('qline_cc')||'';
 const SK = 'pp-planner-v7';
 const FB = 'https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app/plannerData.json';
 const TC = {
@@ -595,6 +611,37 @@ if('serviceWorker' in navigator){
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
 }
 loadData();
+// Toon koppelscherm als geen klantcode in URL of opgeslagen
+if(!window._CC){
+  document.getElementById('cc-screen').style.display='flex';
+  setTimeout(function(){document.getElementById('cc-input').focus();},200);
+}
+
+
+function applyCC(){
+  var code = document.getElementById('cc-input').value.toUpperCase().trim();
+  if(!code) return;
+  window._CC = code;
+  localStorage.setItem('qline_cc', code);
+  var filtered = (window._allProjects||projects||[]).filter(function(p){
+    return (p.clientCode||'').toUpperCase() === code;
+  });
+  if(filtered.length === 0){
+    document.getElementById('cc-err').style.display='block';
+    return;
+  }
+  document.getElementById('cc-screen').style.display='none';
+  projects = filtered;
+  renderList();
+}
+function showCCScreen(){
+  document.getElementById('cc-screen').style.display='flex';
+  setTimeout(function(){document.getElementById('cc-input').focus();},200);
+}
 </script>
-</body>
+
+<button onclick="localStorage.removeItem('qline_cc');window._CC='';document.getElementById('cc-input').value='';document.getElementById('cc-err').style.display='none';showCCScreen();" 
+  style="position:fixed;bottom:20px;right:20px;background:#1a1a1a;border:1px solid #333;color:#666;font-size:12px;font-family:'Barlow',sans-serif;padding:8px 14px;border-radius:20px;cursor:pointer;z-index:100">
+  Andere klantcode
+</button></body>
 </html>
