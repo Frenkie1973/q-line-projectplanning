@@ -176,6 +176,22 @@ table{border-collapse:collapse;table-layout:fixed;}
   <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
+<div id="cc-screen" style="display:flex;position:fixed;inset:0;background:#0f0f0f;z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;font-family:sans-serif;">
+  <div style="background:#1a1a1a;border-radius:16px;padding:40px 32px;width:100%;max-width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+    <div style="font-size:48px;margin-bottom:16px;">📋</div>
+    <div style="color:#fff;font-size:22px;font-weight:700;margin-bottom:8px;">Q-Line Planning</div>
+    <div style="color:#999;font-size:14px;margin-bottom:28px;">Voer uw klantcode in om uw projecten te bekijken</div>
+    <input id="cc-input" type="text" placeholder="Klantcode (bijv. ZDH)"
+      style="width:100%;box-sizing:border-box;padding:14px 16px;border-radius:8px;border:2px solid #333;background:#111;color:#fff;font-size:16px;text-align:center;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;outline:none;"
+      oninput="this.value=this.value.toUpperCase()"
+      onkeydown="if(event.key==='Enter')applyCC()">
+    <div id="cc-err" style="display:none;color:#e53e3e;font-size:13px;margin-bottom:12px;">Ongeldige code — geen projecten gevonden.</div>
+    <button onclick="applyCC()"
+      style="width:100%;padding:14px;background:#c00;border:none;border-radius:8px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">
+      Bekijk mijn planning
+    </button>
+  </div>
+</div>
 <div id="drag-tooltip"></div>
 <header>
   <div class="logo">Project <span>Planner</span></div>
@@ -541,7 +557,7 @@ function loadFromFile(input){
     try{
       const d=JSON.parse(e.target.result);
       if(!d.projects||!Array.isArray(d.projects))throw new Error('Ongeldig bestand');
-      projects=d.projects||[];milestones=d.milestones||[];
+      projects=d.projects||[];window._allProjects=projects.slice();milestones=d.milestones||[];
       nPid=d.nPid||(projects.length?Math.max(...projects.map(p=>p.id))+1:1);
       nPhid=d.nPhid||1;nMid=d.nMid||(milestones.length?Math.max(...milestones.map(m=>m.id))+1:1);
       if(d.contactBook){contactBook=d.contactBook;persistContacts();}
@@ -1051,6 +1067,28 @@ try{
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw-viewer.js').catch(()=>{});
+}
+</script>
+
+<script>
+function applyCC(){
+  var code = document.getElementById('cc-input').value.toUpperCase().trim();
+  if(!code){ document.getElementById('cc-err').style.display='block'; return; }
+  window._CC = code;
+  // Filter projecten op clientCode
+  var allProjects = window._allProjects || projects || [];
+  var filtered = allProjects.filter(function(p){
+    return (p.clientCode||'').toUpperCase() === code && (p.clientCode||'').trim() !== '';
+  });
+  if(filtered.length === 0){
+    document.getElementById('cc-err').style.display='block';
+    document.getElementById('cc-err').textContent='Ongeldige code — geen projecten gevonden.';
+    return;
+  }
+  document.getElementById('cc-err').style.display='none';
+  document.getElementById('cc-screen').style.display='none';
+  projects = filtered;
+  render();
 }
 </script>
 </body>
