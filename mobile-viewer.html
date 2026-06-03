@@ -21,8 +21,8 @@
   --border:#222222;
   --border2:#2a2a2a;
   --text:#f0f0f0;
-  --text2:#888;
-  --text3:#555;
+  --text2:#bbb;
+  --text3:#999;
   --red:#8B0000;
   --red-bright:#c0392b;
   --red-light:#1a0000;
@@ -61,7 +61,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .header-titles{flex:1}
 .header-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px;color:var(--text)}
 .header-name span{color:var(--gold)}
-.header-sub{font-size:11px;color:var(--text3);margin-top:-1px}
+.header-sub{font-size:13px;color:#999;margin-top:-1px}
 .header-sync{display:flex;align-items:center;gap:5px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;flex-shrink:0}
 .sync-dot.off{background:var(--text3)}
@@ -76,9 +76,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   flex-shrink:0;
 }
 .filter-btn{
-  padding:5px 14px;font-size:12px;font-weight:600;
+  padding:8px 18px;font-size:14px;font-weight:600;
   border:1px solid var(--border2);background:none;
-  color:var(--text3);cursor:pointer;font-family:'Barlow',sans-serif;
+  color:#bbb;cursor:pointer;font-family:'Barlow',sans-serif;
   transition:all .15s;
 }
 .filter-btn:first-child{border-radius:4px 0 0 4px}
@@ -90,8 +90,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .project-list::-webkit-scrollbar{display:none}
 
 .section-label{
-  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--text3);padding:12px 16px 6px;font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#ccc;padding:14px 16px 8px;font-family:'Barlow Condensed',sans-serif;
 }
 
 .proj-card{
@@ -117,17 +117,17 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .proj-card:active{background:var(--surface2)}
 
 .proj-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
-.proj-name{font-size:18px;font-weight:600;color:var(--text);flex:1;padding-right:8px;line-height:1.2}
-.proj-owner{font-size:10px;color:var(--text3);background:var(--surface2);border:1px solid var(--border2);padding:2px 8px;border-radius:3px;white-space:nowrap;font-weight:500}
+.proj-name{font-size:22px;font-weight:700;color:#fff;flex:1;padding-right:8px;line-height:1.2}
+.proj-owner{font-size:12px;color:#ccc;background:var(--surface2);border:1px solid var(--border2);padding:3px 10px;border-radius:3px;white-space:nowrap;font-weight:600}
 
 .phase-strip{display:flex;height:4px;border-radius:2px;overflow:hidden;gap:1px;margin-bottom:8px}
 .phase-seg{height:4px;border-radius:1px;min-width:3px}
 
 .proj-meta{display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:2px}
-.meta-item{font-size:11px;color:var(--text3);display:flex;align-items:center}
+.meta-item{font-size:14px;color:#aaa;display:flex;align-items:center}
 .meta-item+.meta-item::before{content:'.';margin:0 6px;color:var(--border2)}
 .meta-pct{color:var(--gold);font-weight:600}
-.meta-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:2px;margin-left:8px}
+.meta-badge{font-size:12px;font-weight:700;padding:3px 9px;border-radius:4px;margin-left:8px}
 .badge-active{background:rgba(139,0,0,.25);color:#ff6b6b;border:1px solid rgba(139,0,0,.4)}
 .badge-upcoming{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
 .badge-done{background:var(--surface2);color:var(--text3);border:1px solid var(--border2)}
@@ -139,9 +139,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   flex-shrink:0;
   background:var(--surface);
 }
-.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:.3px}
 .gantt-proj-meta{display:flex;gap:12px;margin-top:3px}
-.gantt-proj-meta span{font-size:11px;color:var(--text3)}
+.gantt-proj-meta span{font-size:14px;color:#bbb}
 .gantt-proj-meta .prog{color:var(--gold);font-weight:600}
 
 .gantt-legend{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
