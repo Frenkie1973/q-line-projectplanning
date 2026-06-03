@@ -276,6 +276,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 </div>
 
 <script>
+const _CC=(new URLSearchParams(location.search)).get('client')?.toUpperCase()?.trim()||'';
 const SK = 'pp-planner-v7';
 const FB = 'https://q-line-planning-default-rtdb.europe-west1.firebasedatabase.app/plannerData.json';
 const TC = {
