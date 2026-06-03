@@ -878,7 +878,7 @@ function openForm(type,ctx){
     document.getElementById('form-proj').classList.add('open');
     const _pid=ctx&&ctx.pid?parseInt(ctx.pid):null;const p=_pid?projects.find(x=>parseInt(x.id)===_pid):null;
     document.getElementById('form-proj-title').textContent=p?t('editProject'):t('newProjectTitle');
-    document.getElementById('f-pname').value=p?p.name:'';document.getElementById('f-porder').value=p?p.orderNr||'':'';
+    document.getElementById('f-pname').value=p?p.name:'';document.getElementById('f-porder').value=p?p.orderNr||'':'';document.getElementById('f-clientCode').value=p?p.clientCode||'':'';
     document.getElementById('f-powner').value=p?p.owner:'';document.getElementById('f-pstart').value=p?p.start:'';
     document.getElementById('f-pend').value=p?p.end:'';document.getElementById('f-pcp').value=p&&p.cp?'1':'0';
     document.getElementById('del-proj-btn').style.display=p?'inline-block':'none';
@@ -911,13 +911,13 @@ function openForm(type,ctx){
 
 function saveProject(){
   const name=document.getElementById('f-pname').value.trim();if(!name){alert(t('enterCustomer'));return;}
-  const orderNr=document.getElementById('f-porder').value.trim();
+  const orderNr=document.getElementById('f-porder').value.trim();const clientCode=document.getElementById('f-clientCode').value.trim();
   const start=document.getElementById('f-pstart').value,end=document.getElementById('f-pend').value;
   if(!start||!end){alert(t('setDates'));return;}if(new Date(start)>new Date(end)){alert(t('startBeforeEnd'));return;}
   const owner=document.getElementById('f-powner').value.trim(),cp=document.getElementById('f-pcp').value==='1';
   const pid=parseInt(editCtx.pid);
-  if(pid){const p=projects.find(x=>parseInt(x.id)===pid);if(p){p.name=name;p.orderNr=orderNr;p.owner=owner;p.start=start;p.end=end;p.cp=cp;}}
-  else projects.push({id:nPid++,name,orderNr,owner,start,end,cp,open:true,phases:[]});
+  if(pid){const p=projects.find(x=>parseInt(x.id)===pid);if(p){p.name=name;p.orderNr=orderNr;p.clientCode=clientCode;p.owner=owner;p.start=start;p.end=end;p.cp=cp;}}
+  else projects.push({id:nPid++,name,orderNr,clientCode,owner,start,end,cp,open:true,phases:[]});
   save();closeForm('proj');render();
 }
 function savePhase(){
