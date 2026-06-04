@@ -139,13 +139,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   flex-shrink:0;
   background:var(--surface);
 }
-.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:.3px}
+.gantt-proj-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:.3px}
 .gantt-proj-meta{display:flex;gap:12px;margin-top:3px}
-.gantt-proj-meta span{font-size:19px;color:#bbb}
+.gantt-proj-meta span{font-size:14px;color:#bbb}
 .gantt-proj-meta .prog{color:var(--gold);font-weight:600}
 
 .gantt-legend{display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg)}
-.legend-item{display:flex;align-items:center;gap:4px;font-size:16px;color:var(--text3)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text3)}
 .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
 .gantt-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;position:relative}
@@ -155,20 +155,20 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 
 .gantt-inner{min-width:max-content}
 .gantt-head{display:flex;position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border)}
-.gantt-lh{width:110px;flex-shrink:0;padding:6px 10px;font-size:16px;color:var(--text3);background:var(--bg);border-right:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.05em}
+.gantt-lh{width:110px;flex-shrink:0;padding:6px 10px;font-size:12px;color:var(--text3);background:var(--bg);border-right:1px solid var(--border);font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.05em}
 .gantt-weeks{display:flex}
 .gantt-wk{display:flex;flex-direction:column;border-right:1px solid var(--border)}
-.gantt-wl{font-size:28px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:600;padding:2px 6px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+.gantt-wl{font-size:14px;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:600;padding:2px 6px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
 .gantt-days{display:flex}
-.gantt-day{font-size:19px;color:var(--text3);width:28px;text-align:center;padding:3px 0;background:var(--bg)}
+.gantt-day{font-size:11px;color:var(--text3);width:28px;text-align:center;padding:3px 0;background:var(--bg)}
 .gantt-day.we{color:var(--border2)}
 .gantt-day.td{color:var(--gold);font-weight:700;background:rgba(201,168,76,.06)}
 
 .gantt-phase-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:48px}
 .gantt-phase-row.has-assignees{min-height:44px}
 .gantt-pl{width:110px;flex-shrink:0;padding:6px 10px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;flex-direction:column;justify-content:center}
-.gantt-pt{font-size:28px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Barlow Condensed',sans-serif}
-.gantt-pn{font-size:16px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94px}
+.gantt-pt{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-family:'Barlow Condensed',sans-serif}
+.gantt-pn{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94px}
 .gantt-cells{position:relative;display:flex;align-items:center;flex:1}
 .gantt-cell{width:28px;height:100%;flex-shrink:0;border-right:1px solid transparent}
 .gantt-cell.we{background:rgba(255,255,255,.012)}
@@ -177,13 +177,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
   position:absolute;top:50%;transform:translateY(-50%);
   height:26px;border-radius:3px;z-index:5;
   display:flex;align-items:center;padding:0 8px;
-  font-size:28px;font-weight:600;white-space:nowrap;overflow:hidden;
+  font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;
   font-family:'Barlow Condensed',sans-serif;letter-spacing:.03em;
   min-width:6px;
 }
 .gantt-arow{display:flex;align-items:stretch;border-bottom:1px solid rgba(255,255,255,.03);min-height:30px}
 .gantt-al{width:110px;flex-shrink:0;padding:3px 10px 3px 18px;background:var(--bg);border-right:1px solid var(--border);position:sticky;left:0;z-index:10;display:flex;align-items:center}
-.gantt-aname{font-size:28px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px}
+.gantt-aname{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:86px}
 .gantt-acells{position:relative;display:flex;align-items:center;flex:1;height:30px}
 .gantt-abar{position:absolute;height:14px;border-radius:2px;opacity:.6}
 
@@ -194,8 +194,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Barlow',
 .gantt-progress{padding:8px 16px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;display:flex;align-items:center;gap:10px}
 .gantt-progress-bar{flex:1;height:3px;background:var(--border2);border-radius:2px;overflow:hidden}
 .gantt-progress-fill{height:3px;background:var(--gold);border-radius:2px}
-.gantt-progress-pct{font-size:17px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
-.gantt-progress-label{font-size:16px;color:var(--text3)}
+.gantt-progress-pct{font-size:13px;color:var(--gold);font-weight:600;min-width:30px;text-align:right}
+.gantt-progress-label{font-size:11px;color:var(--text3)}
 
 /* --- STATES --- */
 .spinner-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:12px}
