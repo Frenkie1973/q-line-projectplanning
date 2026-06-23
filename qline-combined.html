@@ -6,7 +6,7 @@
 <title>Q-Line Werkplanning — Frank & Douwe</title>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone@7.22.5/babel.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
@@ -128,21 +128,22 @@ label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-wei
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" data-presets="react">
+<script type="text/babel">
 const {useState,useEffect,useMemo,useRef,useCallback}=React;
 // Gebruikers en hun capaciteit
 const USERS=[
   {name:'Frank', capacity:4, color:'#3b82f6'},
   {name:'Douwe', capacity:6, color:'#22c55e'},
 ];
-const DAILY_CAP=7; // tekenststation max 7h/dag // totaal per dag (Frank 4h + Douwe 6h)
+const DAILY_CAP=7;  // tekenststation: max 7h/dag totaal
+const STATION_CAP=7; // zelfde, voor leesbaarheid
 const STATUSES=['New','Planned','In progress','Waiting','Done','Late'];
 
-// -- helpers --------------------------------------------------
+// ── helpers ──────────────────────────────────────────────────
 function genId(){return 'T'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,4).toUpperCase()}
 function today(){return new Date().toISOString().split('T')[0]}
-function fmtDate(iso){if(!iso)return'--';return new Date(iso+'T12:00:00').toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',year:'2-digit'})}
-function fmtDateTime(ts){if(!ts)return'--';const d=new Date(ts);return d.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}
+function fmtDate(iso){if(!iso)return'—';return new Date(iso+'T12:00:00').toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',year:'2-digit'})}
+function fmtDateTime(ts){if(!ts)return'—';const d=new Date(ts);return d.toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}
 function fmtDur(ms){if(!ms||ms<=0)return'0:00:00';const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);return h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s}
 function fmtDurShort(ms){if(!ms||ms<=0)return'0:00';const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);return h+':'+(m<10?'0':'')+m}
 function fmtHours(h){return(+(h||0)).toFixed(1)}
@@ -167,17 +168,14 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
 
-  // stationLoad: totaal uren per dag op het tekenststation (max DAILY_CAP=7)
   const stationLoad={};
-  // perUserLoad: uren per tekenaar per dag
   const perUserLoad={};
   USERS.forEach(u=>{perUserLoad[u.name]={};});
-
   const result={};
 
   function userAvail(user,day){
     const userCap=getUserCap(user);
-    const userUsed=perUserLoad[user]?.[day]||0;
+    const userUsed=(perUserLoad[user]||{})[day]||0;
     const stationUsed=stationLoad[day]||0;
     return Math.min(userCap-userUsed, DAILY_CAP-stationUsed);
   }
@@ -192,16 +190,13 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
 
   function findBlock(hours, deadline, responsible){
     let endDay=prevWorkDay(deadline);
-
     while(endDay>=firstWorkDay){
       let hoursLeft=hours;
       const tryDays={};
       let d=endDay;
       let broken=false;
-
       while(hoursLeft>0){
-        if(d<firstWorkDay){broken=true;break;}
-        if(d>=deadline){broken=true;break;}
+        if(d<firstWorkDay||d>=deadline){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
         const take=Math.min(a,hoursLeft);
@@ -213,15 +208,12 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
           d=prev;
         }
       }
-
       if(!broken&&hoursLeft<=0){
-        // Herverdeel: eerste dagen vol, laatste dag restant
         const sortedDays=Object.keys(tryDays).sort();
         let remaining=hours;
         const fixedDays={};
         sortedDays.forEach(day=>{
-          const cap=getUserCap(responsible);
-          const take=Math.min(cap,remaining);
+          const take=Math.min(getUserCap(responsible),remaining);
           fixedDays[day]=take;
           remaining-=take;
         });
@@ -229,28 +221,18 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       }
       endDay=prevWorkDay(endDay);
     }
-
-    // Conflict: forward, nooit op of na deadline
     let startDay=firstWorkDay;
     for(let i=0;i<90;i++){
       if(userAvail(responsible,startDay)<=0||startDay>=deadline){startDay=nextWorkDay(startDay);continue;}
-      let hoursLeft=hours;
-      const tryDays={};
-      let d=startDay;
-      let broken=false;
+      let hoursLeft=hours;const tryDays={};let d=startDay;let broken=false;
       while(hoursLeft>0){
         if(d>=deadline){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
-        const take=Math.min(a,hoursLeft);
-        tryDays[d]=take;
-        hoursLeft-=take;
+        const take=Math.min(a,hoursLeft);tryDays[d]=take;hoursLeft-=take;
         if(hoursLeft>0) d=nextWorkDay(d);
       }
-      if(!broken&&hoursLeft<=0){
-        const endD=Object.keys(tryDays).sort().pop();
-        return{days:tryDays,fits:endD<deadline};
-      }
+      if(!broken&&hoursLeft<=0){const endD=Object.keys(tryDays).sort().pop();return{days:tryDays,fits:endD<deadline};}
       startDay=nextWorkDay(startDay);
     }
     return{days:{},fits:false};
@@ -260,38 +242,384 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     const actual=calcActual(timeLogs,task.id);
     const remaining=Math.max(0,task.estimatedHours-actual);
     const responsible=task.responsible||'Frank';
-
-    if(remaining<=0){
-      result[task.id]={start:firstWorkDay,end:firstWorkDay,fits:true,remaining:0,days:{},responsible};
-      return;
-    }
-
+    if(remaining<=0){result[task.id]={start:firstWorkDay,end:firstWorkDay,fits:true,remaining:0,days:{},responsible};return;}
     const{days:taskDays,fits}=findBlock(remaining,task.deadline,responsible);
-
     Object.entries(taskDays).forEach(([day,h])=>{
-      if(!perUserLoad[responsible]) perUserLoad[responsible]={};
+      if(!perUserLoad[responsible])perUserLoad[responsible]={};
       perUserLoad[responsible][day]=(perUserLoad[responsible][day]||0)+h;
       stationLoad[day]=(stationLoad[day]||0)+h;
     });
-
     const scheduledDays=Object.keys(taskDays).sort();
     const startDate=scheduledDays[0]||firstWorkDay;
     const endDate=scheduledDays[scheduledDays.length-1]||firstWorkDay;
     result[task.id]={start:startDate,end:endDate,fits,remaining,days:taskDays,responsible};
   });
 
-  const dl={};
-  const dlpu={};
+  const dl={};const dlpu={};
   USERS.forEach(u=>{
     dlpu[u.name]={};
-    Object.entries(perUserLoad[u.name]||{}).forEach(([day,h])=>{
-      dl[day]=(dl[day]||0)+h;
-      dlpu[u.name][day]=h;
-    });
+    Object.entries(perUserLoad[u.name]||{}).forEach(([day,h])=>{dl[day]=(dl[day]||0)+h;dlpu[u.name][day]=h;});
   });
   result.__dayLoad=dl;
   result.__dayLoadPerUser=dlpu;
   return result;
+}
+
+
+// ── Firebase helpers (compat SDK) ─────────────────────────────
+function useFirestore(){
+  const [ready,setReady]=useState(!!window.__fbReady);
+  useEffect(()=>{
+    if(window.__fbReady){setReady(true);return;}
+    const h=()=>setReady(true);
+    window.addEventListener('firebase-ready',h);
+    return()=>window.removeEventListener('firebase-ready',h);
+  },[]);
+  return ready;
+}
+
+function useCollection(colName,ready){
+  const [data,setData]=useState([]);
+  useEffect(()=>{
+    if(!ready)return;
+    const unsub=db.collection(colName).onSnapshot(snap=>{
+      setData(snap.docs.map(d=>({...d.data(),id:d.id})));
+    },err=>console.error('Firestore error:',err));
+    return unsub;
+  },[colName,ready]);
+  return data;
+}
+
+async function saveDoc(colName,id,data){
+  const clean={};
+  Object.entries(data).forEach(([k,v])=>{if(v!==undefined&&v!==null)clean[k]=v;});
+  await db.collection(colName).doc(id).set(clean,{merge:true});
+}
+
+async function deleteDocById(colName,id){
+  await db.collection(colName).doc(id).delete();
+}
+
+// ── sub-components ───────────────────────────────────────────
+function StatusBadge({status}){
+  const m={'New':'new','Planned':'planned','In progress':'inprogress','Waiting':'waiting','Done':'done','Late':'late'};
+  return <span className={`badge badge-${m[status]||'new'}`}>{status}</span>;
+}
+
+function ProgressBar({actual,estimated}){
+  const pct=estimated>0?Math.min((actual/estimated)*100,100):0;
+  const over=actual>estimated;
+  return(
+    <div>
+      <div className="progress-bar"><div className="progress-fill" style={{width:pct+'%',background:over?'var(--red)':pct>80?'var(--orange)':'var(--blue)'}}/></div>
+      <div className="flex justify-between mt-1">
+        <span className="text-xs text-muted">{fmtHours(actual)}h gewerkt</span>
+        <span className={`text-xs ${over?'text-red':''}`}>{fmtHours(estimated)}h geschat</span>
+      </div>
+    </div>
+  );
+}
+
+function InlineTimer({taskId,timeLogs,onStart,onStop}){
+  const [tick,setTick]=useState(0);
+  const activeLog=timeLogs.find(l=>l.taskId===taskId&&l.running);
+  useEffect(()=>{if(!activeLog)return;const t=setInterval(()=>setTick(p=>p+1),1000);return()=>clearInterval(t);},[activeLog]);
+  if(activeLog){
+    return(
+      <div className="flex items-center gap-2" onClick={e=>e.stopPropagation()}>
+        <span className="elapsed">{fmtDurShort(Date.now()-activeLog.start)}</span>
+        <button className="timer-btn timer-btn-stop" onClick={()=>onStop(activeLog)}>⏹ Stop</button>
+      </div>
+    );
+  }
+  return <button className="timer-btn timer-btn-start" onClick={e=>{e.stopPropagation();onStart(taskId);}}>▶ Start</button>;
+}
+
+function TimerWidget({task,timeLogs,onStart,onStop}){
+  const [tick,setTick]=useState(0);
+  const [comment,setComment]=useState('');
+  const [manHours,setManHours]=useState('');
+  const [manComment,setManComment]=useState('');
+  const activeLog=timeLogs.find(l=>l.taskId===task.id&&l.running);
+  useEffect(()=>{if(!activeLog)return;const t=setInterval(()=>setTick(p=>p+1),1000);return()=>clearInterval(t);},[activeLog]);
+
+  function stopWithComment(){onStop(activeLog,comment);setComment('');}
+  function pauseWithComment(){onStop(activeLog,'[Pauze] '+comment);setComment('');}
+  async function addManual(){
+    const h=parseFloat(manHours);
+    if(!h||h<=0){alert('Voer geldige uren in.');return;}
+    const now=Date.now();
+    const logId='L'+Date.now();
+    await saveDoc('qline_logs',logId,{id:logId,taskId:task.id,start:now-h*3600000,end:now,running:false,comment:'[Handmatig] '+(manComment||'')});
+    setManHours('');setManComment('');
+  }
+
+  const taskLogs=timeLogs.filter(l=>l.taskId===task.id).sort((a,b)=>b.start-a.start);
+
+  return(
+    <div>
+      <div className="section-title">Tijdregistratie</div>
+      {activeLog?(
+        <div className="card mb-3" style={{background:'var(--bg3)'}}>
+          <div className="flex items-center justify-between mb-3">
+            <div><div className="text-xs text-muted mb-1">Timer loopt...</div><div className="timer-display">{fmtDur(Date.now()-activeLog.start)}</div></div>
+            <div style={{width:12,height:12,borderRadius:'50%',background:'var(--green)',animation:'blink 1.5s infinite'}}/>
+          </div>
+          <input className="input mb-2" placeholder="Opmerking (optioneel)" value={comment} onChange={e=>setComment(e.target.value)}/>
+          <div className="flex gap-2">
+            <button className="btn btn-warning btn-sm" onClick={pauseWithComment}>⏸ Pauze</button>
+            <button className="btn btn-danger btn-sm" onClick={stopWithComment}>⏹ Stop & opslaan</button>
+          </div>
+        </div>
+      ):(
+        <button className="btn btn-primary mb-3" style={{width:'100%',justifyContent:'center'}} onClick={()=>onStart(task.id)}>▶ Start timer</button>
+      )}
+      <div className="card mb-3" style={{background:'var(--bg3)'}}>
+        <div className="text-xs font-600 text-muted mb-2">Handmatige invoer</div>
+        <div className="form-row">
+          <div><label>Uren</label><input className="input" type="number" min="0.1" step="0.25" placeholder="bv. 1.5" value={manHours} onChange={e=>setManHours(e.target.value)}/></div>
+          <div><label>Opmerking</label><input className="input" placeholder="optioneel" value={manComment} onChange={e=>setManComment(e.target.value)}/></div>
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={addManual}>+ Toevoegen</button>
+      </div>
+      {taskLogs.length>0&&(
+        <div>
+          <div className="text-xs text-muted font-600 mb-2">Logboek ({taskLogs.length})</div>
+          {taskLogs.map(l=>{
+            const dur=l.end?l.end-l.start:l.running?Date.now()-l.start:0;
+            return(
+              <div key={l.id} className="flex justify-between items-center p-2 rounded mb-1" style={{background:'var(--bg4)',fontSize:12}}>
+                <div>
+                  <span className="text-muted">{fmtDateTime(l.start)}</span>
+                  {l.running&&<span className="badge badge-inprogress" style={{fontSize:10,marginLeft:8}}>ACTIEF</span>}
+                  {l.comment&&<span style={{marginLeft:8,color:'var(--text3)',fontSize:11}}>{l.comment}</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span style={{fontWeight:600,fontVariantNumeric:'tabular-nums'}}>{fmtDur(dur)}</span>
+                  <button onClick={()=>{if(confirm('Verwijderen?'))deleteDocById('qline_logs',l.id)}} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:16,lineHeight:1,padding:'0 2px'}}>×</button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── task modal ───────────────────────────────────────────────
+// ── email modal ───────────────────────────────────────────────
+const THIJS_EMAIL='Thijs@q-line.com';
+
+const DEFAULT_TEMPLATE=`Hoi Thijs,
+
+Order {orderNumber} — {customer} is afgerond.
+
+Werkzaamheden:
+{description}
+
+Nacalculatie:
+  Geschat:   {estimatedHours} uur
+  Gewerkt:   {actualHours} uur
+  Verschil:  {diffHours} uur {diffLabel}
+
+{notes}
+Met vriendelijke groet,
+Frank
+`;
+
+function EmailModal({task,emailLogs,timeLogs,onClose}){
+  const actualHours=calcActual(timeLogs||[],task.id);
+  const diff=actualHours-task.estimatedHours;
+  const diffLabel=diff>0?'(meerwerk)':diff<0?'(minder)':'(exact)';
+
+  const [subject,setSubject]=useState(`Order ${task.orderNumber} afgerond — ${task.customer}`);
+  const [body,setBody]=useState(
+    DEFAULT_TEMPLATE
+      .replace('{customer}',task.customer||'')
+      .replace('{orderNumber}',task.orderNumber||'')
+      .replace('{description}',task.description||'')
+      .replace('{estimatedHours}',fmtHours(task.estimatedHours))
+      .replace('{actualHours}',fmtHours(actualHours))
+      .replace('{diffHours}',fmtHours(Math.abs(diff)))
+      .replace('{diffLabel}',diffLabel)
+      .replace('{notes}',task.notes?`Opmerking: ${task.notes}\n\n`:'')
+  );
+  const [recipient,setRecipient]=useState(THIJS_EMAIL);
+  const [sending,setSending]=useState(false);
+  const [sent,setSent]=useState(false);
+
+  async function sendEmail(){
+    if(!recipient.trim()){alert('Voer een e-mailadres in.');return;}
+    setSending(true);
+
+    // Sla op in Firebase als log
+    const logId='M'+Date.now();
+    const logEntry={
+      id:logId,
+      taskId:task.id,
+      sentAt:Date.now(),
+      recipient,
+      subject,
+      body,
+    };
+    await saveDoc('qline_emails',logId,logEntry);
+    if(recipient!==task.customerEmail){
+      await saveDoc('qline_tasks',task.id,{...task,customerEmail:recipient});
+    }
+
+    // Open Outlook/Gmail via mailto
+    const mailto=`mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href=mailto;
+
+    setSending(false);
+    setSent(true);
+  }
+
+  async function copyToClipboard(){
+    const full=`Aan: ${recipient}\nOnderwerp: ${subject}\n\n${body}`;
+    await navigator.clipboard.writeText(full);
+    alert('E-mail gekopieerd naar klembord.');
+  }
+
+  const sentLogs=(emailLogs||[]).filter(l=>l.taskId===task.id).sort((a,b)=>b.sentAt-a.sentAt);
+
+  if(sent) return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal" style={{maxWidth:480}}>
+        <div className="modal-header"><h3>E-mail verstuurd ✓</h3><button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button></div>
+        <div className="modal-body" style={{textAlign:'center',padding:'40px 20px'}}>
+          <div style={{fontSize:48,marginBottom:16}}>✅</div>
+          <div style={{fontWeight:600,fontSize:16,color:'var(--green)',marginBottom:8}}>E-mail verstuurd</div>
+          <div className="text-muted text-sm">Naar: {recipient}</div>
+          <div className="text-muted text-sm">Onderwerp: {subject}</div>
+          <div className="mt-4">
+            <button className="btn btn-primary" onClick={onClose}>Sluiten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return(
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal" style={{maxWidth:620}}>
+        <div className="modal-header">
+          <h3>📧 Afmelding sturen — {task.orderNumber}</h3>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <label>Aan</label>
+            <input className="input" type="email" value={recipient} onChange={e=>setRecipient(e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label>Onderwerp</label>
+            <input className="input" value={subject} onChange={e=>setSubject(e.target.value)}/>
+          </div>
+          <div className="form-group">
+            <label>Bericht</label>
+            <textarea className="input" value={body} onChange={e=>setBody(e.target.value)} style={{minHeight:220,fontFamily:'inherit',fontSize:13,lineHeight:1.6}}/>
+          </div>
+          {sentLogs.length>0&&(
+            <div className="border-t pt-3">
+              <div className="section-title">Eerdere verzendingen ({sentLogs.length})</div>
+              {sentLogs.map(l=>(
+                <div key={l.id} className="flex justify-between items-center p-2 rounded mb-1" style={{background:'var(--bg3)',fontSize:12}}>
+                  <div>
+                    <span style={{color:'var(--green)'}}>✓</span>
+                    <span className="text-muted ml-2">{fmtDateTime(l.sentAt)}</span>
+                    <span className="text-muted ml-2">→ {l.recipient}</span>
+                  </div>
+                  <span className="text-xs text-muted">{l.subject}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost btn-sm" onClick={copyToClipboard}>📋 Kopieer</button>
+          <div className="flex gap-2">
+            <button className="btn btn-ghost" onClick={onClose}>Annuleer</button>
+            <button className="btn btn-primary" onClick={sendEmail} disabled={sending}>
+              {sending?'Versturen...':'📧 Verstuur afmelding'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ICS / Outlook agenda export ───────────────────────────────
+// E-mailadressen van de tekenaars
+const TEKENAAR_EMAILS={
+  'Frank': 'frank@q-line.com',
+  'Douwe': 'douwe@q-line.com',
+};
+
+function exportICS(task){
+  if(!task.deadline){ alert('Geen deadline ingesteld.'); return; }
+
+  const responsible=task.responsible||'Frank';
+  const tekenaarsEmail=TEKENAAR_EMAILS[responsible]||'frank@q-line.com';
+
+  // Datum formatteren voor ICS
+  const d=task.deadline.replace(/-/g,'');
+  const nextDay=(()=>{
+    const nd=new Date(task.deadline+'T12:00:00');
+    nd.setDate(nd.getDate()+1);
+    return nd.toISOString().split('T')[0].replace(/-/g,'');
+  })();
+
+  const uid=`qline-${task.id}-${Date.now()}@q-line.com`;
+  const now=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+
+  // ICS vergaderverzoek: Thijs organiseert, tekenaar is attendee
+  const ics=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Q-Line Werkplanning//NL',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTAMP:${now}`,
+    `DTSTART;VALUE=DATE:${d}`,
+    `DTEND;VALUE=DATE:${nextDay}`,
+    `SUMMARY:Deadline: ${task.orderNumber} \u2014 ${task.customer}`,
+    `DESCRIPTION:Order: ${task.orderNumber}\\nKlant: ${task.customer}\\nOmschrijving: ${task.description||''}\\nVerantwoordelijke: ${responsible}\\nGeschat: ${task.estimatedHours}h`,
+    `ORGANIZER;CN=Thijs Q-Line:mailto:Thijs@q-line.com`,
+    `ATTENDEE;CN=${responsible};ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${tekenaarsEmail}`,
+    'TRANSP:TRANSPARENT',
+    'BEGIN:VALARM',
+    'TRIGGER:-P1D',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:Morgen deadline: ${task.orderNumber}`,
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  // Stap 1: download .ics vergaderverzoek
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`vergaderverzoek-${task.orderNumber}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // Stap 2: open Outlook met e-mail aan de tekenaar
+  const subject=encodeURIComponent(`Deadline planning: ${task.orderNumber} \u2014 ${task.customer}`);
+  const body=encodeURIComponent(
+    `Hoi ${responsible},\n\nBijgevoegd het vergaderverzoek voor order ${task.orderNumber} (${task.customer}).\n`+
+    `Deadline: ${task.deadline}\nGeschat: ${task.estimatedHours} uur\n\n`+
+    `Voeg de .ics bijlage toe om de deadline in je agenda te zetten.\n\nMet vriendelijke groet,\nThijs`
+  );
+  setTimeout(()=>{
+    window.location.href=`mailto:${tekenaarsEmail}?subject=${subject}&body=${body}`;
+  },600);
 }
 
 
@@ -328,14 +656,14 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
       <div className="modal">
         <div className="modal-header">
           <div>
-            <h3>{form.orderNumber} -- {form.customer}</h3>
+            <h3>{form.orderNumber} — {form.customer}</h3>
             <div className="flex gap-2 mt-1">
               <StatusBadge status={form.status}/>
               {overrun&&<span className="badge badge-conflict">Meeruren</span>}
               {plan.fits===false&&<span className="badge badge-late">Conflict</span>}
             </div>
           </div>
-          <button className="btn btn-ghost btn-sm" onClick={onClose}>x</button>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
         </div>
         <div className="modal-body">
           <div className="grid-3 mb-4">
@@ -345,8 +673,8 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
           </div>
           <ProgressBar actual={actual} estimated={form.estimatedHours}/>
           <div className="flex gap-2 mt-3 mb-4" style={{flexWrap:'wrap'}}>
-            {plan.start&&<span className="tag">Agenda Start: {fmtDate(plan.start)}</span>}
-            {plan.end&&<span className={`tag ${plan.fits===false?'text-red':''}`}>Einde Einde: {fmtDate(plan.end)}</span>}
+            {plan.start&&<span className="tag">📅 Start: {fmtDate(plan.start)}</span>}
+            {plan.end&&<span className={`tag ${plan.fits===false?'text-red':''}`}>🏁 Einde: {fmtDate(plan.end)}</span>}
             {plan.fits===false&&<span className="badge badge-conflict">Na deadline!</span>}
           </div>
           <div className="border-t pt-3 mb-4">
@@ -362,6 +690,16 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
             <div className="form-row">
               <div><label>Geschatte uren</label><input className="input" type="number" min="0.5" step="0.5" value={form.estimatedHours} onChange={e=>set('estimatedHours',e.target.value)}/></div>
               <div><label>Status</label><select className="input" value={form.status} onChange={e=>set('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
+            </div>
+            <div className="form-group"><label>Verantwoordelijke</label>
+              <select className="input" value={form.responsible||'Frank'} onChange={e=>set('responsible',e.target.value)}>
+                {USERS.map(u=><option key={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+            <div className="form-group"><label>Verantwoordelijke</label>
+              <select className="input" value={form.responsible||'Frank'} onChange={e=>set('responsible',e.target.value)}>
+                {USERS.map(u=><option key={u.name}>{u.name}</option>)}
+              </select>
             </div>
             <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes||''} onChange={e=>set('notes',e.target.value)}/></div>
             <div className="form-group">
@@ -380,7 +718,7 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
                 <div className="section-title">E-mail communicatie</div>
                 {lastSent&&(
                   <div className="alert alert-success mb-2" style={{background:'var(--green-bg)',border:'1px solid #14532d',color:'#86efac'}}>
-                    <span>v</span>
+                    <span>✓</span>
                     <div>
                       <strong>Afmelding verstuurd</strong> op {fmtDateTime(lastSent.sentAt)}
                       <div className="text-xs" style={{color:'#86efac',opacity:.8}}>Naar: {lastSent.recipient}</div>
@@ -390,14 +728,14 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
                 <div className="flex gap-2">
                   {form.status==='Done'?(
                     <button className="btn btn-success btn-sm" onClick={()=>setShowEmail(true)}>
-                      {lastSent?'Mail Opnieuw sturen':'Mail Stuur afmelding'}
+                      {lastSent?'📧 Opnieuw sturen':'📧 Stuur afmelding'}
                     </button>
                   ):(
                     <button className="btn btn-ghost btn-sm" onClick={()=>setShowEmail(true)}>
-                      Mail E-mail opstellen
+                      📧 E-mail opstellen
                     </button>
                   )}
-                  {!form.customerEmail&&<span className="text-xs text-orange" style={{alignSelf:'center'}}>! Geen e-mailadres</span>}
+                  {!form.customerEmail&&<span className="text-xs text-orange" style={{alignSelf:'center'}}>⚠ Geen e-mailadres</span>}
                 </div>
               </div>
             );
@@ -405,8 +743,8 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
         </div>
         <div className="modal-footer">
           <div className="flex gap-2">
-            <button className="btn btn-danger btn-sm" onClick={del}>Del Verwijderen</button>
-            <button className="btn btn-ghost btn-sm" onClick={()=>exportICS(form)} title="Deadline toevoegen aan Outlook agenda">Agenda Agenda</button>
+            <button className="btn btn-danger btn-sm" onClick={del}>🗑 Verwijderen</button>
+            <button className="btn btn-ghost btn-sm" onClick={()=>exportICS(form)} title="Deadline toevoegen aan Outlook agenda">📅 Agenda</button>
           </div>
           <div className="flex gap-2">
             <button className="btn btn-ghost" onClick={onClose}>Annuleer</button>
@@ -435,7 +773,7 @@ function NewTaskModal({onClose}){
   return(
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
       <div className="modal" style={{maxWidth:540}}>
-        <div className="modal-header"><h3>Nieuwe taak</h3><button className="btn btn-ghost btn-sm" onClick={onClose}>x</button></div>
+        <div className="modal-header"><h3>Nieuwe taak</h3><button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button></div>
         <div className="modal-body">
           <div className="form-row">
             <div><label>Ordernummer *</label><input className="input" value={form.orderNumber} onChange={e=>set('orderNumber',e.target.value)} placeholder="2025-006" autoFocus/></div>
@@ -461,13 +799,13 @@ function NewTaskModal({onClose}){
           </div>
           <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes} onChange={e=>set('notes',e.target.value)}/></div>
         </div>
-        <div className="modal-footer" style={{justifyContent:'flex-end'}}><div className="flex gap-2"><button className="btn btn-ghost" onClick={onClose}>Annuleer</button><button className="btn btn-primary" onClick={async()=>{ await save(); if(form.deadline) exportICS(form); }} disabled={saving}>{saving?'Aanmaken...':'Aanmaken + Agenda'}</button></div></div>
+        <div className="modal-footer" style={{justifyContent:'flex-end'}}><div className="flex gap-2"><button className="btn btn-ghost" onClick={onClose}>Annuleer</button><button className="btn btn-primary" onClick={async()=>{ await save(); if(form.deadline) exportICS(form); }} disabled={saving}>{saving?'Aanmaken...':'Aanmaken + 📅'}</button></div></div>
       </div>
     </div>
   );
 }
 
-// -- dashboard ------------------------------------------------
+// ── dashboard ────────────────────────────────────────────────
 function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
   const td=today();
   const [tick,setTick]=useState(0);
@@ -486,21 +824,21 @@ function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
     <div>
       {conflicts.length>0&&(
         <div className="conflict-banner mb-4">
-          <div className="flex items-center gap-2 mb-1"><span>!</span><span style={{fontWeight:700,color:'var(--orange)'}}>PLANNING CONFLICT -- {conflicts.length} {conflicts.length===1?'taak past':'taken passen'} niet voor deadline ({DAILY_CAP}h/dag)</span></div>
-          {conflicts.map(t=><div key={t.id} style={{color:'#fbd38d',fontSize:13,marginLeft:24,cursor:'pointer',marginTop:4}} onClick={()=>openTask(t)}>{'->'} {t.orderNumber} | {t.customer} | deadline {fmtDate(t.deadline)} | nog {fmtHours(planData[t.id]?.remaining||0)}h</div>)}
+          <div className="flex items-center gap-2 mb-1"><span>⚠️</span><span style={{fontWeight:700,color:'var(--orange)'}}>PLANNING CONFLICT — {conflicts.length} {conflicts.length===1?'taak past':'taken passen'} niet voor deadline ({DAILY_CAP}h/dag)</span></div>
+          {conflicts.map(t=><div key={t.id} style={{color:'#fbd38d',fontSize:13,marginLeft:24,cursor:'pointer',marginTop:4}} onClick={()=>openTask(t)}>→ {t.orderNumber} | {t.customer} | deadline {fmtDate(t.deadline)} | nog {fmtHours(planData[t.id]?.remaining||0)}h</div>)}
         </div>
       )}
       {overdue.length>0&&(
         <div className="alert alert-danger mb-4">
-          <span></span>
-          <div><strong>Verlopen: {overdue.length} {overdue.length===1?'taak':'taken'}</strong>{overdue.map(t=><div key={t.id} style={{cursor:'pointer',marginTop:3,fontSize:12}} onClick={()=>openTask(t)}>{'->'} {t.orderNumber} | {t.customer} | was {fmtDate(t.deadline)}</div>)}</div>
+          <span>🔴</span>
+          <div><strong>Verlopen: {overdue.length} {overdue.length===1?'taak':'taken'}</strong>{overdue.map(t=><div key={t.id} style={{cursor:'pointer',marginTop:3,fontSize:12}} onClick={()=>openTask(t)}>→ {t.orderNumber} | {t.customer} | was {fmtDate(t.deadline)}</div>)}</div>
         </div>
       )}
       {activeLog&&(()=>{const t=tasks.find(x=>x.id===activeLog.taskId);return(
         <div className="alert alert-info mb-4">
           <div style={{width:8,height:8,borderRadius:'50%',background:'var(--green)',marginTop:3,flexShrink:0,animation:'blink 1.5s infinite'}}/>
           <div className="flex justify-between w-full items-center">
-            <div><strong>Timer loopt:</strong> {t?.orderNumber} -- {t?.customer}</div>
+            <div><strong>Timer loopt:</strong> {t?.orderNumber} — {t?.customer}</div>
             <span style={{fontVariantNumeric:'tabular-nums',fontWeight:700,color:'var(--green)'}}>{fmtDur(Date.now()-activeLog.start)}</span>
           </div>
         </div>
@@ -508,11 +846,11 @@ function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
       <div className="grid-4 mb-4">
         <div className="stat-card"><div className="stat-label">Open taken</div><div className="stat-value">{tasks.filter(t=>t.status!=='Done').length}</div><div className="stat-sub">{done.length} afgerond</div></div>
         <div className="stat-card"><div className="stat-label">Deadline deze week</div><div className="stat-value" style={{color:'var(--blue)'}}>{dueWeek.length}</div><div className="stat-sub">{overdue.length} verlopen</div></div>
-        <div className="stat-card"><div className="stat-label">Totaal resterend</div><div className="stat-value">{fmtHours(totalRemaining)}h</div><div className="stat-sub"> {Math.ceil(totalRemaining/DAILY_CAP)} werkdagen</div></div>
+        <div className="stat-card"><div className="stat-label">Totaal resterend</div><div className="stat-value">{fmtHours(totalRemaining)}h</div><div className="stat-sub">≈ {Math.ceil(totalRemaining/DAILY_CAP)} werkdagen</div></div>
         <div className="stat-card"><div className="stat-label">Conflicten</div><div className="stat-value" style={{color:conflicts.length?'var(--orange)':'var(--green)'}}>{conflicts.length}</div><div className="stat-sub">{overruns.length} meeruren</div></div>
       </div>
       <div className="card mb-4">
-        <div className="section-title">Alle open taken -- klik om te openen  {'>'} om direct te klokken</div>
+        <div className="section-title">Alle open taken — klik om te openen · ▶ om direct te klokken</div>
         {allActive.length===0?<div className="text-muted text-sm">Geen open taken. Goed bezig!</div>:allActive.map(t=>{
           const actual=calcActual(timeLogs,t.id);
           const remaining=Math.max(0,t.estimatedHours-actual);
@@ -571,7 +909,7 @@ function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
   );
 }
 
-// -- task list ------------------------------------------------
+// ── task list ────────────────────────────────────────────────
 function TaskList({tasks,timeLogs,planData,openTask,onStart,onStop}){
   const [search,setSearch]=useState('');
   const [filterStatus,setFilterStatus]=useState('');
@@ -605,7 +943,7 @@ function TaskList({tasks,timeLogs,planData,openTask,onStart,onStop}){
     });
     return r;
   },[tasks,timeLogs,search,filterStatus,sortBy,sortDir]);
-  function SortTh({col,label}){return<th onClick={()=>toggleSort(col)} style={{cursor:'pointer',userSelect:'none',whiteSpace:'nowrap'}}>{label}{sortBy===col?(sortDir===1?' ':' '):''}</th>;}
+  function SortTh({col,label}){return<th onClick={()=>toggleSort(col)} style={{cursor:'pointer',userSelect:'none',whiteSpace:'nowrap'}}>{label}{sortBy===col?(sortDir===1?' ↑':' ↓'):''}</th>;}
   return(
     <div>
       <div className="search-bar">
@@ -654,10 +992,10 @@ function TaskList({tasks,timeLogs,planData,openTask,onStart,onStop}){
   );
 }
 
-// -- planning board -------------------------------------------
+// ── planning board ───────────────────────────────────────────
 function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
   const td=today();
-  // Toon alle dagen incl weekenden zodat vr->ma aaneengesloten lijkt
+  // Toon alle dagen incl weekenden zodat vr→ma aaneengesloten lijkt
   const days=[];
   let d=td;
   for(let i=0;i<35;i++){
@@ -721,9 +1059,9 @@ function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
   }
 
   return(<div>
-    {conflicts.length>0&&<div className="alert alert-warning mb-4"><span>!</span><div><strong>Conflict:</strong> {conflicts.map(t=>t.orderNumber).join(', ')} -- niet gereed voor deadline bij {DAILY_CAP}h/dag.</div></div>}
+    {conflicts.length>0&&<div className="alert alert-warning mb-4"><span>⚠️</span><div><strong>Conflict:</strong> {conflicts.map(t=>t.orderNumber).join(', ')} — niet gereed voor deadline bij {DAILY_CAP}h/dag.</div></div>}
     <div className="card">
-      <div className="section-title">Tijdlijn -- sleep de D cirkel om deadline te verplaatsen</div>
+      <div className="section-title">Tijdlijn — sleep de D cirkel om deadline te verplaatsen</div>
       <div style={{overflowX:'auto'}}>
         <table style={{tableLayout:'fixed',minWidth:1000}}>
           <thead>
@@ -798,7 +1136,7 @@ function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
                       )}
                       {isDeadline&&(
                         // D cirkel staat ALTIJD op de deadline kolom
-                        // ook als er werk van een andere taak op die dag staat -- dat is normaal
+                        // ook als er werk van een andere taak op die dag staat — dat is normaal
                         <div
                           draggable={true}
                           onDragStart={e=>onDeadlineDragStart(e,t.id)}
@@ -833,7 +1171,7 @@ function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
                   style={{textAlign:'center',fontSize:10,fontWeight:600,
                     color:over?'var(--orange)':h>=DAILY_CAP?'var(--blue)':h>0?'var(--text2)':'var(--text3)',
                     padding:'6px 2px'}}>
-                  {h>0?Math.round(h*10)/10+'h':'--'}
+                  {h>0?Math.round(h*10)/10+'h':'—'}
                 </td>;
               })}
             </tr>
@@ -877,8 +1215,8 @@ function TimeLogView({tasks,timeLogs}){
                   <td className="text-sm text-muted">{fmtDateTime(l.start)}</td>
                   <td className="text-sm text-muted">{l.running?<span className="badge badge-inprogress">ACTIEF</span>:fmtDateTime(l.end)}</td>
                   <td style={{fontWeight:600,fontVariantNumeric:'tabular-nums'}}>{fmtDur(dur)}</td>
-                  <td className="text-xs text-muted" style={{maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.comment||'--'}</td>
-                  <td><button onClick={()=>{if(confirm('Verwijderen?'))deleteDocById('qline_logs',l.id)}} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:16,padding:'0 4px'}}>x</button></td>
+                  <td className="text-xs text-muted" style={{maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.comment||'—'}</td>
+                  <td><button onClick={()=>{if(confirm('Verwijderen?'))deleteDocById('qline_logs',l.id)}} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:16,padding:'0 4px'}}>×</button></td>
                 </tr>
               );
             })}
@@ -889,7 +1227,7 @@ function TimeLogView({tasks,timeLogs}){
   );
 }
 
-// -- loading screen -------------------------------------------
+// ── loading screen ───────────────────────────────────────────
 function Loading(){
   return(
     <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:16}}>
@@ -899,7 +1237,7 @@ function Loading(){
   );
 }
 
-// -- app root -------------------------------------------------
+// ── app root ─────────────────────────────────────────────────
 function App(){
   const fbReady=useFirestore();
   const rawTasks=useCollection('qline_tasks',fbReady);
@@ -920,7 +1258,11 @@ function App(){
   const [planData,setPlanData]=useState({__dayLoad:{}});
   useEffect(()=>{
     if(tasks.length===0&&timeLogs.length===0)return;
-    setPlanData(planTasks(tasks,timeLogs,{}));
+    try{
+      setPlanData(planTasks(tasks,timeLogs,{}));
+    }catch(e){
+      console.error('planTasks error:',e);
+    }
   },[tasks,timeLogs,tick]);
 
   // timer actions
@@ -947,7 +1289,7 @@ function App(){
   const activeLog=timeLogs.find(l=>l.running);
   const overdue=tasks.filter(t=>t.status!=='Done'&&t.deadline<today()).length;
 
-  const VIEWS=[{id:'dashboard',icon:'',label:'Dashboard'},{id:'tasks',icon:'',label:'Taakoverzicht'},{id:'planning',icon:'',label:'Planning'},{id:'timelog',icon:'',label:'Tijdregistratie'}];
+  const VIEWS=[{id:'dashboard',icon:'◉',label:'Dashboard'},{id:'tasks',icon:'≡',label:'Taakoverzicht'},{id:'planning',icon:'▦',label:'Planning'},{id:'timelog',icon:'◷',label:'Tijdregistratie'}];
   const TITLES={dashboard:'Dashboard',tasks:'Taakoverzicht',planning:'Planning',timelog:'Tijdregistraties'};
 
   if(!fbReady)return <Loading/>;
@@ -957,7 +1299,7 @@ function App(){
       <div className="sidebar">
         <div className="sidebar-logo">
           <h1>Q-LINE</h1>
-          <p>Frank 4h  Douwe 6h / dag</p>
+          <p>Frank 4h · Douwe 6h / dag</p>
         </div>
         {VIEWS.map(v=>(
           <div key={v.id} className={`nav-item ${view===v.id?'active':''}`} onClick={()=>setView(v.id)}>
@@ -967,8 +1309,8 @@ function App(){
         <div style={{marginTop:'auto',padding:'16px',borderTop:'1px solid var(--border)'}}>
           <div className="text-xs text-muted mb-2" style={{fontWeight:600,textTransform:'uppercase',letterSpacing:'.5px'}}>Status</div>
           <div style={{fontSize:12,color:'var(--text)',marginBottom:4}}>{tasks.filter(t=>t.status!=='Done').length} open taken</div>
-          {conflicts>0&&<div style={{fontSize:12,color:'var(--orange)',marginBottom:4}}>! {conflicts} conflict{conflicts!==1?'en':''}</div>}
-          {activeLog&&<div style={{fontSize:12,color:'var(--green)',marginBottom:4}}> Timer loopt</div>}
+          {conflicts>0&&<div style={{fontSize:12,color:'var(--orange)',marginBottom:4}}>⚠ {conflicts} conflict{conflicts!==1?'en':''}</div>}
+          {activeLog&&<div style={{fontSize:12,color:'var(--green)',marginBottom:4}}>● Timer loopt</div>}
           {overdue>0&&<div style={{fontSize:12,color:'var(--red)',marginBottom:4}}>! {overdue} verlopen</div>}
           <div style={{fontSize:10,color:'var(--text3)',marginTop:8,display:'flex',alignItems:'center',gap:4}}>
             <span className="sync-dot" style={{background:'var(--green)'}}/>Firebase sync actief
@@ -979,8 +1321,8 @@ function App(){
         <div className="topbar">
           <h2>{TITLES[view]}</h2>
           <div className="flex gap-2 items-center">
-            {activeLog&&<span className="badge badge-inprogress"> Timer loopt</span>}
-            {conflicts>0&&<span className="badge badge-conflict">! {conflicts} conflict{conflicts!==1?'en':''}</span>}
+            {activeLog&&<span className="badge badge-inprogress">● Timer loopt</span>}
+            {conflicts>0&&<span className="badge badge-conflict">⚠ {conflicts} conflict{conflicts!==1?'en':''}</span>}
             {overdue>0&&<span className="badge badge-late">! {overdue} verlopen</span>}
             <button className="btn btn-primary btn-sm" onClick={()=>setShowNew(true)}>+ Nieuwe taak</button>
           </div>
