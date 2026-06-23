@@ -487,13 +487,13 @@ function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
       {conflicts.length>0&&(
         <div className="conflict-banner mb-4">
           <div className="flex items-center gap-2 mb-1"><span>!</span><span style={{fontWeight:700,color:'var(--orange)'}}>PLANNING CONFLICT -- {conflicts.length} {conflicts.length===1?'taak past':'taken passen'} niet voor deadline ({DAILY_CAP}h/dag)</span></div>
-          {conflicts.map(t=><div key={t.id} style={{color:'#fbd38d',fontSize:13,marginLeft:24,cursor:'pointer',marginTop:4}} onClick={()=>openTask(t)}>-> {t.orderNumber} | {t.customer} | deadline {fmtDate(t.deadline)} | nog {fmtHours(planData[t.id]?.remaining||0)}h</div>)}
+          {conflicts.map(t=><div key={t.id} style={{color:'#fbd38d',fontSize:13,marginLeft:24,cursor:'pointer',marginTop:4}} onClick={()=>openTask(t)}>{'->'} {t.orderNumber} | {t.customer} | deadline {fmtDate(t.deadline)} | nog {fmtHours(planData[t.id]?.remaining||0)}h</div>)}
         </div>
       )}
       {overdue.length>0&&(
         <div className="alert alert-danger mb-4">
           <span></span>
-          <div><strong>Verlopen: {overdue.length} {overdue.length===1?'taak':'taken'}</strong>{overdue.map(t=><div key={t.id} style={{cursor:'pointer',marginTop:3,fontSize:12}} onClick={()=>openTask(t)}>-> {t.orderNumber} | {t.customer} | was {fmtDate(t.deadline)}</div>)}</div>
+          <div><strong>Verlopen: {overdue.length} {overdue.length===1?'taak':'taken'}</strong>{overdue.map(t=><div key={t.id} style={{cursor:'pointer',marginTop:3,fontSize:12}} onClick={()=>openTask(t)}>{'->'} {t.orderNumber} | {t.customer} | was {fmtDate(t.deadline)}</div>)}</div>
         </div>
       )}
       {activeLog&&(()=>{const t=tasks.find(x=>x.id===activeLog.taskId);return(
@@ -512,7 +512,7 @@ function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
         <div className="stat-card"><div className="stat-label">Conflicten</div><div className="stat-value" style={{color:conflicts.length?'var(--orange)':'var(--green)'}}>{conflicts.length}</div><div className="stat-sub">{overruns.length} meeruren</div></div>
       </div>
       <div className="card mb-4">
-        <div className="section-title">Alle open taken -- klik om te openen  > om direct te klokken</div>
+        <div className="section-title">Alle open taken -- klik om te openen  {'>'} om direct te klokken</div>
         {allActive.length===0?<div className="text-muted text-sm">Geen open taken. Goed bezig!</div>:allActive.map(t=>{
           const actual=calcActual(timeLogs,t.id);
           const remaining=Math.max(0,t.estimatedHours-actual);
