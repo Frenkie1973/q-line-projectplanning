@@ -163,20 +163,27 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     firstWorkDay=nd.toISOString().split('T')[0];
   }
 
+  // Sorteer: vroegste deadline eerst, dan oudste invoerdatum
+  // Sla taken over zonder geldige deadline
   const active=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{
     const diff=new Date(a.deadline)-new Date(b.deadline);
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
 
+  // stationLoad[dag] = totaal geplande uren op het tekenststation die dag (max DAILY_CAP=7)
   const stationLoad={};
+  // perUserLoad[user][dag] = uren voor die tekenaar die dag (max getUserCap)
   const perUserLoad={};
   USERS.forEach(u=>{perUserLoad[u.name]={};});
+
   const result={};
 
+  // Hoeveel uur kan 'user' nog op 'day'?
   function userAvail(user,day){
     const userCap=getUserCap(user);
-    const userUsed=(perUserLoad[user]||{})[day]||0;
+    const userUsed=perUserLoad[user][day]||0;
     const stationUsed=stationLoad[day]||0;
+    // Beperkt door: eigen cap en station cap
     return Math.min(userCap-userUsed, DAILY_CAP-stationUsed);
   }
 
@@ -190,13 +197,15 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
 
   function findBlock(hours, deadline, responsible){
     let endDay=prevWorkDay(deadline);
+
     while(endDay>=firstWorkDay){
       let hoursLeft=hours;
       const tryDays={};
       let d=endDay;
       let broken=false;
+
       while(hoursLeft>0){
-        if(d<firstWorkDay||d>=deadline){broken=true;break;}
+        if(d<firstWorkDay){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
         const take=Math.min(a,hoursLeft);
@@ -208,12 +217,15 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
           d=prev;
         }
       }
+
       if(!broken&&hoursLeft<=0){
+        // Herverdeel: eerste dagen vol, laatste dag restant
         const sortedDays=Object.keys(tryDays).sort();
         let remaining=hours;
         const fixedDays={};
         sortedDays.forEach(day=>{
-          const take=Math.min(getUserCap(responsible),remaining);
+          const cap=Math.min(getUserCap(responsible), DAILY_CAP-(stationLoad[day]||0));
+          const take=Math.min(cap,remaining);
           fixedDays[day]=take;
           remaining-=take;
         });
@@ -221,18 +233,28 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       }
       endDay=prevWorkDay(endDay);
     }
+
+    // Conflict: eerste aaneengesloten blok forward — nooit op of na deadline
     let startDay=firstWorkDay;
     for(let i=0;i<90;i++){
       if(userAvail(responsible,startDay)<=0||startDay>=deadline){startDay=nextWorkDay(startDay);continue;}
-      let hoursLeft=hours;const tryDays={};let d=startDay;let broken=false;
+      let hoursLeft=hours;
+      const tryDays={};
+      let d=startDay;
+      let broken=false;
       while(hoursLeft>0){
         if(d>=deadline){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
-        const take=Math.min(a,hoursLeft);tryDays[d]=take;hoursLeft-=take;
+        const take=Math.min(a,hoursLeft);
+        tryDays[d]=take;
+        hoursLeft-=take;
         if(hoursLeft>0) d=nextWorkDay(d);
       }
-      if(!broken&&hoursLeft<=0){const endD=Object.keys(tryDays).sort().pop();return{days:tryDays,fits:endD<deadline};}
+      if(!broken&&hoursLeft<=0){
+        const endD=Object.keys(tryDays).sort().pop();
+        return{days:tryDays,fits:endD<deadline};
+      }
       startDay=nextWorkDay(startDay);
     }
     return{days:{},fits:false};
@@ -242,23 +264,34 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     const actual=calcActual(timeLogs,task.id);
     const remaining=Math.max(0,task.estimatedHours-actual);
     const responsible=task.responsible||'Frank';
-    if(remaining<=0){result[task.id]={start:firstWorkDay,end:firstWorkDay,fits:true,remaining:0,days:{},responsible};return;}
+
+    if(remaining<=0){
+      result[task.id]={start:firstWorkDay,end:firstWorkDay,fits:true,remaining:0,days:{},responsible};
+      return;
+    }
+
     const{days:taskDays,fits}=findBlock(remaining,task.deadline,responsible);
+
     Object.entries(taskDays).forEach(([day,h])=>{
-      if(!perUserLoad[responsible])perUserLoad[responsible]={};
       perUserLoad[responsible][day]=(perUserLoad[responsible][day]||0)+h;
       stationLoad[day]=(stationLoad[day]||0)+h;
     });
+
     const scheduledDays=Object.keys(taskDays).sort();
     const startDate=scheduledDays[0]||firstWorkDay;
     const endDate=scheduledDays[scheduledDays.length-1]||firstWorkDay;
     result[task.id]={start:startDate,end:endDate,fits,remaining,days:taskDays,responsible};
   });
 
-  const dl={};const dlpu={};
+  // dayLoad voor weergave
+  const dl={};
+  const dlpu={};
   USERS.forEach(u=>{
     dlpu[u.name]={};
-    Object.entries(perUserLoad[u.name]||{}).forEach(([day,h])=>{dl[day]=(dl[day]||0)+h;dlpu[u.name][day]=h;});
+    Object.entries(perUserLoad[u.name]).forEach(([day,h])=>{
+      dl[day]=(dl[day]||0)+h;
+      dlpu[u.name][day]=h;
+    });
   });
   result.__dayLoad=dl;
   result.__dayLoadPerUser=dlpu;
@@ -690,16 +723,6 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
             <div className="form-row">
               <div><label>Geschatte uren</label><input className="input" type="number" min="0.5" step="0.5" value={form.estimatedHours} onChange={e=>set('estimatedHours',e.target.value)}/></div>
               <div><label>Status</label><select className="input" value={form.status} onChange={e=>set('status',e.target.value)}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
-            </div>
-            <div className="form-group"><label>Verantwoordelijke</label>
-              <select className="input" value={form.responsible||'Frank'} onChange={e=>set('responsible',e.target.value)}>
-                {USERS.map(u=><option key={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-            <div className="form-group"><label>Verantwoordelijke</label>
-              <select className="input" value={form.responsible||'Frank'} onChange={e=>set('responsible',e.target.value)}>
-                {USERS.map(u=><option key={u.name}>{u.name}</option>)}
-              </select>
             </div>
             <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes||''} onChange={e=>set('notes',e.target.value)}/></div>
             <div className="form-group">
