@@ -1036,7 +1036,7 @@ function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
                 </td>
                 {days.map(day=>{
                   const hoursThisDay=plan.days?.[day]||0;
-                  const isDeadline=day===t.deadline;
+                  const isDeadline=day===t.deadline||(day===days[0]&&t.deadline<days[0]);
                   const isHover=dropDay===day;
                   // Bereken offset op basis van gesorteerde segmenten
                   const segs=getDaySegments(day);
