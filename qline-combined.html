@@ -135,8 +135,7 @@ const USERS=[
   {name:'Frank', capacity:4, color:'#3b82f6'},
   {name:'Douwe', capacity:6, color:'#22c55e'},
 ];
-const DAILY_CAP=7;  // tekenststation: max 7h/dag totaal
-const STATION_CAP=7; // zelfde, voor leesbaarheid
+const DAILY_CAP=10; // totaal per dag (Frank 4h + Douwe 6h)
 const STATUSES=['New','Planned','In progress','Waiting','Done','Late'];
 
 // ── helpers ──────────────────────────────────────────────────
@@ -157,34 +156,28 @@ function getUserCap(name){
 }
 
 function planTasks(tasks,timeLogs,pinnedStarts={}){
+  // Eerste werkdag = vandaag of volgende maandag als weekend
   let firstWorkDay=today();
   while(isWeekend(firstWorkDay)){
     const nd=new Date(firstWorkDay+'T12:00:00');nd.setDate(nd.getDate()+1);
     firstWorkDay=nd.toISOString().split('T')[0];
   }
 
-  // Sorteer: vroegste deadline eerst, dan oudste invoerdatum
-  // Sla taken over zonder geldige deadline
-  const active=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{
+  // Sorteer per persoon op vroegste deadline dan invoerdatum
+  const active=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
     const diff=new Date(a.deadline)-new Date(b.deadline);
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
 
-  // stationLoad[dag] = totaal geplande uren op het tekenststation die dag (max DAILY_CAP=7)
-  const stationLoad={};
-  // perUserLoad[user][dag] = uren voor die tekenaar die dag (max getUserCap)
-  const perUserLoad={};
-  USERS.forEach(u=>{perUserLoad[u.name]={};});
+  // Per persoon eigen dayLoad bijhouden
+  const dayLoadPerUser={};
+  USERS.forEach(u=>{ dayLoadPerUser[u.name]={}; });
 
   const result={};
 
-  // Hoeveel uur kan 'user' nog op 'day'?
   function userAvail(user,day){
-    const userCap=getUserCap(user);
-    const userUsed=perUserLoad[user][day]||0;
-    const stationUsed=stationLoad[day]||0;
-    // Beperkt door: eigen cap en station cap
-    return Math.min(userCap-userUsed, DAILY_CAP-stationUsed);
+    const cap=getUserCap(user);
+    return cap-(dayLoadPerUser[user][day]||0);
   }
 
   function prevWorkDay(d){
@@ -196,6 +189,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   function isDirectlyBefore(x,y){return nextWorkDay(x)===y;}
 
   function findBlock(hours, deadline, responsible){
+    // Probeer elk mogelijk eindpunt voor deadline, van achter naar voor
     let endDay=prevWorkDay(deadline);
 
     while(endDay>=firstWorkDay){
@@ -218,32 +212,19 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
         }
       }
 
-      if(!broken&&hoursLeft<=0){
-        // Herverdeel: eerste dagen vol, laatste dag restant
-        const sortedDays=Object.keys(tryDays).sort();
-        let remaining=hours;
-        const fixedDays={};
-        sortedDays.forEach(day=>{
-          const cap=Math.min(getUserCap(responsible), DAILY_CAP-(stationLoad[day]||0));
-          const take=Math.min(cap,remaining);
-          fixedDays[day]=take;
-          remaining-=take;
-        });
-        return{days:fixedDays,fits:true};
-      }
+      if(!broken&&hoursLeft<=0) return{days:tryDays,fits:true};
       endDay=prevWorkDay(endDay);
     }
 
-    // Conflict: eerste aaneengesloten blok forward — nooit op of na deadline
+    // Conflict: eerste aaneengesloten blok forward
     let startDay=firstWorkDay;
     for(let i=0;i<90;i++){
-      if(userAvail(responsible,startDay)<=0||startDay>=deadline){startDay=nextWorkDay(startDay);continue;}
+      if(userAvail(responsible,startDay)<=0){startDay=nextWorkDay(startDay);continue;}
       let hoursLeft=hours;
       const tryDays={};
       let d=startDay;
       let broken=false;
       while(hoursLeft>0){
-        if(d>=deadline){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
         const take=Math.min(a,hoursLeft);
@@ -273,8 +254,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     const{days:taskDays,fits}=findBlock(remaining,task.deadline,responsible);
 
     Object.entries(taskDays).forEach(([day,h])=>{
-      perUserLoad[responsible][day]=(perUserLoad[responsible][day]||0)+h;
-      stationLoad[day]=(stationLoad[day]||0)+h;
+      dayLoadPerUser[responsible][day]=(dayLoadPerUser[responsible][day]||0)+h;
     });
 
     const scheduledDays=Object.keys(taskDays).sort();
@@ -283,18 +263,15 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
     result[task.id]={start:startDate,end:endDate,fits,remaining,days:taskDays,responsible};
   });
 
-  // dayLoad voor weergave
+  // Combined dayLoad voor weergave
   const dl={};
-  const dlpu={};
   USERS.forEach(u=>{
-    dlpu[u.name]={};
-    Object.entries(perUserLoad[u.name]).forEach(([day,h])=>{
+    Object.entries(dayLoadPerUser[u.name]).forEach(([day,h])=>{
       dl[day]=(dl[day]||0)+h;
-      dlpu[u.name][day]=h;
     });
   });
   result.__dayLoad=dl;
-  result.__dayLoadPerUser=dlpu;
+  result.__dayLoadPerUser=dayLoadPerUser;
   return result;
 }
 
@@ -584,78 +561,6 @@ function EmailModal({task,emailLogs,timeLogs,onClose}){
   );
 }
 
-// ── ICS / Outlook agenda export ───────────────────────────────
-// E-mailadressen van de tekenaars
-const TEKENAAR_EMAILS={
-  'Frank': 'frank@q-line.com',
-  'Douwe': 'douwe@q-line.com',
-};
-
-function exportICS(task){
-  if(!task.deadline){ alert('Geen deadline ingesteld.'); return; }
-
-  const responsible=task.responsible||'Frank';
-  const tekenaarsEmail=TEKENAAR_EMAILS[responsible]||'frank@q-line.com';
-
-  // Datum formatteren voor ICS
-  const d=task.deadline.replace(/-/g,'');
-  const nextDay=(()=>{
-    const nd=new Date(task.deadline+'T12:00:00');
-    nd.setDate(nd.getDate()+1);
-    return nd.toISOString().split('T')[0].replace(/-/g,'');
-  })();
-
-  const uid=`qline-${task.id}-${Date.now()}@q-line.com`;
-  const now=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
-
-  // ICS vergaderverzoek: Thijs organiseert, tekenaar is attendee
-  const ics=[
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Q-Line Werkplanning//NL',
-    'CALSCALE:GREGORIAN',
-    'METHOD:REQUEST',
-    'BEGIN:VEVENT',
-    `UID:${uid}`,
-    `DTSTAMP:${now}`,
-    `DTSTART;VALUE=DATE:${d}`,
-    `DTEND;VALUE=DATE:${nextDay}`,
-    `SUMMARY:Deadline: ${task.orderNumber} \u2014 ${task.customer}`,
-    `DESCRIPTION:Order: ${task.orderNumber}\\nKlant: ${task.customer}\\nOmschrijving: ${task.description||''}\\nVerantwoordelijke: ${responsible}\\nGeschat: ${task.estimatedHours}h`,
-    `ORGANIZER;CN=Thijs Q-Line:mailto:Thijs@q-line.com`,
-    `ATTENDEE;CN=${responsible};ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:${tekenaarsEmail}`,
-    'TRANSP:TRANSPARENT',
-    'BEGIN:VALARM',
-    'TRIGGER:-P1D',
-    'ACTION:DISPLAY',
-    `DESCRIPTION:Morgen deadline: ${task.orderNumber}`,
-    'END:VALARM',
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-
-  // Stap 1: download .ics vergaderverzoek
-  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download=`vergaderverzoek-${task.orderNumber}.ics`;
-  a.click();
-  URL.revokeObjectURL(url);
-
-  // Stap 2: open Outlook met e-mail aan de tekenaar
-  const subject=encodeURIComponent(`Deadline planning: ${task.orderNumber} \u2014 ${task.customer}`);
-  const body=encodeURIComponent(
-    `Hoi ${responsible},\n\nBijgevoegd het vergaderverzoek voor order ${task.orderNumber} (${task.customer}).\n`+
-    `Deadline: ${task.deadline}\nGeschat: ${task.estimatedHours} uur\n\n`+
-    `Voeg de .ics bijlage toe om de deadline in je agenda te zetten.\n\nMet vriendelijke groet,\nThijs`
-  );
-  setTimeout(()=>{
-    window.location.href=`mailto:${tekenaarsEmail}?subject=${subject}&body=${body}`;
-  },600);
-}
-
-
 function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
   const [form,setForm]=useState({...task});
   const [saving,setSaving]=useState(false);
@@ -765,10 +670,7 @@ function TaskModal({task,timeLogs,emailLogs,onStart,onStop,onClose,planData}){
           })()}
         </div>
         <div className="modal-footer">
-          <div className="flex gap-2">
-            <button className="btn btn-danger btn-sm" onClick={del}>🗑 Verwijderen</button>
-            <button className="btn btn-ghost btn-sm" onClick={()=>exportICS(form)} title="Deadline toevoegen aan Outlook agenda">📅 Agenda</button>
-          </div>
+          <button className="btn btn-danger btn-sm" onClick={del}>🗑 Verwijderen</button>
           <div className="flex gap-2">
             <button className="btn btn-ghost" onClick={onClose}>Annuleer</button>
             <button className="btn btn-primary" onClick={save} disabled={saving}>{saving?'Opslaan...':'Opslaan'}</button>
@@ -822,7 +724,7 @@ function NewTaskModal({onClose}){
           </div>
           <div className="form-group"><label>Notities</label><textarea className="input" value={form.notes} onChange={e=>set('notes',e.target.value)}/></div>
         </div>
-        <div className="modal-footer" style={{justifyContent:'flex-end'}}><div className="flex gap-2"><button className="btn btn-ghost" onClick={onClose}>Annuleer</button><button className="btn btn-primary" onClick={async()=>{ await save(); if(form.deadline) exportICS(form); }} disabled={saving}>{saving?'Aanmaken...':'Aanmaken + 📅'}</button></div></div>
+        <div className="modal-footer" style={{justifyContent:'flex-end'}}><div className="flex gap-2"><button className="btn btn-ghost" onClick={onClose}>Annuleer</button><button className="btn btn-primary" onClick={save} disabled={saving}>{saving?'Aanmaken...':'Aanmaken'}</button></div></div>
       </div>
     </div>
   );
@@ -1281,19 +1183,11 @@ function App(){
   const [planData,setPlanData]=useState({__dayLoad:{}});
   useEffect(()=>{
     if(tasks.length===0&&timeLogs.length===0)return;
-    try{
-      setPlanData(planTasks(tasks,timeLogs,{}));
-    }catch(e){
-      console.error('planTasks error:',e);
-    }
+    setPlanData(planTasks(tasks,timeLogs,{}));
   },[tasks,timeLogs,tick]);
 
   // timer actions
   async function handleStart(taskId){
-    // Stop alle lopende timers eerst
-    const running=timeLogs.filter(l=>l.running);
-    await Promise.all(running.map(l=>saveDoc('qline_logs',l.id,{...l,end:Date.now(),running:false,comment:''})));
-    // Start nieuwe timer
     const logId='L'+Date.now();
     await saveDoc('qline_logs',logId,{id:logId,taskId,start:Date.now(),end:null,running:true,comment:''});
     // auto-set status to In progress
