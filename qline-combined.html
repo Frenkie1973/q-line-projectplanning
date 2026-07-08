@@ -176,7 +176,9 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   const result={};
 
   const stationLoad2={};
+  const deadlineDays=new Set(); // deadlines van geplande taken - mogen geen werkdagen zijn
   function userAvail(user,day){
+    if(deadlineDays.has(day)) return 0; // deadline dag van andere taak = geen werk
     const userCap=getUserCap(user);
     const userUsed=(dayLoadPerUser[user]||{})[day]||0;
     const stationUsed=stationLoad2[day]||0;
@@ -264,6 +266,8 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       dayLoadPerUser[responsible][day]=(dayLoadPerUser[responsible][day]||0)+h;
       stationLoad2[day]=(stationLoad2[day]||0)+h;
     });
+    // Registreer deadline van deze taak zodat anderen er niet op werken
+    if(task.deadline) deadlineDays.add(task.deadline);
 
     const scheduledDays=Object.keys(taskDays).sort();
     const startDate=scheduledDays[0]||firstWorkDay;
