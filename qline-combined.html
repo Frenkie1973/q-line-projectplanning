@@ -164,7 +164,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
   }
 
   // Sorteer per persoon op vroegste deadline dan invoerdatum
-  const active=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+  const active=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{
     const diff=new Date(a.deadline)-new Date(b.deadline);
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
@@ -215,7 +215,10 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
         }
       }
 
-      if(!broken&&hoursLeft<=0) return{days:tryDays,fits:true};
+      if(!broken&&hoursLeft<=0){
+        const endD=Object.keys(tryDays).sort().pop();
+        return{days:tryDays,fits:endD<deadline};
+      }
       endDay=prevWorkDay(endDay);
     }
 
@@ -758,7 +761,7 @@ function Dashboard({tasks,timeLogs,planData,openTask,onStart,onStop}){
   const done=tasks.filter(t=>t.status==='Done');
   const overruns=tasks.filter(t=>t.status!=='Done'&&calcActual(timeLogs,t.id)>t.estimatedHours);
   const totalRemaining=tasks.filter(t=>t.status!=='Done').reduce((s,t)=>s+Math.max(0,t.estimatedHours-calcActual(timeLogs,t.id)),0);
-  const allActive=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{const d=new Date(a.deadline)-new Date(b.deadline);return d!==0?d:new Date(a.entryDate)-new Date(b.entryDate);});
+  const allActive=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{const d=new Date(a.deadline)-new Date(b.deadline);return d!==0?d:new Date(a.entryDate)-new Date(b.entryDate);});
   const dueWeek=tasks.filter(t=>t.status!=='Done'&&t.deadline>=td&&t.deadline<=addWorkDays(td,4));
 
   return(
@@ -948,7 +951,7 @@ function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
   const [dragTaskId,setDragTaskId]=useState(null);
   const [dropDay,setDropDay]=useState(null);
 
-  const activeTasks=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+  const activeTasks=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{
     const diff=new Date(a.deadline)-new Date(b.deadline);
     return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
   });
@@ -984,7 +987,7 @@ function PlanningBoard({tasks,timeLogs,planData,setDeadlineOverrides}){
   function getDaySegments(day){
     const segs=[];
     // Loop in zelfde volgorde als planTasks (vroegste deadline eerst)
-    const sorted=[...tasks.filter(t=>t.status!=='Done')].sort((a,b)=>{
+    const sorted=[...tasks.filter(t=>t.status!=='Done'&&t.deadline&&!isNaN(new Date(t.deadline)))].sort((a,b)=>{
       const diff=new Date(a.deadline)-new Date(b.deadline);
       return diff!==0?diff:new Date(a.entryDate)-new Date(b.entryDate);
     });
