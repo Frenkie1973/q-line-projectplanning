@@ -712,7 +712,7 @@ function NewTaskModal({onClose}){
     // Mail naar tekenaar
     const subj=encodeURIComponent('Nieuwe taak: '+form.orderNumber+' - '+form.customer);
     const bod=encodeURIComponent('Hoi '+responsible+',\n\nEr is een nieuwe taak voor jou ingepland.\n\nOrder: '+form.orderNumber+'\nKlant: '+form.customer+'\nOmschrijving: '+(form.description||'-')+'\nDeadline: '+form.deadline+'\nGeschat: '+(form.estimatedHours||4)+' uur\n\nMet vriendelijke groet,\nThijs');
-    window.location.href='mailto:'+tekEmail+'?subject='+subj+'&body='+bod;
+    window.open('mailto:'+tekEmail+'?subject='+subj+'&body='+bod);
     setSaving(false);
     onClose();
   }
