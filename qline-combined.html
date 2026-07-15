@@ -207,7 +207,7 @@ function planTasks(tasks,timeLogs,pinnedStarts={}){
       let broken=false;
 
       while(hoursLeft>0){
-        if(d<firstWorkDay||d>=deadline){broken=true;break;}
+        if(d<firstWorkDay){broken=true;break;}
         const a=userAvail(responsible,d);
         if(a<=0){broken=true;break;}
         const take=Math.min(a,hoursLeft);
