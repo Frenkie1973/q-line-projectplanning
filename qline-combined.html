@@ -925,6 +925,7 @@ function TaskList({tasks,timeLogs,planData,openTask,onStart,onStop}){
                     <td onClick={()=>openTask(t)} style={{cursor:'pointer',maxWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.customer}</td>
                     <td onClick={()=>openTask(t)} style={{cursor:'pointer',maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.description}</td>
                     <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}><span className={isLate?'text-red font-600':du<=3?'text-orange':du<=7?'text-yellow':''}>{fmtDate(t.deadline)}</span></td>
+                    <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}>{(()=>{const u=USERS.find(x=>x.name===(t.responsible||'Frank'));return<span style={{color:u?.color,fontWeight:600}}>{u?.name}</span>;})()}</td>
                     <td onClick={()=>openTask(t)} style={{cursor:'pointer'}}>{fmtHours(t.estimatedHours)}h</td>
                     <td onClick={()=>openTask(t)} style={{cursor:'pointer'}} className={overrun?'overrun':''}>{fmtHours(actual)}h</td>
                     <td onClick={()=>openTask(t)} style={{cursor:'pointer'}} className={overrun?'overrun':''}>{overrun?<span className="text-red">+{fmtHours(actual-t.estimatedHours)}h</span>:fmtHours(remaining)+'h'}</td>
